@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include "piece.h"
 
+bool estAlloue(void* p);
+void switchsMovePiece(piece p, dir d, int distance);
+bool estPositionValide(piece p);
+int** pieceEnTableau(piece p, int taille);
+
 struct piece_s{
 	bool isHorizontal; // true for Horizontal ; false for vertical
 	bool isSmall; // Size of the vehicule, true for 2 boxes, false for 3.
@@ -11,8 +16,11 @@ struct piece_s{
 piece new_piece_rh (int x, int y, bool small, bool horizontal){
 	piece newPiece = (piece)malloc(sizeof(struct piece_s));
 
-	if(!estAlloue(newPiece))
+	if(newPiece == NULL)
+	{
+		fprintf(stderr, "Erreur: pas d'allocation mémoire\n");
 		exit(EXIT_FAILURE);
+	}
 
 	if(x < 0 || x > 5 || y < 0 || y > 5)
 	{
@@ -34,9 +42,6 @@ void delete_piece (piece p){
 }
 
 void copy_piece (cpiece src, piece dst){
-	if(!estAlloue(src) || !estAlloue(dst))
-		exit(EXIT_FAILURE);
-
 	if(src == NULL || dst == NULL)
 	{
 		fprintf(stderr,"Erreur: problème d'allocation mémoire avec src ou dst\n");
@@ -49,13 +54,16 @@ void copy_piece (cpiece src, piece dst){
 }
 
 void move_piece (piece p, dir d, int distance){
-	if(!estAlloue(p))
+	if(p == NULL)
+	{
+		fprintf(stderr, "Erreur: pas d'allocation mémoire\n");
 		exit(EXIT_FAILURE);
+	}
 	//A ce stade, p est bien alloué.
 
 	if(!estPositionValide(p))
 	{
-		fprintf(stderr, "Erreur: Position de la piece invalide\n")
+		fprintf(stderr, "Erreur: Position de la piece invalide\n");
 		exit(EXIT_FAILURE);
 	}
 	//A ce stade, p est bien positionnée.
@@ -67,8 +75,8 @@ void move_piece (piece p, dir d, int distance){
 	}
 	//A ce stade, les paramètres sont cohérents avec l'orientation de p.
 
-	switchsMovePiece(p, dir, distance);
-	
+	switchsMovePiece(p, d, distance);
+
 }
 
 //Vérifie si la position de la piece est bien dans le plateau.
@@ -78,22 +86,13 @@ bool estPositionValide(piece p){
 	return true;
 }
 
-//Verifie si l'allocation de la piece p s'est bien déroulée.
-bool estAlloue(piece p){
-	if(p == NULL)
-	{
-		fprintf(stderr,"Erreur: problème d'allocation mémoire\n");
-		return false;
-	}
-	return true;
-}
+
 
 void switchsMovePiece(piece p, dir d, int distance){
-	int taille_piece;
+	int taille_piece = 2;
+
 	if(p->isSmall)
 		taille_piece = 1;
-	else
-		taille_piece = 2;
 
 	switch (d){
 
@@ -121,4 +120,57 @@ void switchsMovePiece(piece p, dir d, int distance){
 				printf("Cas non prévu\n");
 				break;
 		}
+}
+
+bool intersect(cpiece p1, cpiece p2){
+
+	int taille_p1 = 3;
+	int taille_p2 = 3;
+
+	if(p1 -> isSmall)
+		taille_p1 = 2;
+
+	if(p2 -> isSmall)
+		taille_p2 = 2;
+
+	int** tab_p1 = pieceEnTableau(p1, taille_p1);
+	int** tab_p2 = pieceEnTableau(p2, taille_p2);
+
+	for(int x = 0; x < taille_p1; x++)
+	{
+		for(int y = 0; y < taille_p2; y++)
+			{
+				if((tab_p1[x][0] == tab_p2[y][0]) && (tab_p1[x][1] == tab_p2[y][1]))
+					return true;
+			}
+	}
+	
+	return false;
+}
+
+int** pieceEnTableau(piece p, int taille){
+
+	int **tab = (int **)malloc(taille * sizeof(int*));
+	int *tab2 =(int *)malloc(sizeof(int)*taille*2);
+	for(int i = 0; i < taille; i++)
+		tab[i] = &tab2[i*2];
+
+	if(p -> isHorizontal)
+	{
+		for(int j = 0; j < taille; j++)
+		{
+			tab[j][0] = (p->position[0]) + j;
+			tab[j][1] = p->position[1];
+		}
+	}
+	else
+	{
+		for(int j = 0; j < taille; j++)
+		{
+			tab[j][0] = p->position[0];
+			tab[j][1] = (p->position[1]) + j;
+		}
+	}
+
+	return tab;
 }
