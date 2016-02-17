@@ -67,69 +67,8 @@ void move_piece (piece p, dir d, int distance){
 	}
 	//A ce stade, les paramètres sont cohérents avec l'orientation de p.
 
-
-	// Dans le cas ou la piece fait 2 cases :
-	if(p -> isSmall)
-	{
-		switch (d){
-
-			case UP:
-				if((p -> position[1] + distance + 1) <= 5)
-					p -> position[1] += distance;
-				break;
-
-			case DOWN:
-				if((p -> position[1] - distance) >= 0)
-					p -> position[1] -= distance;
-				break;
-
-			case RIGHT:
-				if((p -> position[0] + distance + 1) <= 5)
-					p -> position[0] += distance;
-				break;
-
-			case LEFT:
-				if((p -> position[0] - distance) >= 0)
-					p -> position[0] -= distance;
-				break;
-
-			default:
-				printf("Cas non prévu\n");
-				break;
-		}
-	}
-
-	// Dans le cas ou la piece fait 3 cases :
-	if(!(p -> isSmall))
-	{
-		switch (d){
-
-			case UP:
-				if((p -> position[1] + distance + 2) <= 5)
-					p -> position[1] += distance;
-				break;
-
-			case DOWN:
-				if((p -> position[1] - distance) >= 0)
-					p -> position[1] -= distance;
-				break;
-
-			case RIGHT:
-				if((p -> position[0] + distance + 2) <= 5)
-					p -> position[0] += distance;
-				break;
-
-			case LEFT:
-				if((p -> position[0] - distance) >= 0)
-					p -> position[0] -= distance;
-				break;
-
-			default:
-				printf("Cas non prévu\n");
-				break;
-		}
-	}
-
+	switchsMovePiece(p, dir, distance);
+	
 }
 
 //Vérifie si la position de la piece est bien dans le plateau.
