@@ -38,6 +38,17 @@ void delete_game (game g)
 	free(g -> nb_pieces);
 }
 
+void copy_game(cgame src, game dst)
+{
+	dst -> nb_pieces = src -> nb_pieces;
+	dst -> nb_moves = src -> nb_moves;
+	
+	for (int i = 0; i < src -> nb_pieces; i++)
+	{
+		dst -> pieces[i] = src -> pieces[i];
+	}
+}
+
 cpiece game_piece(cgame g, int piece_num){
   //Vérifie que la pièce est bien dans le jeu
 	if (piece_num < 0 || piece_num > game_nb_pieces(g)){
