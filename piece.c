@@ -67,59 +67,101 @@ void move_piece (piece p, dir d, int distance){
 		exit(EXIT_FAILURE);
 	}
 	//A ce stade, p est bien positionnée.
-	if( (p->isHorizontal && ((d == UP) || (d == DOWN))) || (!p->isHorizontal && ((d == RIGHT) || (d == LEFT))))
+
+	if( (p -> isHorizontal && ((d == UP) || (d == DOWN))) || (!(p -> isHorizontal) && ((d == RIGHT) || (d == LEFT))))
 	{
-		// fprintf(stderr,"Erreur: direction invalide avec cette pièce\n");
-		// exit(EXIT_FAILURE);
+		fprintf(stderr,"Erreur: direction invalide avec cette pièce\n");
 		return;
 	}
 	//A ce stade, les paramètres sont cohérents avec l'orientation de p.
 
-	switchsMovePiece(p, d, distance);
+	if(distance > 0)
+		switchsMovePiece(p, d, distance);
 
 }
 
 //Vérifie si la position de la piece est bien dans le plateau.
 bool estPositionValide(piece p){
-	if((p -> position[0] < 0) || (p -> position[0] > 5) || (p -> position[1] < 0) || (p -> position[1] > 5))
+	if((p -> position[0] < 0) || (p -> position[1] < 0))
 		return false;
+
+	//dans le cas de la piece horizontal :
+	if(p -> isHorizontal)
+	{
+		if(p -> isSmall) // Ici la piece fait 2 cases
+			if(p -> position[0] > 4 || p -> position[1] > 5)
+				return false;
+		else // ici la piece fait 3 cases
+			if(p -> position[0] > 3 || p -> position[1] > 5)
+				return false;
+	}
+	else // ici la piece est a la verticale
+	{
+		if(p -> isSmall) //ici la piece fait 2 cases
+			if(p -> position[0] > 5 || p -> position[1] > 4)
+				return false;
+		else //ici la piece fait 3 cases
+			if(p -> position[0] > 5 || p -> position[1] > 3)
+				return false;
+	}
 	return true;
 }
 
 
-
+//Fonction qui effectue le mouvement en passant par une copie (p_copy)
+//Ainsi, on vérifie seulement a la fin si la position est valide de la copie
+//Et on recopie dans p
 void switchsMovePiece(piece p, dir d, int distance){
 	int taille_piece = 2;
-
-	if(p->isSmall)
+	if(p -> isSmall)
 		taille_piece = 1;
+
+	piece p_copy = (piece)malloc(sizeof(struct piece_s));
+	if(p_copy == NULL)
+	{
+		fprintf(stderr, "Erreur: problème d'allocation mémoire\n");
+		exit(EXIT_FAILURE);
+	}
+
+	copy_piece(p, p_copy);
+	
 
 	switch (d){
 
 			case UP:
-				if((p -> position[1] + distance + taille_piece) <= 5)
-					p -> position[1] += distance;
+				if(((p_copy -> position[1]) + distance + taille_piece) <= 5)
+					(p_copy -> position[1]) += distance;
 				break;
 
 			case DOWN:
-				if((p -> position[1] - distance) >= 0)
-					p -> position[1] -= distance;
+				if(((p_copy -> position[1]) - distance) >= 0)
+					(p_copy -> position[1]) -= distance;
 				break;
 
 			case RIGHT:
-				if((p -> position[0] + distance + taille_piece) <= 5)
-					p -> position[0] += distance;
+				// printf("Pour p *(avant) x: %d\ny:%d\n", distance, taille_piece, get_x(p), get_y(p));
+				// printf("Pour p_copy *(avant) dist: %d\ntaille_piece: %d\nx: %d\ny:%d\n", distance, taille_piece, get_x(p_copy), get_y(p_copy));
+				if(((p_copy -> position[0]) + distance + taille_piece) <= 5)
+					(p_copy -> position[0]) += distance;
+				// printf("Pour p_copy *(apres) dist: %d\ntaille_piece: %d\nx: %d\ny:%d\n", distance, taille_piece, get_x(p_copy), get_y(p_copy));
 				break;
 
 			case LEFT:
-				if((p -> position[0] - distance) >= 0)
-					p -> position[0] -= distance;
+				if(((p_copy -> position[0]) - distance) >= 0)
+					(p_copy -> position[0]) -= distance;
 				break;
 
 			default:
 				printf("Cas non prévu\n");
 				break;
 		}
+	if(estPositionValide(p_copy)){
+		// printf("on copie p_copy dans p\n");
+		copy_piece(p_copy, p);
+		// printf("Pour p *(apres) x: %d\ny:%d\n", distance, taille_piece, get_x(p), get_y(p));
+	}
+	
+	delete_piece(p_copy);
 }
 
 bool intersect(cpiece p1, cpiece p2){
@@ -187,17 +229,21 @@ int get_y(cpiece p){
 
 int get_height(cpiece p){
 	if(!(p->isHorizontal))
+	{
 		if(p->isSmall)
 			return 2;
 		return 3;
+	}
 	return 1;
 }
 
 int get_width(cpiece p){
 	if(p->isHorizontal)
+	{
 		if(p->isSmall)
 			return 2;
 		return 3;
+	}
 	return 1;
 }
 
