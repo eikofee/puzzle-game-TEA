@@ -49,6 +49,11 @@ void copy_game(cgame src, game dst)
 	}
 }
 
+int game_nb_pieces(cgame g)
+{
+	return cgame -> nb_pieces;
+}
+
 cpiece game_piece(cgame g, int piece_num){
   //Vérifie que la pièce est bien dans le jeu
 	if (piece_num < 0 || piece_num > game_nb_pieces(g)){
