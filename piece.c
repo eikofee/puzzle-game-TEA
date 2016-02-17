@@ -174,3 +174,34 @@ int** pieceEnTableau(piece p, int taille){
 
 	return tab;
 }
+
+int get_x(cpiece p){
+	if(p != NULL)
+		return p->position[0];
+}
+
+int get_y(cpiece p){
+	if(p != NULL)
+		return p->position[1];
+}
+
+int get_height(cpiece p){
+	if(!(p->isHorizontal))
+		if(p->isSmall)
+			return 2;
+		return 3;
+	return 1;
+}
+
+int get_width(cpiece p){
+	if(p->isHorizontal)
+		if(p->isSmall)
+			return 2;
+		return 3;
+	return 1;
+}
+
+bool is_horizontal(cpiece p){
+	if(p != NULL)
+		return p->isHorizontal;
+}
