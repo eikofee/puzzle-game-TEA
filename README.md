@@ -22,3 +22,23 @@ $> git pull --rebase
 $> git push origin master
 [[Tout est ok]]
 ```
+
+##Faire un push à partir d'un pull obsolète ET conflit lors du `pull --rebase`
+`git mergetool` semble très utile pour gérer les conflits
+Penser à lancer `git rebase --continue` après la résolution. On aura donc:
+```
+$> git push origin master
+[[Message d'erreur fast forward]]
+
+$> git pull --rebase
+[[Message de conflit]]
+
+$> git mergetool					//marche aussi sans fichier en paramètre
+[[Résolution de votre côté, les deux fichiers sont dans la partie supérieure, le nouveau fichier se trouve dans la partie inférieur, appliquer les transformations en faisant un clique droit sur les parties en conflit]]
+
+$> git rebase --continue
+[[Succès]]
+
+$> git push origin master
+[[Tout est ok]]
+```
