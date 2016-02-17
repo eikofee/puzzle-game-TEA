@@ -6,4 +6,4 @@ Projet rush-hour
 Le projet consiste à développer le jeu Rush Hour en interface texte (console) et graphique plus tard, avec un solveur.
 
 Composition du groupe :
-HALNAUT Adrien - ORDONEZ Romain - MARTY Yoan
+HALNAUT Adrien (Echoffee) - ORDONEZ Romain (Apodeus) - MARTY Yoan (tlanvaldear)
