@@ -6,6 +6,8 @@ bool estAlloue(void* p);
 void switchsMovePiece(piece p, dir d, int distance);
 bool estPositionValide(piece p);
 int** pieceEnTableau(piece p, int taille);
+int get_x(cpiece p);
+int get_y(cpiece p);
 
 struct piece_s{
 	bool isHorizontal; // true for Horizontal ; false for vertical
@@ -47,11 +49,11 @@ void copy_piece (cpiece src, piece dst){
 		fprintf(stderr,"Erreur: problème d'allocation mémoire avec src ou dst\n");
 		exit(EXIT_FAILURE);
 	}
-	// dst -> isHorizontal = src -> isHorizontal;
-	// dst -> isSmall = src -> isSmall;
-	// dst -> position[0] = src -> position[0];
-	// dst -> position[1] = src -> position[1];
-	dst = new_piece_rh(get_x(src), get_y(src), src -> isSmall, is_horizontal(src));
+	dst -> isHorizontal = is_horizontal(src);
+	dst -> isSmall = src -> isSmall;
+	dst -> position[0] = get_x(src);
+	dst -> position[1] = get_y(src);
+	//dst = new_piece_rh(get_x(src), get_y(src), src -> isSmall, is_horizontal(src));
 }
 
 void move_piece (piece p, dir d, int distance){
@@ -83,27 +85,35 @@ void move_piece (piece p, dir d, int distance){
 
 //Vérifie si la position de la piece est bien dans le plateau.
 bool estPositionValide(piece p){
-	if((p -> position[0] < 0) || (p -> position[1] < 0))
+	if((get_x(p) < 0) || (get_y(p) < 0))
 		return false;
 
 	//dans le cas de la piece horizontal :
-	if(p -> isHorizontal)
+	if(is_horizontal(p))
 	{
 		if(p -> isSmall) // Ici la piece fait 2 cases
-			if(p -> position[0] > 4 || p -> position[1] > 5)
+		{
+			if(get_x(p) > 4 || get_y(p) > 5)
 				return false;
+		}
 		else // ici la piece fait 3 cases
-			if(p -> position[0] > 3 || p -> position[1] > 5)
+		{
+			if(get_x(p) > 3 || get_y(p) > 5)
 				return false;
+		}
 	}
 	else // ici la piece est a la verticale
 	{
 		if(p -> isSmall) //ici la piece fait 2 cases
-			if(p -> position[0] > 5 || p -> position[1] > 4)
+		{
+			if(get_x(p) > 5 || get_y(p) > 4)
 				return false;
+		}
 		else //ici la piece fait 3 cases
-			if(p -> position[0] > 5 || p -> position[1] > 3)
+		{ 
+			if(get_x(p) > 5 || get_y(p) > 3)
 				return false;
+		}
 	}
 	return true;
 }
@@ -116,17 +126,9 @@ void switchsMovePiece(piece p, dir d, int distance){
 	int taille_piece = 2;
 	if(p -> isSmall)
 		taille_piece = 1;
-
-	piece p_copy = (piece)malloc(sizeof(struct piece_s));
-	if(p_copy == NULL)
-	{
-		fprintf(stderr, "Erreur: problème d'allocation mémoire\n");
-		exit(EXIT_FAILURE);
-	}
-
+	piece p_copy = new_piece_rh(0,0,true,true);
 	copy_piece(p, p_copy);
 	
-
 	switch (d){
 
 		case UP:
@@ -146,7 +148,7 @@ void switchsMovePiece(piece p, dir d, int distance){
 
 		case LEFT:
 			if((get_x(p_copy) - distance) >= 0)
-				(p_copy -> position[0]) -= distance;
+				(p_copy -> position[0]) =get_x(p_copy) - distance;
 			break;
 
 		default:
@@ -156,6 +158,7 @@ void switchsMovePiece(piece p, dir d, int distance){
 
 	if(estPositionValide(p_copy)){
 		copy_piece(p_copy, p);
+		printf("**Pour p (apres)**\n(x;y)=(%d;%d)\n", get_x(p), get_y(p));
 	}
 
 	delete_piece(p_copy);
