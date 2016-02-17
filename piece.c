@@ -47,10 +47,11 @@ void copy_piece (cpiece src, piece dst){
 		fprintf(stderr,"Erreur: problème d'allocation mémoire avec src ou dst\n");
 		exit(EXIT_FAILURE);
 	}
-	dst -> isHorizontal = src -> isHorizontal;
-	dst -> isSmall = src -> isSmall;
-	dst -> position[0] = src -> position[0];
-	dst -> position[1] = src -> position[1];
+	// dst -> isHorizontal = src -> isHorizontal;
+	// dst -> isSmall = src -> isSmall;
+	// dst -> position[0] = src -> position[0];
+	// dst -> position[1] = src -> position[1];
+	dst = new_piece_rh(get_x(src), get_y(src), src -> isSmall, is_horizontal(src));
 }
 
 void move_piece (piece p, dir d, int distance){
@@ -68,9 +69,9 @@ void move_piece (piece p, dir d, int distance){
 	}
 	//A ce stade, p est bien positionnée.
 
-	if( (p -> isHorizontal && ((d == UP) || (d == DOWN))) || (!(p -> isHorizontal) && ((d == RIGHT) || (d == LEFT))))
+	if( (p -> isHorizontal && ((d == UP) || (d == DOWN))) || ((!(p -> isHorizontal)) && ((d == RIGHT) || (d == LEFT))))
 	{
-		fprintf(stderr,"Erreur: direction invalide avec cette pièce\n");
+		//fprintf(stderr,"Erreur: direction invalide avec cette pièce\n");
 		return;
 	}
 	//A ce stade, les paramètres sont cohérents avec l'orientation de p.
@@ -128,39 +129,35 @@ void switchsMovePiece(piece p, dir d, int distance){
 
 	switch (d){
 
-			case UP:
-				if(((p_copy -> position[1]) + distance + taille_piece) <= 5)
-					(p_copy -> position[1]) += distance;
-				break;
+		case UP:
+			if((get_y(p_copy) + distance + taille_piece) <= 5)
+				(p_copy -> position[1]) += distance;
+			break;
 
-			case DOWN:
-				if(((p_copy -> position[1]) - distance) >= 0)
-					(p_copy -> position[1]) -= distance;
-				break;
+		case DOWN:
+			if((get_y(p_copy) - distance) >= 0)
+				(p_copy -> position[1]) -= distance;
+			break;
 
-			case RIGHT:
-				// printf("Pour p *(avant) x: %d\ny:%d\n", distance, taille_piece, get_x(p), get_y(p));
-				// printf("Pour p_copy *(avant) dist: %d\ntaille_piece: %d\nx: %d\ny:%d\n", distance, taille_piece, get_x(p_copy), get_y(p_copy));
-				if(((p_copy -> position[0]) + distance + taille_piece) <= 5)
-					(p_copy -> position[0]) += distance;
-				// printf("Pour p_copy *(apres) dist: %d\ntaille_piece: %d\nx: %d\ny:%d\n", distance, taille_piece, get_x(p_copy), get_y(p_copy));
-				break;
+		case RIGHT:
+			if((get_x(p_copy) + distance + taille_piece) <= 5)
+				(p_copy -> position[0]) += distance;
+			break;
 
-			case LEFT:
-				if(((p_copy -> position[0]) - distance) >= 0)
-					(p_copy -> position[0]) -= distance;
-				break;
+		case LEFT:
+			if((get_x(p_copy) - distance) >= 0)
+				(p_copy -> position[0]) -= distance;
+			break;
 
-			default:
-				printf("Cas non prévu\n");
-				break;
-		}
-	if(estPositionValide(p_copy)){
-		// printf("on copie p_copy dans p\n");
-		copy_piece(p_copy, p);
-		// printf("Pour p *(apres) x: %d\ny:%d\n", distance, taille_piece, get_x(p), get_y(p));
+		default:
+			printf("Cas non prévu\n");
+			break;
 	}
-	
+
+	if(estPositionValide(p_copy)){
+		copy_piece(p_copy, p);
+	}
+
 	delete_piece(p_copy);
 }
 
