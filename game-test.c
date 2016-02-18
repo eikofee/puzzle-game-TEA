@@ -6,7 +6,7 @@ void display_pieces(piece *p, int taille)
 {
 	for (int i = 0; i < taille; i++)
 	{
-		printf("Pièce [%d] : x = %d, y = %d\n",i ,p[i] -> position[0], p[i] -> position[1]);
+		printf("Pièce [%d] : x = %d, y = %d\n",i ,get_x(p[i]), get_y(p[i]));
 	}
 
 }
@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 	printf("> Préparation des tests:\n");
 	printf("> création des pièces...\n");
 	int nb_pieces = 4;
-	piece *p = (piece*) malloc(sizeof( struct piece_s) * nb_pieces);
+	piece p[nb_pieces];
 	p[0] = new_piece_rh(0, 3, true, true);		//Voiture rouge
 	p[1] = new_piece_rh(2, 4, false, false);	//Camion jaune sur l'ex
 	p[2] = new_piece_rh(5, 3, true, false);		//Voiture verte sur l'ex
@@ -28,13 +28,14 @@ int main(int argc, char* argv[])
 	printf("Done.\n");
 
 	printf("> création d'un jeu vide...\n");
-	piece *q = (piece*) malloc(sizeof(struct piece_s));
+	piece q[nb_pieces];
 	if (!q)
-		error("Allocation de q");
+		fprintf(stderr, "Allocation de q");
 	q[0] = new_piece_rh(0, 3, true, true);
 	if (!q[0])
-		error("Creation de q[0]");
+		fprintf(stderr, "Creation de q[0]");
 	game g2 = new_game_hr(1, q);
+	printf("juste apres g2 = new_game_hr\n");
 	display_pieces(g2 -> pieces, g2 -> nb_pieces);
 	printf("Done.\n");
 
