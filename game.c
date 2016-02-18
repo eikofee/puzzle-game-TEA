@@ -90,7 +90,8 @@ cpiece game_piece(cgame g, int piece_num){
 
 
 bool game_over_hr(cgame g){
-	if (g -> pieces[0].position[0] = 4 && g -> pieces[0].position[1] = 3){
+	//if (g -> pieces[0].position[0] = 4 && g -> pieces[0].position[1] = 3){
+	if (g -> pieces[0] -> position[0] == 4 && g -> pieces[0] -> position[1] == 3){
 		return true;
 	}
 	return false;
@@ -98,16 +99,16 @@ bool game_over_hr(cgame g){
 
 bool play_move(game g, int piece_num, dir d, int distance){
     //On vérifie que le mouvement est correct par rapport à la pièce (Si incorrect, return false)
-    if (((d == UP || d == DOWN) &&  g -> pieces[piece_num].isHorizontal) || (d == LEFT || d == RIGHT) && g -> pieces[piece_num].isHorizontal == false){
+    if (((d == UP || d == DOWN) &&  g -> pieces[piece_num]->isHorizontal) || (d == LEFT || d == RIGHT) && g -> pieces[piece_num]->isHorizontal == false){
         return false;
     }
     //On vérifie que si le mouvement est réalisé il reste sur la plateforme (Sinon, false)
-    if ((d == UP && (g -> pieces[piece_num].position[1] + distance > 5)) || (d == DOWN && (g -> pieces[piece_num].position[1] + distance < 0)) || (d == RIGHT && (g -> pieces[piece_num].position[0] + distance > 5)) || (d == LEFT && (g -> pieces[piece_num].position[0] + distance > 0))){
+    if ((d == UP && (g -> pieces[piece_num]->position[1] + distance > 5)) || (d == DOWN && (g -> pieces[piece_num]->position[1] + distance < 0)) || (d == RIGHT && (g -> pieces[piece_num]->position[0] + distance > 5)) || (d == LEFT && (g -> pieces[piece_num]->position[0] + distance > 0))){
         return false;
     }
     //On vérifie qu'il n'entre au contact d'aucune pièce
     for (int i = 0; i < game_nb_pieces(g); i++){
-        if ((d == UP || d == DOWN) && (g -> pieces[piece_num].position[1] + distance) == g -> pieces[i].position[1] || (d == LEFT || d == RIGHT) && (g -> pieces[piece_num].position[0] + distance) == g -> pieces[i].position[0]) {
+        if ((d == UP || d == DOWN) && (g -> pieces[piece_num]->position[1] + distance) == g -> pieces[i]->position[1] || (d == LEFT || d == RIGHT) && (g -> pieces[piece_num]->position[0] + distance) == g -> pieces[i]->position[0]) {
             return false;
         }
     }
