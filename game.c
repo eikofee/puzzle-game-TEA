@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "game.h"
+#include "piece.c"
 
 
 
@@ -26,7 +27,15 @@ game new_game_hr( int nb_pieces, piece *pieces)
 	for (int i = 0; i < nb_pieces; i++)
 	{
 		//new_game -> pieces[i] = pieces[i];
-		copy_piece(pieces[i], new_game -> pieces[i])
+		copy_piece(pieces[i], new_game -> pieces[i]);
+
+		//debug
+		if (!new_game -> pieces[i])
+		{
+			printf("i=%d\n", i);
+			error("Copie de pièce");
+		}
+		//fin debug
 	}
 
 	//Initialisation des valeurs de jeu
