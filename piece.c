@@ -6,13 +6,11 @@ bool estAlloue(void* p);
 void switchsMovePiece(piece p, dir d, int distance);
 bool estPositionValide(piece p);
 int** pieceEnTableau(piece p, int taille);
-int get_x(cpiece p);
-int get_y(cpiece p);
 
 struct piece_s{
-	bool isHorizontal; // true for Horizontal ; false for vertical
-	bool isSmall; // Size of the vehicule, true for 2 boxes, false for 3.
-	int position[2]; // position of his lower left box. (x;y)
+	bool isHorizontal; // true si la piece est horizontal, false sinon.
+	bool isSmall; // true si la taille de la piece est 2, et false si 3.
+	int position[2]; // position de la case inférieur gauche. (x;y)
 };
 
 piece new_piece_rh (int x, int y, bool small, bool horizontal){
@@ -53,42 +51,42 @@ void copy_piece (cpiece src, piece dst){
 	dst -> isSmall = src -> isSmall;
 	dst -> position[0] = get_x(src);
 	dst -> position[1] = get_y(src);
-	//dst = new_piece_rh(get_x(src), get_y(src), src -> isSmall, is_horizontal(src));
 }
-
+//Cette fonction permet de bouger une piece sur une distance donnée
+//dans une direction d. On réalise 3 tests pour déterminer si 
+//les paramètres sont cohérents et valides.
+//On appelle une fonction annexe switchsMovePiece pour faire le mouvement.
 void move_piece (piece p, dir d, int distance){
 	if(p == NULL)
 	{
 		fprintf(stderr, "Erreur: pas d'allocation mémoire\n");
 		exit(EXIT_FAILURE);
 	}
-	//A ce stade, p est bien alloué.
 
 	if(!estPositionValide(p))
 	{
 		fprintf(stderr, "Erreur: Position de la piece invalide\n");
 		exit(EXIT_FAILURE);
 	}
-	//A ce stade, p est bien positionnée.
-
-	if( (p -> isHorizontal && ((d == UP) || (d == DOWN))) || ((!(p -> isHorizontal)) && ((d == RIGHT) || (d == LEFT))))
+	//Simple vérification pour savoir si la direction est cohérente avec l'orientation de la pièce.
+	if( (is_horizontal(p) && ((d == UP) || (d == DOWN))) || ( (!(is_horizontal(p))) && ((d == RIGHT) || (d == LEFT))))
 	{
-		//fprintf(stderr,"Erreur: direction invalide avec cette pièce\n");
 		return;
 	}
-	//A ce stade, les paramètres sont cohérents avec l'orientation de p.
 
+	//A ce stade, tout est ok pour réaliser le mouvement.
+	// On vérifie juste si la distance est bien >0
 	if(distance > 0)
 		switchsMovePiece(p, d, distance);
 
 }
 
-//Vérifie si la position de la piece est bien dans le plateau.
+//Vérifie si la position de la piece est bien dans le plateau (6x6)
 bool estPositionValide(piece p){
 	if((get_x(p) < 0) || (get_y(p) < 0))
 		return false;
 
-	//dans le cas de la piece horizontal :
+	//Ici la piece est horizontal
 	if(is_horizontal(p))
 	{
 		if(p -> isSmall) // Ici la piece fait 2 cases
@@ -102,7 +100,8 @@ bool estPositionValide(piece p){
 				return false;
 		}
 	}
-	else // ici la piece est a la verticale
+	// ici la piece est a la verticale
+	else 
 	{
 		if(p -> isSmall) //ici la piece fait 2 cases
 		{
@@ -124,13 +123,14 @@ bool estPositionValide(piece p){
 //Et on recopie dans p
 void switchsMovePiece(piece p, dir d, int distance){
 	int taille_piece = 2;
+
 	if(p -> isSmall)
 		taille_piece = 1;
+
 	piece p_copy = new_piece_rh(0,0,true,true);
 	copy_piece(p, p_copy);
 	
 	switch (d){
-
 		case UP:
 			if((get_y(p_copy) + distance + taille_piece) <= 5)
 				(p_copy -> position[1]) += distance;
@@ -156,14 +156,15 @@ void switchsMovePiece(piece p, dir d, int distance){
 			break;
 	}
 
-	if(estPositionValide(p_copy)){
+	if(estPositionValide(p_copy))
 		copy_piece(p_copy, p);
-		printf("**Pour p (apres)**\n(x;y)=(%d;%d)\n", get_x(p), get_y(p));
-	}
 
 	delete_piece(p_copy);
 }
 
+//Retourne true si il deux pièces se chevauchent, false sinon.
+//On emploi 2 tableau2D crées par la fonction pieceEnTableau afin de vérifier plus facilement
+//les problèmes de collisions.
 bool intersect(cpiece p1, cpiece p2){
 
 	int taille_p1 = 3;
@@ -181,15 +182,16 @@ bool intersect(cpiece p1, cpiece p2){
 	for(int x = 0; x < taille_p1; x++)
 	{
 		for(int y = 0; y < taille_p2; y++)
-			{
-				if((tab_p1[x][0] == tab_p2[y][0]) && (tab_p1[x][1] == tab_p2[y][1]))
-					return true;
-			}
+		{
+			if((tab_p1[x][0] == tab_p2[y][0]) && (tab_p1[x][1] == tab_p2[y][1]))
+				return true;
+		}
 	}
-	
 	return false;
 }
 
+//Crée et retourne un tableau 2D des coordonnées de chaque case prise par la piece
+//Cela nous permet de mieux gérer les conflits entre 2 pieces dans intersect.
 int** pieceEnTableau(piece p, int taille){
 
 	int **tab = (int **)malloc(taille * sizeof(int*));
@@ -213,10 +215,10 @@ int** pieceEnTableau(piece p, int taille){
 			tab[j][1] = (p->position[1]) + j;
 		}
 	}
-
 	return tab;
 }
 
+// ---- Fonctions Simples ----
 int get_x(cpiece p){
 	if(p != NULL)
 		return p->position[0];
