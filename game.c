@@ -4,7 +4,7 @@
 #include "game.h"
 #include "piece.c"
 
-
+void error(char* s);
 
 struct game_s{
 	piece *pieces;	//malloc nécessaire
@@ -31,7 +31,7 @@ game new_game_hr( int nb_pieces, piece *pieces)
 	for (int i = 0; i < nb_pieces; i++)
 	{
 		//new_game -> pieces[i] = pieces[i];
-		new_game -> pieces[i] = (piece) malloc(sizeof(piece));
+		new_game -> pieces[i] = new_piece_rh(0,0,true,true);
 		if (!new_game -> pieces[i])
 			error("Allocation new_game -> pieces[i]");
 		copy_piece(pieces[i], new_game -> pieces[i]);
