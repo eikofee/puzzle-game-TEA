@@ -2,7 +2,14 @@
 #include <stdlib.h>
 #include "game.c"
 
+void display_pieces(piece *p, int taille)
+{
+	for (int i = 0; i < taille; i++)
+	{
+		printf("Pièce [%d] : x = %d, y = %d\n",i ,p[i] -> position[0], p[i] -> position[1]);
+	}
 
+}
 int main(int argc, char* argv[])
 {
 	printf("> Préparation des tests:\n");
@@ -17,11 +24,23 @@ int main(int argc, char* argv[])
 
 	printf("> new_game_hr...\n");
 	game g = new_game_hr(nb_pieces, p);
+	display_pieces(g -> pieces, nb_pieces);
+	printf("Done.\n");
+
+	printf("> création d'un jeu vide...\n");
+	piece *q = (piece*) malloc(sizeof(struct piece_s));
+	if (!q)
+		error("Allocation de q");
+	q[0] = new_piece_rh(0, 3, true, true);
+	if (!q[0])
+		error("Creation de q[0]");
+	game g2 = new_game_hr(1, q);
+	display_pieces(g2 -> pieces, g2 -> nb_pieces);
 	printf("Done.\n");
 
 	printf("> copy_game...\n");
-	game g2;
 	copy_game(g, g2);
+	display_pieces(g2 -> pieces, g2 -> nb_pieces);
 	printf("Done.\n");
 
 	printf("> delete_game...\n");
