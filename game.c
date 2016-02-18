@@ -19,6 +19,10 @@ game new_game_hr( int nb_pieces, piece *pieces)
 	if(!new_game)
 		error("Allocation new_game");
 	new_game -> pieces = (piece*) malloc(sizeof(struct piece_s) * nb_pieces);
+	/*for (int i = 0: i < nb_pieces; i++)
+	{
+		new_game -> pieces[i] = (piece) malloc(sizeof(struct piece_s));
+	}*/
 	if(!new_game -> pieces)
 		error("Allocation new_game -> pieces");
 
@@ -27,6 +31,9 @@ game new_game_hr( int nb_pieces, piece *pieces)
 	for (int i = 0; i < nb_pieces; i++)
 	{
 		//new_game -> pieces[i] = pieces[i];
+		new_game -> pieces[i] = (piece) malloc(sizeof(piece));
+		if (!new_game -> pieces[i])
+			error("Allocation new_game -> pieces[i]");
 		copy_piece(pieces[i], new_game -> pieces[i]);
 
 		//debug
@@ -61,11 +68,20 @@ void copy_game(cgame src, game dst)
 {
 	//D'abord les propriétés directes
 	dst -> nb_pieces = src -> nb_pieces;
+	printf("nb_pieces Done : attendu : %d, recu : %d.\n", src->nb_pieces, dst->nb_pieces);
 	dst -> nb_moves = src -> nb_moves;
+	printf("nb_moves Done : attendu : %d, recu : %d.\n", src->nb_moves, dst->nb_moves);
 	
 	//...Ensuite le tableau des pièces
+	//Reallocation du tableau des pieces
+	realloc(dst -> pieces, sizeof(struct piece_s) * dst -> nb_pieces);
+	if (!dst -> pieces)
+		error("Echec du realloc");
 	for (int i = 0; i < src -> nb_pieces; i++)
 	{
+		dst -> pieces[i] = (piece) malloc(sizeof(struct piece_s));
+		if (!dst -> pieces[i])
+			error("Allocation dst -> pieces[i]");
 		//dst -> pieces[i] = src -> pieces[i];
 		copy_piece(src -> pieces[i], dst -> pieces[i]);
 	}
