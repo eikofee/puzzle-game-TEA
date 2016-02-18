@@ -69,6 +69,7 @@ void copy_game(cgame src, game dst)
 	//On supprime les anciennes pieces
 	for (int i = 0; i < dst -> nb_pieces; i++)
 		delete_piece(dst -> pieces[i]);
+	free(dst -> pieces);
 	//D'abord les propriétés directes
 	dst -> nb_pieces = src -> nb_pieces;
 	printf("nb_pieces Done : attendu : %d, recu : %d.\n", src->nb_pieces, dst->nb_pieces);
