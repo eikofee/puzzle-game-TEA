@@ -119,6 +119,7 @@ bool game_over_hr(cgame g){
 }
 
 bool play_move(game g, int piece_num, dir d, int distance){
+    /* Ancienne methode
     //On vérifie que le mouvement est correct par rapport à la pièce (Si incorrect, return false)
     if (((d == UP || d == DOWN) &&  g -> pieces[piece_num]->isHorizontal) || (d == LEFT || d == RIGHT) && g -> pieces[piece_num]->isHorizontal == false){
         return false;
@@ -133,8 +134,24 @@ bool play_move(game g, int piece_num, dir d, int distance){
             return false;
         }
     }
-    //Si tout est bon, alors on déplace la pièce, puis on ajoute les moves, puis le signal est bon
-    switchsMovePiece(g -> pieces[piece_num], d, distance);
+    */
+    //On vérifie qu'il n'entre au contact d'aucune pièce en utilisant un clone-cobaye
+    piece ptest = new_piece_rh(0,0,true,true);
+    copy_piece(g -> pieces[piece_num],ptest);
+    move_piece(ptest, d, distance);
+    for (int i = 0; i < game_nb_pieces(g); i++){
+    	//Une pièce peut finir en contact avec elle même, c'est pas très grave
+    	if (i == piece_num)
+    		i++;
+
+    	if (intersect(ptest, g -> pieces[i])){
+    		delete_piece(ptest);
+    		return false;
+    	}
+    }
+    delete_piece(ptest);
+    //Si tout est bon, alors on lance l'algorithme de déplacement de la pièce, puis on ajoute les moves correspondant.
+    move_piece(g -> pieces[piece_num], d, distance);
     g -> nb_moves += abs(distance);
     return true;
 }
