@@ -55,17 +55,20 @@ void delete_game (game g)
 	//D'abord le tableau des pieces
 	for (int i = 0; i < g -> nb_pieces; i++)
 	{
+		printf("i=%d\n", i);
 		//free(g -> pieces[i]);
 		delete_piece(g -> pieces[i]);
 	}
-
+	free(g -> pieces);
 	//...Ensuite le reste de la structure
-	free(g -> nb_moves);
-	free(g -> nb_pieces);
+	free(g);
 }
 
 void copy_game(cgame src, game dst)
 {
+	//On supprime les anciennes pieces
+	for (int i = 0; i < dst -> nb_pieces; i++)
+		delete_piece(dst -> pieces[i]);
 	//D'abord les propriétés directes
 	dst -> nb_pieces = src -> nb_pieces;
 	printf("nb_pieces Done : attendu : %d, recu : %d.\n", src->nb_pieces, dst->nb_pieces);
@@ -73,10 +76,11 @@ void copy_game(cgame src, game dst)
 	printf("nb_moves Done : attendu : %d, recu : %d.\n", src->nb_moves, dst->nb_moves);
 	
 	//...Ensuite le tableau des pièces
-	//Reallocation du tableau des pieces
-	realloc(dst -> pieces, sizeof(struct piece_s) * dst -> nb_pieces);
+	//On réalloue du tableau des pieces
+	dst -> pieces = (piece*) malloc(sizeof(struct piece_s) * dst -> nb_pieces);
 	if (!dst -> pieces)
-		error("Echec du realloc");
+		error("Echec du deuxième malloc");
+
 	for (int i = 0; i < src -> nb_pieces; i++)
 	{
 		dst -> pieces[i] = (piece) malloc(sizeof(struct piece_s));

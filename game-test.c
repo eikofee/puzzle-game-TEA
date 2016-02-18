@@ -40,6 +40,9 @@ int main(int argc, char* argv[])
 
 	printf("> copy_game...\n");
 	copy_game(g, g2);
+	printf("Pieces src : \n");
+	display_pieces(g -> pieces, g -> nb_pieces);
+	printf("Pièces dst : \n");
 	display_pieces(g2 -> pieces, g2 -> nb_pieces);
 	printf("Done.\n");
 
