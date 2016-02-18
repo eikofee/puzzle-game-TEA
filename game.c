@@ -13,42 +13,48 @@ struct game_s{
 
 game new_game_hr( int nb_pieces, piece *pieces)
 {
+	//Allocation de l'espace nécessaire à la création de new_game
 	game new_game = (game) malloc(sizeof(struct game_s));
 	if(!new_game)
 		error("Allocation new_game");
-
 	new_game -> pieces = (piece*) malloc(sizeof(struct piece_s) * nb_pieces);
 	if(!new_game -> pieces)
 		error("Allocation new_game -> pieces");
 
+	//Affectation des valeurs par copie
 	new_game -> nb_pieces = nb_pieces;
-
 	for (int i = 0; i < nb_pieces; i++)
 	{
 		//new_game -> pieces[i] = pieces[i];
 		copy_piece(pieces[i], new_game -> pieces[i])
 	}
 
+	//Initialisation des valeurs de jeu
 	new_game -> nb_moves = 0;
 	return new_game;
 }
 
 void delete_game (game g)
 {
+	//D'abord le tableau des pieces
 	for (int i = 0; i < g -> nb_pieces; i++)
 	{
 		//free(g -> pieces[i]);
 		delete_piece(g -> pieces[i]);
 	}
+
+	//...Ensuite le reste de la structure
 	free(g -> nb_moves);
 	free(g -> nb_pieces);
 }
 
 void copy_game(cgame src, game dst)
 {
+	//D'abord les propriétés directes
 	dst -> nb_pieces = src -> nb_pieces;
 	dst -> nb_moves = src -> nb_moves;
 	
+	//...Ensuite le tableau des pièces
 	for (int i = 0; i < src -> nb_pieces; i++)
 	{
 		//dst -> pieces[i] = src -> pieces[i];
@@ -56,7 +62,7 @@ void copy_game(cgame src, game dst)
 	}
 }
 
-int game_nb_pieces(cgame g)
+int game_nb_pieces(cgame g)	//Not sure about this one tbh
 {
 	if (!g)
 		error("Allocation cgame game_nb_pieces");
