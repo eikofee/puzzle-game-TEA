@@ -13,17 +13,20 @@ struct game_s{
 
 game new_game_hr( int nb_pieces, piece *pieces)
 {
-	game new_game = (game_s) malloc(sizeof(struct game_s));
+	game new_game = (game) malloc(sizeof(struct game_s));
 	if(!new_game)
 		error("Allocation new_game");
+
 	new_game -> pieces = (piece*) malloc(sizeof(struct piece_s) * nb_pieces);
 	if(!new_game -> pieces)
 		error("Allocation new_game -> pieces");
+
 	new_game -> nb_pieces = nb_pieces;
 
 	for (int i = 0; i < nb_pieces; i++)
 	{
-		new_game -> pieces[i] = pieces[i];
+		//new_game -> pieces[i] = pieces[i];
+		copy_piece(pieces[i], new_game -> pieces[i])
 	}
 
 	new_game -> nb_moves = 0;
@@ -34,7 +37,8 @@ void delete_game (game g)
 {
 	for (int i = 0; i < g -> nb_pieces; i++)
 	{
-		free(g -> pieces[i]);
+		//free(g -> pieces[i]);
+		delete_piece(g -> pieces[i]);
 	}
 	free(g -> nb_moves);
 	free(g -> nb_pieces);
@@ -47,13 +51,16 @@ void copy_game(cgame src, game dst)
 	
 	for (int i = 0; i < src -> nb_pieces; i++)
 	{
-		dst -> pieces[i] = src -> pieces[i];
+		//dst -> pieces[i] = src -> pieces[i];
+		copy_piece(src -> pieces[i], dst -> pieces[i]);
 	}
 }
 
 int game_nb_pieces(cgame g)
 {
-	return cgame -> nb_pieces;
+	if (!g)
+		error("Allocation cgame game_nb_pieces");
+	return g -> nb_pieces;
 }
 
 cpiece game_piece(cgame g, int piece_num){
@@ -76,16 +83,16 @@ bool game_over_hr(cgame g){
 
 bool play_move(game g, int piece_num, dir d, int distance){
     //On vérifie que le mouvement est correct par rapport à la pièce (Si incorrect, return false)
-    if (((d == "UP" || d == "DOWN") &&  g -> pieces[piece_num].isHorizontal) || (d == "LEFT" || d == "RIGHT") && g -> pieces[piece_num].isHorizontal == false){
+    if (((d == UP || d == DOWN) &&  g -> pieces[piece_num].isHorizontal) || (d == LEFT || d == RIGHT) && g -> pieces[piece_num].isHorizontal == false){
         return false;
     }
     //On vérifie que si le mouvement est réalisé il reste sur la plateforme (Sinon, false)
-    if ((d == "UP" && (g -> pieces[piece_num].position[1] + distance > 5)) || (d == "DOWN" && (g -> pieces[piece_num].position[1] + distance < 0)) || (d == "RIGHT" && (g -> pieces[piece_num].position[0] + distance > 5)) || (d == "LEFT" && (g -> pieces[piece_num].position[0] + distance > 0))){
+    if ((d == UP && (g -> pieces[piece_num].position[1] + distance > 5)) || (d == DOWN && (g -> pieces[piece_num].position[1] + distance < 0)) || (d == RIGHT && (g -> pieces[piece_num].position[0] + distance > 5)) || (d == LEFT && (g -> pieces[piece_num].position[0] + distance > 0))){
         return false;
     }
     //On vérifie qu'il n'entre au contact d'aucune pièce
     for (int i = 0; i < game_nb_pieces(g); i++){
-        if ((d == "UP" || d == "DOWN") && (g -> pieces[piece_num].position[1] + distance) == g -> pieces[i].position[1] || (d == "LEFT" || d == "RIGHT") && (g -> pieces[piece_num].position[0] + distance) == g -> pieces[i].position[0]) {
+        if ((d == UP || d == DOWN) && (g -> pieces[piece_num].position[1] + distance) == g -> pieces[i].position[1] || (d == LEFT || d == RIGHT) && (g -> pieces[piece_num].position[0] + distance) == g -> pieces[i].position[0]) {
             return false;
         }
     }
