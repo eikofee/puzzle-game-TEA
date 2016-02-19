@@ -7,6 +7,8 @@ void switchsMovePiece(piece p, dir d, int distance);
 bool estPositionValide(piece p);
 int** pieceEnTableau(piece p, int taille);
 
+int TAILLE_PLATEAU = 6;
+
 struct piece_s{
 	bool isHorizontal; // true si la piece est horizontal, false sinon.
 	bool isSmall; // true si la taille de la piece est 2, et false si 3.
@@ -22,7 +24,7 @@ piece new_piece_rh (int x, int y, bool small, bool horizontal){
 		exit(EXIT_FAILURE);
 	}
 
-	if(x < 0 || x > 5 || y < 0 || y > 5)
+	if(x < 0 || x > (TAILLE_PLATEAU - 1) || y < 0 || y >= (TAILLE_PLATEAU - 1))
 	{
 		fprintf(stderr, "Erreur: x ou y inférieur à 0\n");
 		exit(EXIT_FAILURE);
@@ -52,6 +54,7 @@ void copy_piece (cpiece src, piece dst){
 	dst -> position[0] = get_x(src);
 	dst -> position[1] = get_y(src);
 }
+
 //Cette fonction permet de bouger une piece sur une distance donnée
 //dans une direction d. On réalise 3 tests pour déterminer si 
 //les paramètres sont cohérents et valides.
@@ -91,12 +94,12 @@ bool estPositionValide(piece p){
 	{
 		if(p -> isSmall) // Ici la piece fait 2 cases
 		{
-			if(get_x(p) > 4 || get_y(p) > 5)
+			if(get_x(p) > (TAILLE_PLATEAU - 2) || get_y(p) > (TAILLE_PLATEAU - 1))
 				return false;
 		}
 		else // ici la piece fait 3 cases
 		{
-			if(get_x(p) > 3 || get_y(p) > 5)
+			if(get_x(p) > (TAILLE_PLATEAU - 3) || get_y(p) > (TAILLE_PLATEAU - 1))
 				return false;
 		}
 	}
@@ -105,12 +108,12 @@ bool estPositionValide(piece p){
 	{
 		if(p -> isSmall) //ici la piece fait 2 cases
 		{
-			if(get_x(p) > 5 || get_y(p) > 4)
+			if(get_x(p) > (TAILLE_PLATEAU - 1) || get_y(p) > (TAILLE_PLATEAU - 2))
 				return false;
 		}
 		else //ici la piece fait 3 cases
 		{ 
-			if(get_x(p) > 5 || get_y(p) > 3)
+			if(get_x(p) > (TAILLE_PLATEAU - 1) || get_y(p) > (TAILLE_PLATEAU - 3))
 				return false;
 		}
 	}
@@ -192,10 +195,11 @@ bool intersect(cpiece p1, cpiece p2){
 
 //Crée et retourne un tableau 2D des coordonnées de chaque case prise par la piece
 //Cela nous permet de mieux gérer les conflits entre 2 pieces dans intersect.
+//Prend en paramètre une piece et sa taille.
 int** pieceEnTableau(piece p, int taille){
-
 	int **tab = (int **)malloc(taille * sizeof(int*));
-	int *tab2 =(int *)malloc(sizeof(int)*taille*2);
+	int *tab2 =(int *)malloc(taille * 2 * sizeof(int));
+
 	for(int i = 0; i < taille; i++)
 		tab[i] = &tab2[i*2];
 
@@ -218,17 +222,21 @@ int** pieceEnTableau(piece p, int taille){
 	return tab;
 }
 
+//Génere un tableau 2D correspondant au plateau du jeu
+//Il est rempli par la valeur -1 par défaut. Les vehicules sont mis grace
+// au tableau de piece.
 int** TableauDePieces(piece* tab_pieces, int taille){
-	int **tab2Dpieces = (int **) malloc(6*sizeof(int*));
-	int *tab2Dpieces2 = (int *) malloc(6*6*sizeof(int));
+	int **tab2Dpieces = (int **) malloc(TAILLE_PLATEAU * sizeof(int*));
+	int *tab2Dpieces2 = (int *) malloc(TAILLE_PLATEAU * TAILLE_PLATEAU * sizeof(int));
+
 	int **tab_tmp_piece;
 	int taille_tab_tmp_piece;
 
-	for(int i = 0; i < 6; i++)
-		tab2Dpieces[i] = &tab2Dpieces2[i*6];
+	for(int i = 0; i < TAILLE_PLATEAU; i++)
+		tab2Dpieces[i] = &tab2Dpieces2[i*TAILLE_PLATEAU];
 
-	for(int x = 0; x < 6; x++)
-		for(int y = 0; y < 6; y++)
+	for(int x = 0; x < TAILLE_PLATEAU; x++)
+		for(int y = 0; y < TAILLE_PLATEAU; y++)
 			tab2Dpieces[x][y] = -1;
 
 	for(int i = 0; i < taille; i++)
@@ -242,7 +250,6 @@ int** TableauDePieces(piece* tab_pieces, int taille){
 			tab2Dpieces[ tab_tmp_piece[j][0] ][ tab_tmp_piece[j][1] ] = i;
 	}
 
-	//free(tab_tmp_piece);
 	return tab2Dpieces;
 }
 
