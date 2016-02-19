@@ -200,7 +200,7 @@ int** pieceEnTableau(piece p, int taille){
 		tab[i] = &tab2[i*2];
 
 	if(p -> isHorizontal)
-	{
+	{ 
 		for(int j = 0; j < taille; j++)
 		{
 			tab[j][0] = (p->position[0]) + j;
@@ -216,6 +216,34 @@ int** pieceEnTableau(piece p, int taille){
 		}
 	}
 	return tab;
+}
+
+int** TableauDePieces(piece* tab_pieces, int taille){
+	int **tab2Dpieces = (int **) malloc(6*sizeof(int*));
+	int *tab2Dpieces2 = (int *) malloc(6*6*sizeof(int));
+	int **tab_tmp_piece;
+	int taille_tab_tmp_piece;
+
+	for(int i = 0; i < 6; i++)
+		tab2Dpieces[i] = &tab2Dpieces2[i*6];
+
+	for(int x = 0; x < 6; x++)
+		for(int y = 0; y < 6; y++)
+			tab2Dpieces[x][y] = -1;
+
+	for(int i = 0; i < taille; i++)
+	{
+		taille_tab_tmp_piece = 3;
+		if(tab_pieces[i] -> isSmall)
+			taille_tab_tmp_piece = 2;
+
+		tab_tmp_piece = pieceEnTableau(tab_pieces[i], taille_tab_tmp_piece);
+		for(int j = 0; j < taille_tab_tmp_piece; j++)
+			tab2Dpieces[ tab_tmp_piece[j][0] ][ tab_tmp_piece[j][1] ] = i;
+	}
+
+	free(tab_tmp_piece);
+	return tab2Dpieces;
 }
 
 // ---- Fonctions Simples ----
