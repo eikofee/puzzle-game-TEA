@@ -17,8 +17,8 @@ int main(int argc, char* argv[])
 	int nb_pieces = 4;
 	piece p[nb_pieces];
 	p[0] = new_piece_rh(0, 3, true, true);		//Voiture rouge
-	p[1] = new_piece_rh(2, 4, false, false);	//Camion jaune sur l'ex
-	p[2] = new_piece_rh(5, 3, true, false);		//Voiture verte sur l'ex
+	p[1] = new_piece_rh(2, 2, false, false);	//Camion jaune sur l'ex
+	p[2] = new_piece_rh(5, 2, true, false);		//Voiture verte sur l'ex
 	p[3] = new_piece_rh(0, 0, false, true);		//Camion horizontal en 0,0
 	printf("Done.\n");
 

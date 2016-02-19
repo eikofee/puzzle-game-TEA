@@ -70,7 +70,7 @@ void draw_interface(game g)
 				printf(">\n");
 				break;
 			case 0: 
-				printf("# Type 'help' for more commands\n");
+				printf("# Type 'help' for more informations\n");
 				break;
 			default:
 				printf("#\n");
