@@ -75,7 +75,7 @@ void copy_game(cgame src, game dst)
 	printf("nb_pieces Done : attendu : %d, recu : %d.\n", src->nb_pieces, dst->nb_pieces);
 	dst -> nb_moves = src -> nb_moves;
 	printf("nb_moves Done : attendu : %d, recu : %d.\n", src->nb_moves, dst->nb_moves);
-	
+
 	//...Ensuite le tableau des pièces
 	//On réalloue du tableau des pieces
 	dst -> pieces = (piece*) malloc(sizeof(struct piece_s) * dst -> nb_pieces);
@@ -119,32 +119,13 @@ bool game_over_hr(cgame g){
 }
 
 bool play_move(game g, int piece_num, dir d, int distance){
-    /* Ancienne methode
-    //On vérifie que le mouvement est correct par rapport à la pièce (Si incorrect, return false)
-    if (((d == UP || d == DOWN) &&  g -> pieces[piece_num]->isHorizontal) || (d == LEFT || d == RIGHT) && g -> pieces[piece_num]->isHorizontal == false){
-        return false;
-    }
-    //On vérifie que si le mouvement est réalisé il reste sur la plateforme (Sinon, false)
-    if ((d == UP && (g -> pieces[piece_num]->position[1] + distance > 5)) || (d == DOWN && (g -> pieces[piece_num]->position[1] + distance < 0)) || (d == RIGHT && (g -> pieces[piece_num]->position[0] + distance > 5)) || (d == LEFT && (g -> pieces[piece_num]->position[0] + distance > 0))){
-        return false;
-    }
-    //On vérifie qu'il n'entre au contact d'aucune pièce
-    for (int i = 0; i < game_nb_pieces(g); i++){
-        if ((d == UP || d == DOWN) && (g -> pieces[piece_num]->position[1] + distance) == g -> pieces[i]->position[1] || (d == LEFT || d == RIGHT) && (g -> pieces[piece_num]->position[0] + distance) == g -> pieces[i]->position[0]) {
-            return false;
-        }
-    }
-    */
     //On vérifie qu'il n'entre au contact d'aucune pièce en utilisant un clone-cobaye
     piece ptest = new_piece_rh(0,0,true,true);
     copy_piece(g -> pieces[piece_num],ptest);
     move_piece(ptest, d, distance);
     for (int i = 0; i < game_nb_pieces(g); i++){
-    	//Une pièce peut finir en contact avec elle même, c'est pas très grave
-    	if (i == piece_num)
-    		i++;
-
-    	if (intersect(ptest, g -> pieces[i])){
+        // s'il ne s'agit pas de la même pièce, alors on regarde s'il y a contact.
+    	if (i != piece_num && intersect(ptest, g -> pieces[i])){
     		delete_piece(ptest);
     		return false;
     	}
