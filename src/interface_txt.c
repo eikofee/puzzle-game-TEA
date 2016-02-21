@@ -130,8 +130,8 @@ dir getDirection(piece p, char sign)
 
 void input_player(game g)
 {
-	char input[6];
-	fgets(input, 5, stdin);
+	char input[7] = "";
+	fgets(input, 6, stdin);
 
 	if (str_equal(input, "help"))
 	{
@@ -165,14 +165,14 @@ void input_player(game g)
 				if (input[1] == ' ' && isNumber(input[2], 9))
 				{
 					//TODO : Check if piece actually exists
-					move_piece(g -> pieces[getNumber(input[0])], getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
+					play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
 				}else{
 					if (isOperatorSimple(input[2]))
 					{
 						if (input[2] == '+')
-							move_piece(g -> pieces[getNumber(input[0])], getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
+							play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
 						else{
-							move_piece(g -> pieces[getNumber(input[0])], getDirection(g -> pieces[getNumber(input[0])], '-'), getNumber(input[3]));
+							play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), getNumber(input[3]));
 						}
 					}
 				}
