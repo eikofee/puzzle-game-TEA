@@ -166,6 +166,15 @@ void input_player(game g)
 				{
 					//TODO : Check if piece actually exists
 					move_piece(g -> pieces[getNumber(input[0])], getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
+				}else{
+					if (isOperatorSimple(input[2]))
+					{
+						if (input[2] == '+')
+							move_piece(g -> pieces[getNumber(input[0])], getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
+						else{
+							move_piece(g -> pieces[getNumber(input[0])], getDirection(g -> pieces[getNumber(input[0])], '-'), getNumber(input[3]));
+						}
+					}
 				}
 			}
 		}else{
