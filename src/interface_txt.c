@@ -128,6 +128,7 @@ dir getDirection(piece p, char sign)
 	}
 }
 
+
 void input_player(game g)
 {
 	char input[7] = "";
@@ -160,20 +161,31 @@ void input_player(game g)
 			//syntaxe check
 			if (input[1] == '\n')
 			{
-				//ask for second input
-			}else{
-				if (input[1] == ' ' && isNumber(input[2], 9))
+				char input2[5];
+				printf("%s]]\n", input);
+				printf("Enter the distance for car n°%c :\n", input[0]);
+				fgets(input2, 4, stdin);
+				input[1] = ' ';
+				if (isOperatorSimple(input2[0]))
 				{
-					//TODO : Check if piece actually exists
-					play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
+					input[2] = input2[0];
+					input[3] = input2[1];
 				}else{
-					if (isOperatorSimple(input[2]))
-					{
-						if (input[2] == '+')
-							play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
-						else{
-							play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), getNumber(input[3]));
-						}
+					input[2] = input2[0];
+				}
+			}
+			printf("%s]]\n", input);
+			if (input[1] == ' ' && isNumber(input[2], 9))
+			{
+					//TODO : Check if piece actually exists
+				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
+			}else{
+				if (isOperatorSimple(input[2]))
+				{
+					if (input[2] == '+')
+						play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
+					else{
+						play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), getNumber(input[3]));
 					}
 				}
 			}
