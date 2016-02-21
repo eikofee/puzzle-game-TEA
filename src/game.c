@@ -135,9 +135,7 @@ bool play_move(game g, int piece_num, dir d, int distance){
 		move_piece(ptest,d,1);
 		for (int i = 0; i < game_nb_pieces(g); i++){
         // s'il ne s'agit pas de la même pièce, alors on regarde s'il y a contact.
-        	printf("I was here");
 			if (i != piece_num && intersect(ptest, g -> pieces[i])){
-				printf("I was there");
 				delete_piece(ptest);
 				return false;
 			}
