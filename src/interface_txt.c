@@ -20,7 +20,7 @@ game test_level()
 	int nb_pieces = 4;
 	piece p[nb_pieces];
 	p[0] = new_piece_rh(0, 3, true, true);		//Voiture rouge
-	p[1] = new_piece_rh(2, 2, false, false);	//Camion jaune sur l'ex
+	p[1] = new_piece_rh(2, 2, true, false);	//Camion jaune sur l'ex
 	p[2] = new_piece_rh(5, 2, true, false);		//Voiture verte sur l'ex
 	p[3] = new_piece_rh(0, 0, false, true);		//Camion horizontal en 0,0
 	game g = new_game_hr(nb_pieces, p);
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 void draw_interface(game g)
 {
 	//Test values
-	int moves = 3;
+	int moves = game_nb_moves(g);
 	int num_moves = 10;
 	char* seed = "0b4aaf345e";
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);

@@ -111,7 +111,7 @@ bool estPositionValide(piece p){
 void switchsMovePiece(piece p, dir d, int distance){
 
 	int taille_piece;
-	taille_piece = p->isSmall ? 2 : 3;
+	taille_piece = p->isSmall ? 1 : 2;
 
 	piece p_copy = new_piece_rh(0,0,true,true);
 	copy_piece(p, p_copy);
@@ -141,9 +141,13 @@ void switchsMovePiece(piece p, dir d, int distance){
 			printf("Cas non prévu\n");
 			break;
 	}
-
+	printf("estPositionValide called\n");
 	if(estPositionValide(p_copy))
+	{
 		copy_piece(p_copy, p);
+		printf("True\n");
+	}
+	printf("end calling\n");
 
 	delete_piece(p_copy);
 }
