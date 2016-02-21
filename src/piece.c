@@ -1,12 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include "piece.h"
+#include "utility.h"
 
-bool estAlloue(void* p);
-void switchsMovePiece(piece p, dir d, int distance);
-bool estPositionValide(piece p);
-int** pieceEnTableau(piece p, int taille);
-
+//variable globale pour la taille du plateau
 int TAILLE_PLATEAU = 6;
 
 struct piece_s{
@@ -19,16 +13,10 @@ piece new_piece_rh (int x, int y, bool small, bool horizontal){
 	piece newPiece = (piece)malloc(sizeof(struct piece_s));
 
 	if(newPiece == NULL)
-	{
-		fprintf(stderr, "Erreur: pas d'allocation mémoire\n");
-		exit(EXIT_FAILURE);
-	}
+		error("Problème d'allocation sur newPiece");
 
 	if(x < 0 || x > (TAILLE_PLATEAU - 1) || y < 0 || y >= (TAILLE_PLATEAU - 1))
-	{
-		fprintf(stderr, "Erreur: x ou y inférieur à 0\n");
-		exit(EXIT_FAILURE);
-	}
+		error("new_piece_rh, x ou y invalide.");
 
 	newPiece -> isHorizontal = horizontal;
 	newPiece -> isSmall = small;
@@ -45,10 +33,8 @@ void delete_piece (piece p){
 
 void copy_piece (cpiece src, piece dst){
 	if(src == NULL || dst == NULL)
-	{
-		fprintf(stderr,"Erreur: problème d'allocation mémoire avec src ou dst\n");
-		exit(EXIT_FAILURE);
-	}
+		error("copy_piece, src ou dst n'est pas alloué");
+
 	dst -> isHorizontal = is_horizontal(src);
 	dst -> isSmall = src -> isSmall;
 	dst -> position[0] = get_x(src);
@@ -61,16 +47,11 @@ void copy_piece (cpiece src, piece dst){
 //On appelle une fonction annexe switchsMovePiece pour faire le mouvement.
 void move_piece (piece p, dir d, int distance){
 	if(p == NULL)
-	{
-		fprintf(stderr, "Erreur: pas d'allocation mémoire\n");
-		exit(EXIT_FAILURE);
-	}
+		error("move_piece, p n'est pas alloué");
 
 	if(!estPositionValide(p))
-	{
-		fprintf(stderr, "Erreur: Position de la piece invalide\n");
-		exit(EXIT_FAILURE);
-	}
+		error("move_piece, Position de la piece invalide");
+
 	//Simple vérification pour savoir si la direction est cohérente avec l'orientation de la pièce.
 	if( (is_horizontal(p) && ((d == UP) || (d == DOWN))) || ( (!(is_horizontal(p))) && ((d == RIGHT) || (d == LEFT))))
 	{
@@ -125,10 +106,9 @@ bool estPositionValide(piece p){
 //Ainsi, on vérifie seulement a la fin si la position est valide de la copie
 //Et on recopie dans p
 void switchsMovePiece(piece p, dir d, int distance){
-	int taille_piece = 2;
 
-	if(p -> isSmall)
-		taille_piece = 1;
+	int taille_piece;
+	p->isSmall ? taille_piece = 2 : taille_piece = 3;
 
 	piece p_copy = new_piece_rh(0,0,true,true);
 	copy_piece(p, p_copy);
@@ -169,15 +149,11 @@ void switchsMovePiece(piece p, dir d, int distance){
 //On emploi 2 tableau2D crées par la fonction pieceEnTableau afin de vérifier plus facilement
 //les problèmes de collisions.
 bool intersect(cpiece p1, cpiece p2){
+	int taille_p1;
+	int taille_p2;
 
-	int taille_p1 = 3;
-	int taille_p2 = 3;
-
-	if(p1 -> isSmall)
-		taille_p1 = 2;
-
-	if(p2 -> isSmall)
-		taille_p2 = 2;
+	p1->isSmall ? taille_p1 = 2 : taille_p1 = 3;
+	p2->isSmall ? taille_p2 = 2 : taille_p2 = 3;
 
 	int** tab_p1 = pieceEnTableau(p1, taille_p1);
 	int** tab_p2 = pieceEnTableau(p2, taille_p2);
@@ -226,26 +202,34 @@ int** pieceEnTableau(piece p, int taille){
 //Il est rempli par la valeur -1 par défaut. Les vehicules sont mis grace
 // au tableau de piece.
 int** TableauDePieces(piece* tab_pieces, int taille){
+
+	// ---	Début de l'allocation ---
 	int **tab2Dpieces = (int **) malloc(TAILLE_PLATEAU * sizeof(int*));
 	int *tab2Dpieces2 = (int *) malloc(TAILLE_PLATEAU * TAILLE_PLATEAU * sizeof(int));
 
-	int **tab_tmp_piece;
-	int taille_tab_tmp_piece;
+	if(tab2Dpieces == NULL)
+		error("TableauDePieces, Problème d'allocation sur tab2Dpieces");
+	if(tab2Dpieces2 == NULL)
+		error("TableauDePieces, Problème d'allocation sur tab2Dpieces2");
 
 	for(int i = 0; i < TAILLE_PLATEAU; i++)
-		tab2Dpieces[i] = &tab2Dpieces2[i*TAILLE_PLATEAU];
-
+			tab2Dpieces[i] = &tab2Dpieces2[i*TAILLE_PLATEAU];
+	// --- Fin de l'allocation ---
+	// On rempli le tableau de -1
 	for(int x = 0; x < TAILLE_PLATEAU; x++)
 		for(int y = 0; y < TAILLE_PLATEAU; y++)
 			tab2Dpieces[x][y] = -1;
 
+	// Tableau temporaire
+	int **tab_tmp_piece;
+	int taille_tab_tmp_piece;
+
 	for(int i = 0; i < taille; i++)
 	{
-		taille_tab_tmp_piece = 3;
-		if(tab_pieces[i] -> isSmall)
-			taille_tab_tmp_piece = 2;
+		tab_pieces[i]->isSmall ? taille_tab_tmp_piece = 2 : taille_tab_tmp_piece = 3;
 
 		tab_tmp_piece = pieceEnTableau(tab_pieces[i], taille_tab_tmp_piece);
+		
 		for(int j = 0; j < taille_tab_tmp_piece; j++)
 			tab2Dpieces[ tab_tmp_piece[j][0] ][ tab_tmp_piece[j][1] ] = i;
 	}
