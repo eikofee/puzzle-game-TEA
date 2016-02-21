@@ -112,9 +112,9 @@ cpiece game_piece(cgame g, int piece_num){
 
 bool game_over_hr(cgame g){
 	//if (g -> pieces[0].position[0] = 4 && g -> pieces[0].position[1] = 3){
-	if (g -> pieces[0] -> position[0] == 4 && g -> pieces[0] -> position[1] == 3){
+	//if (g -> pieces[0] -> position[0] == 4 && g -> pieces[0] -> position[1] == 3){
+	if (get_x(g -> pieces[0]) == 4 && get_y(g -> pieces[0]) == 3)
 		return true;
-	}
 	return false;
 }
 
