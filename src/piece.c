@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include "piece.h"
 #include "utility.h"
 
 //variable globale pour la taille du plateau
@@ -108,7 +111,7 @@ bool estPositionValide(piece p){
 void switchsMovePiece(piece p, dir d, int distance){
 
 	int taille_piece;
-	p->isSmall ? taille_piece = 2 : taille_piece = 3;
+	taille_piece = p->isSmall ? 2 : 3;
 
 	piece p_copy = new_piece_rh(0,0,true,true);
 	copy_piece(p, p_copy);
@@ -152,8 +155,8 @@ bool intersect(cpiece p1, cpiece p2){
 	int taille_p1;
 	int taille_p2;
 
-	p1->isSmall ? taille_p1 = 2 : taille_p1 = 3;
-	p2->isSmall ? taille_p2 = 2 : taille_p2 = 3;
+	taille_p1 = p1->isSmall ? 2 : 3;
+	taille_p2 = p2->isSmall ? 2 : 3;
 
 	int** tab_p1 = pieceEnTableau(p1, taille_p1);
 	int** tab_p2 = pieceEnTableau(p2, taille_p2);
@@ -226,7 +229,7 @@ int** TableauDePieces(piece* tab_pieces, int taille){
 
 	for(int i = 0; i < taille; i++)
 	{
-		tab_pieces[i]->isSmall ? taille_tab_tmp_piece = 2 : taille_tab_tmp_piece = 3;
+		taille_tab_tmp_piece = tab_pieces[i]->isSmall ? 2 : 3;
 
 		tab_tmp_piece = pieceEnTableau(tab_pieces[i], taille_tab_tmp_piece);
 		

@@ -1,4 +1,8 @@
-#include "utility.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "game.h"
+#include "piece.c"
 
 struct game_s{
 	piece *pieces;	//malloc nécessaire
