@@ -119,40 +119,47 @@ cpiece game_piece(cgame g, int piece_num){
 }
 
 bool game_over_hr(cgame g){
-	//if (g -> pieces[0].position[0] = 4 && g -> pieces[0].position[1] = 3){
-	//if (g -> pieces[0] -> position[0] == 4 && g -> pieces[0] -> position[1] == 3){
+	
 	if (get_x(g -> pieces[0]) == 4 && get_y(g -> pieces[0]) == 3)
 		return true;
 	return false;
 }
 
 bool play_move(game g, int piece_num, dir d, int distance){
-    //On vérifie qu'il n'entre au contact d'aucune pièce en utilisant un clone-cobaye
-    piece ptest = new_piece_rh(0,0,true,true);
-
-    copy_piece(g -> pieces[piece_num],ptest);
-    move_piece(ptest, d, distance);
-
-    for (int i = 0; i < game_nb_pieces(g); i++){
+    //On vérifie qu'il n'entre au contact d'aucune pièce et qu'il reste sur le plateau en utilisant un clone-cobaye
+	piece ptest = new_piece_rh(0,0,true,true);
+	copy_piece(g -> pieces[piece_num],ptest);
+	int ptestx = get_x(ptest);
+	int ptesty = get_y(ptest);
+	for (int step = 0; step < distance; step++){
+		move_piece(ptest,d,1);
+		for (int i = 0; i < game_nb_pieces(g); i++){
         // s'il ne s'agit pas de la même pièce, alors on regarde s'il y a contact.
-    	if (i != piece_num && intersect(ptest, g -> pieces[i])){
-    		delete_piece(ptest);
-    		return false;
-    	}
-    }
-
-    delete_piece(ptest);
-
+        	printf("I was here");
+			if (i != piece_num && intersect(ptest, g -> pieces[i])){
+				printf("I was there");
+				delete_piece(ptest);
+				return false;
+			}
+			
+		}	
+	}
+	// Si ptest n'a pas bougé, c'est que move_piece a trouvé que le mouvement sur distance n'était pas bon.
+	if (d != 0 && ((ptest -> isHorizontal == false && get_y(ptest) == ptesty) || (ptest -> isHorizontal && get_x(ptest) == ptestx))) {
+		delete_piece(ptest);
+		return false;
+	}
+	delete_piece(ptest);
     //Si tout est bon, alors on lance l'algorithme de déplacement de la pièce, puis on ajoute les moves correspondant.
-    move_piece(g -> pieces[piece_num], d, distance);
-    g -> nb_moves += abs(distance);
-
-    return true;
+	move_piece(g -> pieces[piece_num], d, abs(distance));
+	g -> nb_moves += abs(distance);
+	return true;
 }
 
 int game_nb_moves(cgame g){
 	if(g != NULL)
     	return g -> nb_moves;
+    return -1;
 }
 
 //error est une fonction qui permet d'envoyer un message sur stderr et de faire un exit(EXIT_FAILURE). 
