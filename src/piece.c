@@ -118,7 +118,7 @@ void switchsMovePiece(piece p, dir d, int distance){
 	
 	switch (d){
 		case UP:
-			if((get_y(p_copy) + distance + taille_piece) <= 5)
+			if((get_y(p_copy) + distance + taille_piece) <= TAILLE_PLATEAU - 1)
 				(p_copy -> position[1]) += distance;
 			break;
 
@@ -128,7 +128,7 @@ void switchsMovePiece(piece p, dir d, int distance){
 			break;
 
 		case RIGHT:
-			if((get_x(p_copy) + distance + taille_piece) <= 5)
+			if((get_x(p_copy) + distance + taille_piece) <= TAILLE_PLATEAU - 1)
 				(p_copy -> position[0]) += distance;
 			break;
 
@@ -141,13 +141,9 @@ void switchsMovePiece(piece p, dir d, int distance){
 			printf("Cas non prévu\n");
 			break;
 	}
-	printf("estPositionValide called\n");
+	
 	if(estPositionValide(p_copy))
-	{
 		copy_piece(p_copy, p);
-		printf("True\n");
-	}
-	printf("end calling\n");
 
 	delete_piece(p_copy);
 }
