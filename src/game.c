@@ -129,21 +129,25 @@ bool play_move(game g, int piece_num, dir d, int distance){
     //On vérifie qu'il n'entre au contact d'aucune pièce et qu'il reste sur le plateau en utilisant un clone-cobaye
 	piece ptest = new_piece_rh(0,0,true,true);
 	copy_piece(g -> pieces[piece_num],ptest);
+
 	int ptestx = get_x(ptest);
 	int ptesty = get_y(ptest);
-	for (int step = 0; step < distance; step++){
+
+	for (int step = 0; step < distance; step++)
+	{
 		move_piece(ptest,d,1);
-		for (int i = 0; i < game_nb_pieces(g); i++){
+		for (int i = 0; i < game_nb_pieces(g); i++)
+		{
         // s'il ne s'agit pas de la même pièce, alors on regarde s'il y a contact.
-			if (i != piece_num && intersect(ptest, g -> pieces[i])){
+			if (i != piece_num && intersect(ptest, g -> pieces[i]))
+			{
 				delete_piece(ptest);
 				return false;
 			}
-			
 		}	
 	}
 	// Si ptest n'a pas bougé, c'est que move_piece a trouvé que le mouvement sur distance n'était pas bon.
-	if (d != 0 && ((ptest -> isHorizontal == false && get_y(ptest) == ptesty) || (ptest -> isHorizontal && get_x(ptest) == ptestx))) {
+	if (d != 0 && ((!is_horizontal(ptest) && get_y(ptest) == ptesty) || (is_horizontal(ptest) && get_x(ptest) == ptestx))) {
 		delete_piece(ptest);
 		return false;
 	}
