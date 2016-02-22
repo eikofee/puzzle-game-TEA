@@ -20,7 +20,7 @@ game test_level()
 	int nb_pieces = 4;
 	piece p[nb_pieces];
 	p[0] = new_piece_rh(0, 3, true, true);		//Voiture rouge
-	p[1] = new_piece_rh(2, 2, true, false);	    //Camion jaune sur l'ex
+	p[1] = new_piece_rh(2, 2, false, false);	    //Camion jaune sur l'ex
 	p[2] = new_piece_rh(5, 2, true, false);		//Voiture verte sur l'ex
 	p[3] = new_piece_rh(0, 0, false, true);		//Camion horizontal en 0,0
 	game g = new_game_hr(nb_pieces, p);
@@ -28,10 +28,72 @@ game test_level()
 	return g;
 }
 
+long revertLong(long n)
+{
+	long a = 7;
+	while (n != 7)
+	{
+		a *=10;
+		a = n % 10;
+		n /= 10;
+	}
+	a = a * 10 + 7;
+	return a;
+}
+int getNbPieces(long l)
+{
+	int n = 0;
+	while (l != 0)
+	{
+		l /= 10;
+		n++;
+	}
+	n -= 2;
+	return n / 3 + 1;
+}
+//73002221527
+//---------
+void printl(long i)
+{
+	printf("id=%ld\n", i);
+}
+game getGameFromId(long id)
+{
+	//Syntaxe : 7abca2b2c2a3b3c37
+	//a = car type: +1 st horizontale, +2 si grand
+	//b = case axe x
+	//c = case axe y
+	//7 to get start
+	printl(id);
+	id = revertLong(id);
+	printl(id);
+	int nb_pieces = getNbPieces(id);
+	id /= 10;
+	piece p[nb_pieces];
+	p[0] = new_piece_rh(0, 3, true, true);
+	int index = 1;
+	while (id != 7)
+	{
+		int c = id%10;
+		bool isHorizontal = (c == 1 || c == 3);
+		bool isSmall = (c == 0 || c == 1);
+		id /= 10;
+		int x = id%10;
+		id /= 10;
+		int y = id%10;
+		id /= 10; //Prochaine pièce
+		printf("x=%d; y=%d;\n", x, y);
+		p[index] = new_piece_rh(x, y, isSmall, isHorizontal);
+		index++;
+	}
+	return new_game_hr(nb_pieces, p);
+}
+
 int main(int argc, char* argv[])
 {
-	game g = test_level();
+	//game g = test_level();
 	//display_pieces(g -> pieces, g -> nb_pieces);
+	game g = getGameFromId(73002221527);
 	while (!game_over_hr(g))
 	{
 		draw_interface(g);
@@ -198,6 +260,7 @@ void input_player(game g)
 	{
 		//sauvegarde
 	}
+	
 	if (isNumber(input[0], g -> nb_pieces))
 	{
 		//correct input
