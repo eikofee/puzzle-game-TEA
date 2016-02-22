@@ -147,7 +147,7 @@ bool play_move(game g, int piece_num, dir d, int distance){
 		}	
 	}
 	// Si ptest n'a pas bougé, c'est que move_piece a trouvé que le mouvement sur distance n'était pas bon.
-	if (d != 0 && ((!is_horizontal(ptest) && get_y(ptest) == ptesty) || (is_horizontal(ptest) && get_x(ptest) == ptestx))) {
+	if (distance != 0 && ((ptest -> isHorizontal == false && get_y(ptest) != ptesty + distance) || (ptest -> isHorizontal && get_x(ptest) != ptestx + distance))) {
 		delete_piece(ptest);
 		return false;
 	}
