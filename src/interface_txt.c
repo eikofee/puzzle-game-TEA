@@ -129,8 +129,36 @@ dir getDirection(piece p, char sign)
 		}
 	}
 }
-
-
+void confirm()
+{
+	printf("\n\tPress 'Enter' to go back to the help menu");
+	int cha;
+	while (cha != '\r' && cha != '\n')
+		cha = getchar();	
+}
+void getHelp(int input, bool* done)
+{
+	switch(input)
+	{
+		case 4:
+		*(done) = true;
+		break;
+		case 1:
+		printf("\tRules are simple. You're the car n°0 and you need to go to the exit (\">\"). To do that, you need\n");
+		printf("to move the other cars to free yourself a passage. Cars can't cross others or go outside the game area.\n");
+		confirm();
+		break;
+		case 2:
+		printf("\tSyntaxe is as it follows : a b where a is the car number you want to move and b the distance to\n");
+		printf("translate it. Positive numbers go to up and right and negative ones go to down and left.\n");
+		printf("e.g. 2 -3 with the car number 2 being a horizontal car will go 3 cases to the left. You can also input\n");
+		printf("the car number first and then input the distance.\n");
+		confirm();
+		break;
+	//Help pages here
+	}
+	//printf("Press Enter to go back to the help menu...\n");
+}
 void input_player(game g)
 {
 	char input[7] = "";
@@ -138,7 +166,15 @@ void input_player(game g)
 
 	if (str_equal(input, "help"))
 	{
-		//Display help
+		bool done = false;
+		while (!done)
+		{
+			char i[4];
+			printf("What do you want to know ? (Type a number)\n\n\t1. What's this game ?\n\t2. How to play\n\t3. Advanced commands\n\t4. Get back to the game\n");
+			fgets(i, 3, stdin);
+			getHelp(atoi(i), &done);
+		}
+
 	}
 	if (str_equal(input, "hint"))
 	{
@@ -164,7 +200,6 @@ void input_player(game g)
 			if (input[1] == '\n')
 			{
 				char input2[5];
-				printf("%s]]\n", input);
 				printf("Enter the distance for car n°%c :\n", input[0]);
 				fgets(input2, 4, stdin);
 				input[1] = ' ';
@@ -176,7 +211,6 @@ void input_player(game g)
 					input[2] = input2[0];
 				}
 			}
-			printf("%s]]\n", input);
 			if (input[1] == ' ' && isNumber(input[2], 9))
 			{
 					//TODO : Check if piece actually exists
