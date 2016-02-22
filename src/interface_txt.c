@@ -30,11 +30,11 @@ game test_level()
 
 long revertLong(long n)
 {
-	long a = 7;
+	long a = 0;
 	while (n != 7)
 	{
 		a *=10;
-		a = n % 10;
+		a += n % 10;
 		n /= 10;
 	}
 	a = a * 10 + 7;
