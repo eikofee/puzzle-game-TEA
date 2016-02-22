@@ -155,6 +155,16 @@ void getHelp(int input, bool* done)
 		printf("the car number first and then input the distance.\n");
 		confirm();
 		break;
+		case 3:
+		printf("\tList of available commands:\n\n");
+		printf("\thelp: Display this menu\n");
+		printf("\thint: Get closer to the end by cheating\n");
+		printf("\tskip: skip the current game for another\n");
+		printf("\tsave: Save the current run for later\n");
+		printf("\tload: Load a run\n");
+		printf("\texit: Close the game\n");
+		confirm();
+		break;
 	//Help pages here
 	}
 	//printf("Press Enter to go back to the help menu...\n");
@@ -182,7 +192,7 @@ void input_player(game g)
 	}
 	if (str_equal(input, "exit"))
 	{
-		exit;
+		exit(EXIT_SUCCESS);
 	}
 	if (str_equal(input, "save"))
 	{
