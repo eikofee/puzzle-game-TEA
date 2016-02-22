@@ -87,15 +87,13 @@ game getGameFromId(long id)
 		id /= 10;
 		int y = id%10;
 		id /= 10; //Prochaine pièce
-		printf("x=%d; y=%d;\n", x, y);
 		p[index] = new_piece_rh(x, y, isSmall, isHorizontal);
 		index++;
 	}
-	printf("--Done--\n");
 
 	return new_game_hr(nb_pieces, p);
 }
-
+//TODO gameToID()
 int main(int argc, char* argv[])
 {
 	//game g = test_level();
