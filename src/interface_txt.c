@@ -10,7 +10,12 @@ void display_pieces(piece *p, int taille)
 {
 	for (int i = 0; i < taille; i++)
 	{
-		printf("Pièce [%d] : x = %d, y = %d\n",i ,get_x(p[i]), get_y(p[i]));
+		printf("Pièce [%d] : x = %d, y = %d, ",i ,get_x(p[i]), get_y(p[i]));
+		if (p[i] -> isSmall)
+			printf("isSmall, ");
+		if (p[i] -> isHorizontal)
+			printf("isHorizontal");
+		printf("]\n");
 	}
 
 }
@@ -86,6 +91,8 @@ game getGameFromId(long id)
 		p[index] = new_piece_rh(x, y, isSmall, isHorizontal);
 		index++;
 	}
+	printf("--Done--\n");
+
 	return new_game_hr(nb_pieces, p);
 }
 
@@ -93,7 +100,9 @@ int main(int argc, char* argv[])
 {
 	//game g = test_level();
 	//display_pieces(g -> pieces, g -> nb_pieces);
-	game g = getGameFromId(73002221527);
+	game g = getGameFromId(73002220527);
+	display_pieces(g -> pieces, g -> nb_pieces);
+	printf("Game done\n");
 	while (!game_over_hr(g))
 	{
 		draw_interface(g);
