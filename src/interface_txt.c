@@ -93,6 +93,23 @@ game getGameFromId(long id)
 
 	return new_game_hr(nb_pieces, p);
 }
+
+long getIdFromGame(game g)
+{
+	long id = 7;
+	for (int i = 1; i < game_nb_pieces(g); i++)
+	{
+		id *= 10;
+		id += (is_horizontal(g -> pieces[i])?1:0) + ((g -> pieces[i] -> isSmall)?0:2);
+		id *= 10;
+		id += get_x(g -> pieces[i]);
+		id *= 10;
+		id += get_y(g -> pieces[i]);
+	}
+	id *= 10;
+	id += 7;
+	return id;
+}
 //TODO gameToID()
 int main(int argc, char* argv[])
 {
@@ -103,20 +120,20 @@ int main(int argc, char* argv[])
 	printf("Game done\n");
 	while (!game_over_hr(g))
 	{
-		draw_interface(g);
+		draw_interface(g, getIdFromGame(g));
 		input_player(g);
 	}
-	draw_interface(g);
+	draw_interface(g, getIdFromGame(g));
 	printf("************\n*--- GG ---*\n************\n");
 	return 0;
 }
 
-void draw_interface(game g)
+void draw_interface(game g, long seed)
 {
 	//Test values
 	int moves = game_nb_moves(g);
 	int num_moves = 10;
-	char* seed = "0b4aaf345e";
+	//char* seed = "0b4aaf345e";
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
 	printf("############### Rush Hour\n");
 
@@ -140,7 +157,7 @@ void draw_interface(game g)
 			printf("# Move %d / %d\n", moves, num_moves);
 			break;
 			case 1:	//Level's seed display (optional)
-			printf("# Seed: %s\n", seed);
+			printf("# Seed: %ld\n", seed);
 			break;
 			case 3: //Exit
 			printf(">\n");
