@@ -133,7 +133,7 @@ bool play_move(game g, int piece_num, dir d, int distance){
 	int ptestx = get_x(ptest);
 	int ptesty = get_y(ptest);
 
-	for (int step = 0; step < distance; step++)
+	for (int step = 0; step < abs(distance); step++)
 	{
 		move_piece(ptest,d,1);
 		for (int i = 0; i < game_nb_pieces(g); i++)
