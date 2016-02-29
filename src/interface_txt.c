@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.c"
+#include "game.h"
 #include "utility.h"
 
 void draw_interface();
@@ -19,6 +19,7 @@ void display_pieces(piece *p, int taille)
 	}
 
 }
+
 game test_level()
 {
 
@@ -45,6 +46,7 @@ long long revertLong(long long n)
 	a = a * 10 + 7;
 	return a;
 }
+
 int getNbPieces(long l)
 {
 	int n = 0;
@@ -56,13 +58,16 @@ int getNbPieces(long l)
 	n -= 2;
 	return n / 3 + 1;
 }
+
 //73002221527
 //2147483647
 //---------
+
 void printl(long long i)
 {
 	printf("id=%lld\n", i);
 }
+
 game getGameFromId(long long id)
 {
 	//Syntaxe : 7abca2b2c2a3b3c37
@@ -112,22 +117,7 @@ long long getIdFromGame(game g)
 	return id;
 }
 //TODO gameToID()
-int main(int argc, char* argv[])
-{
-	//game g = test_level();
-	//display_pieces(g -> pieces, g -> nb_pieces);
-	game g = getGameFromId(73002220527);
-	display_pieces(g -> pieces, g -> nb_pieces);
-	printf("Game done\n");
-	while (!game_over_hr(g))
-	{
-		draw_interface(g, getIdFromGame(g));
-		input_player(g);
-	}
-	draw_interface(g, getIdFromGame(g));
-	printf("************\n*--- GG ---*\n************\n");
-	return 0;
-}
+
 
 void draw_interface(game g, long long seed)
 {
@@ -191,14 +181,17 @@ bool isNumber(char s, int max_number)
 {
 	return (s >= 48 && s <= 48 + max_number);
 }
+
 bool isOperatorSimple(char s)
 {
 	return (s == '+' || s == '-');
 }
+
 int getNumber(char s)
 {
 	return s - 48;
 }
+
 dir getDirection(piece p, char sign)
 {
 	if (sign == '+')
@@ -216,6 +209,7 @@ dir getDirection(piece p, char sign)
 		}
 	}
 }
+
 void confirm()
 {
 	printf("\n\tPress 'Enter' to go back to the help menu");
@@ -223,6 +217,7 @@ void confirm()
 	while (cha != '\r' && cha != '\n')
 		cha = getchar();	
 }
+
 void getHelp(int input, bool* done)
 {
 	switch(input)
@@ -256,6 +251,8 @@ void getHelp(int input, bool* done)
 	}
 	//printf("Press Enter to go back to the help menu...\n");
 }
+
+
 void input_player(game g)
 {
 	char input[7] = "";

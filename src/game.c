@@ -1,14 +1,7 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "game.h"
-#include "piece.c"
-
-struct game_s{
-	piece *pieces;	//malloc nécessaire
-	int	nb_moves;
-	int nb_pieces;
-};
+#include "utility.h"
 
 
 game new_game_hr( int nb_pieces, piece *pieces)
@@ -136,6 +129,9 @@ bool play_move(game g, int piece_num, dir d, int distance){
 	for (int step = 0; step < abs(distance); step++)
 	{
 		move_piece(ptest,d,1);
+		if(!estPositionValide(ptest))
+			return false;
+		//Boucle qui vérifie la colision avec les autres pieces
 		for (int i = 0; i < game_nb_pieces(g); i++)
 		{
         // s'il ne s'agit pas de la même pièce, alors on regarde s'il y a contact.
@@ -151,6 +147,7 @@ bool play_move(game g, int piece_num, dir d, int distance){
 		delete_piece(ptest);
 		return false;
 	}
+
 	delete_piece(ptest);
     //Si tout est bon, alors on lance l'algorithme de déplacement de la pièce, puis on ajoute les moves correspondant.
 	move_piece(g -> pieces[piece_num], d, abs(distance));
