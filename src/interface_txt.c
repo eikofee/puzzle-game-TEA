@@ -92,7 +92,7 @@ game getGameFromId(long long id)
 		index++;
 	}
 
-	return new_game_hr(nb_pieces, p);
+	return new_game_hr(nb_pieces + 1, p);
 }
 
 long long getIdFromGame(game g)
@@ -286,7 +286,7 @@ void input_player(game g)
 		//sauvegarde
 	}
 	
-	if (isNumber(input[0], g -> nb_pieces))
+	if (isNumber(input[0], g -> nb_pieces - 1))
 	{
 		//correct input
 		/*SYNTAXE :
