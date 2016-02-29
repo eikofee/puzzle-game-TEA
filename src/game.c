@@ -6,16 +6,13 @@
 
 game new_game_hr( int nb_pieces, piece *pieces)
 {
-	//Allocation de l'espace nécessaire à la création de new_game
 	game new_game = (game) malloc(sizeof(struct game_s));
+
 	if(!new_game)
 		error("Allocation new_game");
 
 	new_game -> pieces = (piece*) malloc(sizeof(struct piece_s) * nb_pieces);
-	/*for (int i = 0: i < nb_pieces; i++)
-	{
-		new_game -> pieces[i] = (piece) malloc(sizeof(struct piece_s));
-	}*/
+	
 	if(!new_game -> pieces)
 		error("Allocation new_game -> pieces");
 
@@ -23,19 +20,18 @@ game new_game_hr( int nb_pieces, piece *pieces)
 	new_game -> nb_pieces = nb_pieces;
 	for (int i = 0; i < nb_pieces; i++)
 	{
-		//new_game -> pieces[i] = pieces[i];
 		new_game -> pieces[i] = new_piece_rh(0,0,true,true);
+
 		if (!new_game -> pieces[i])
 			error("Allocation new_game -> pieces[i]");
+
 		copy_piece(pieces[i], new_game -> pieces[i]);
 
-		//debug
 		if (!new_game -> pieces[i])
 		{
 			printf("i=%d\n", i);
 			error("Copie de pièce");
 		}
-		//fin debug
 	}
 
 	//Initialisation des valeurs de jeu
@@ -47,11 +43,10 @@ void delete_game (game g)
 {
 	if(g != NULL)
 	{
-		//D'abord le tableau des pieces
+		//On libère d'abord le tableau des pieces
 		for (int i = 0; i < g -> nb_pieces; i++)
 		{
 			printf("i=%d\n", i);
-			//free(g -> pieces[i]);
 			delete_piece(g -> pieces[i]);
 		}
 		free(g -> pieces);
@@ -87,9 +82,10 @@ void copy_game(cgame src, game dst)
 	for (int i = 0; i < src -> nb_pieces; i++)
 	{
 		dst -> pieces[i] = (piece) malloc(sizeof(struct piece_s));
+
 		if (!dst -> pieces[i])
 			error("Allocation dst -> pieces[i]");
-		//dst -> pieces[i] = src -> pieces[i];
+
 		copy_piece(src -> pieces[i], dst -> pieces[i]);
 	}
 }
@@ -98,43 +94,49 @@ int game_nb_pieces(cgame g)	//Not sure about this one tbh
 {
 	if (!g)
 		error("Allocation cgame game_nb_pieces");
+
 	return g -> nb_pieces;
 }
 
-cpiece game_piece(cgame g, int piece_num){
-	//Vérifie que la pièce est bien dans le jeu
-    if (piece_num < 0 || piece_num > game_nb_pieces(g) - 1){
-		fprintf(stderr,"L'index de la pièce recherchée est impossible (trop grand ou négatif)\n");
-			exit(EXIT_FAILURE);
-		}
+cpiece game_piece(cgame g, int piece_num)
+{
+	//Vérifie que l'indice piece_num pièce est bien dans le jeu
+    if (piece_num < 0 || piece_num > game_nb_pieces(g) - 1)
+		error("L'index de la pièce recherchée est impossible (trop grand ou négatif)");
+
 	//Si elle existe, on la renvoie
 	return g -> pieces[piece_num];
 }
 
-bool game_over_hr(cgame g){
-	
+bool game_over_hr(cgame g)
+{
+	//On regarde si les coordonnées de la voiture 0 sont bien (4;3)
 	if (get_x(g -> pieces[0]) == 4 && get_y(g -> pieces[0]) == 3)
 		return true;
+
 	return false;
 }
 
-bool play_move(game g, int piece_num, dir d, int distance){
-    //On vérifie qu'il n'entre au contact d'aucune pièce et qu'il reste sur le plateau en utilisant un clone-cobaye
-	piece ptest = new_piece_rh(0,0,true,true);
-	copy_piece(g -> pieces[piece_num],ptest);
+bool play_move(game g, int piece_num, dir d, int distance)
+{
+    //On vérifie qu'il n'entre au contact d'aucune pièce et qu'il reste sur le plateau en utilisant un clone-cobaye (ptest)
+	piece ptest = new_piece_rh(0, 0, true, true);
+	copy_piece(g -> pieces[piece_num], ptest);
 
 	int ptestx = get_x(ptest);
 	int ptesty = get_y(ptest);
 
+	//Cette première boucle permet de faire pas à pas le déplacement lorsque celui ci est supérieur à 1
 	for (int step = 0; step < abs(distance); step++)
 	{
 		move_piece(ptest,d,1);
 		if(!estPositionValide(ptest))
 			return false;
+
 		//Boucle qui vérifie la colision avec les autres pieces
 		for (int i = 0; i < game_nb_pieces(g); i++)
 		{
-        // s'il ne s'agit pas de la même pièce, alors on regarde s'il y a contact.
+        	// s'il ne s'agit pas de la même pièce, alors on regarde s'il y a contact.
 			if (i != piece_num && intersect(ptest, g -> pieces[i]))
 			{
 				delete_piece(ptest);
@@ -155,9 +157,11 @@ bool play_move(game g, int piece_num, dir d, int distance){
 	return true;
 }
 
-int game_nb_moves(cgame g){
+int game_nb_moves(cgame g)
+{
 	if(g != NULL)
     	return g -> nb_moves;
+    
     return -1;
 }
 
