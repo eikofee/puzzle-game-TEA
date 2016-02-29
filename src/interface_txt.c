@@ -57,10 +57,7 @@ game test_level()
 //73002221527
 //2147483647
 //---------
-void printl(char* i)
-{
-	printf("id=%lld\n", i);
-}
+
 game getGameFromId(char* id)
 {
 	//Syntaxe : 7abca2b2c2a3b3c37

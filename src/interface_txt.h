@@ -3,12 +3,9 @@
 
 void display_pieces(piece *p, int taille);
 game test_level();
-long long revertLong(long long n);
-int getNbPieces(long l);
-void printl(long long i);
-game getGameFromId(long long id);
-long long getIdFromGame(game g);
-void draw_interface(game g, long long seed);
+game getGameFromId(char*  id);
+char* getIdFromGame(game g);
+void draw_interface(game g, char* seed);
 bool str_equal(char* a, char* b);
 bool isNumber(char s, int max_number);
 bool isOperatorSimple(char s);
