@@ -5,6 +5,7 @@
 
 void draw_interface();
 void input_player();
+int getNumber(char s);
 
 void display_pieces(piece *p, int taille)
 {
@@ -33,19 +34,18 @@ game test_level()
 	return g;
 }
 
-long long revertLong(long long n)
+/*char* revertLong(char* n)
 {
-	long long a = 0;
-	while (n != 7)
-	{
+	char* a = (char) malloc(sizeof(char) * 128);
+	while (n[i] != '\0')
 		a *=10;
 		a += n % 10;
 		n /= 10;
 	}
 	a = a * 10 + 7;
 	return a;
-}
-int getNbPieces(long l)
+}*/
+/*int getNbPieces(long l)
 {
 	int n = 0;
 	while (l != 0)
@@ -55,22 +55,22 @@ int getNbPieces(long l)
 	}
 	n -= 2;
 	return n / 3 + 1;
-}
+}*/
 //73002221527
 //2147483647
 //---------
-void printl(long long i)
+void printl(char* i)
 {
 	printf("id=%lld\n", i);
 }
-game getGameFromId(long long id)
+game getGameFromId(char* id)
 {
 	//Syntaxe : 7abca2b2c2a3b3c37
 	//a = car type: +1 st horizontale, +2 si grand
 	//b = case axe x
 	//c = case axe y
 	//7 to get start
-	printl(id);
+	/*printl(id);
 	id = revertLong(id);
 	printl(id);
 	int nb_pieces = getNbPieces(id);
@@ -92,12 +92,28 @@ game getGameFromId(long long id)
 		index++;
 	}
 
+	return new_game_hr(nb_pieces, p);*/
+	int nb_pieces = getNumber(id[0]);
+	piece p[nb_pieces + 1];
+	p[0] = new_piece_rh(0, 3, true, true);
+	int i = 1;
+	int indexP = 1;
+	while (id[i] != '\0')
+	{
+		bool isHorizontal = (id[i] == '1' || id[i] == '3');
+		bool isSmall = (id[i] == '0' || id[i] == '1');
+		int x = getNumber(id[i + 1]);
+		int y = getNumber(id[i + 2]);
+		p[indexP] = new_piece_rh(x, y, isSmall, isHorizontal);
+		i += 3;
+		indexP++;
+	}
 	return new_game_hr(nb_pieces, p);
 }
 
-long long getIdFromGame(game g)
+/*char* getIdFromGame(game g)
 {
-	long long id = 7;
+	char* id = 7;
 	for (int i = 1; i < game_nb_pieces(g); i++)
 	{
 		id *= 10;
@@ -110,26 +126,26 @@ long long getIdFromGame(game g)
 	id *= 10;
 	id += 7;
 	return id;
-}
+}*/
 //TODO gameToID()
 int main(int argc, char* argv[])
 {
 	//game g = test_level();
 	//display_pieces(g -> pieces, g -> nb_pieces);
-	game g = getGameFromId(73002220527);
+	game g = getGameFromId("3300222052");
 	display_pieces(g -> pieces, g -> nb_pieces);
 	printf("Game done\n");
 	while (!game_over_hr(g))
 	{
-		draw_interface(g, getIdFromGame(g));
+		draw_interface(g, "temp");
 		input_player(g);
 	}
-	draw_interface(g, getIdFromGame(g));
+	draw_interface(g, "temp");
 	printf("************\n*--- GG ---*\n************\n");
 	return 0;
 }
 
-void draw_interface(game g, long long seed)
+void draw_interface(game g, char* seed)
 {
 	//Test values
 	int moves = game_nb_moves(g);
@@ -269,7 +285,7 @@ void input_player(game g)
 			char i[4];
 			printf("What do you want to know ? (Type a number)\n\n\t1. What's this game ?\n\t2. How to play\n\t3. Advanced commands\n\t4. Get back to the game\n");
 			fgets(i, 3, stdin);
-			getHelp(atoi(i), &done);
+			getHelp(getNumber(i), &done);
 		}
 
 	}
