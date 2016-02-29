@@ -2,9 +2,7 @@
 #include <stdlib.h>
 #include "game.h"
 #include "utility.h"
-
-void draw_interface();
-void input_player();
+#include "interface_txt.h"
 
 void display_pieces(piece *p, int taille)
 {
@@ -97,7 +95,7 @@ game getGameFromId(long long id)
 		index++;
 	}
 
-	return new_game_hr(nb_pieces + 1, p);
+	return new_game_hr(nb_pieces, p);
 }
 
 long long getIdFromGame(game g)
