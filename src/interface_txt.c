@@ -178,7 +178,7 @@ void draw_interface(game g, long long seed)
 bool str_equal(char* a, char* b)
 {
 	int i = 0;
-	while (a[i] != '\n')
+	while (a[i] != '\0')
 	{
 		if (a[i] != b[i])
 			return false;
@@ -261,7 +261,7 @@ void input_player(game g)
 	char input[7] = "";
 	fgets(input, 6, stdin);
 
-	if (str_equal(input, "help"))
+	if (str_equal(input, "help\n"))
 	{
 		bool done = false;
 		while (!done)
@@ -273,15 +273,16 @@ void input_player(game g)
 		}
 
 	}
-	if (str_equal(input, "hint"))
+	if (str_equal(input, "hint\n"))
 	{
+		printf("hint\n");
 		//Do a move 
 	}
-	if (str_equal(input, "exit"))
+	if (str_equal(input, "exit\n"))
 	{
 		exit(EXIT_SUCCESS);
 	}
-	if (str_equal(input, "save"))
+	if (str_equal(input, "save\n"))
 	{
 		//sauvegarde
 	}
