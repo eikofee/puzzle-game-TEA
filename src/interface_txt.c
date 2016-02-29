@@ -94,7 +94,7 @@ game getGameFromId(char* id)
 
 	return new_game_hr(nb_pieces, p);*/
 	printf("%s\n", id);
-	int nb_pieces = getNumber(id[0]);
+	int nb_pieces = getNumber(id[0]) + 1;
 	piece p[nb_pieces + 1];
 	p[0] = new_piece_rh(0, 3, true, true);
 	int i = 1;
@@ -110,6 +110,7 @@ game getGameFromId(char* id)
 		i += 3;
 		indexP++;
 	}
+	display_pieces(p, nb_pieces);
 	return new_game_hr(nb_pieces, p);
 }
 
@@ -129,7 +130,7 @@ char* getIdFromGame(game g)
 	id[indexChar] = '\0';
 	return id;
 }
-//TODO gameToID()
+
 int main(int argc, char* argv[])
 {
 	//game g = test_level();
