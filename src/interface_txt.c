@@ -110,7 +110,7 @@ game getGameFromId(char* id)
 		i += 3;
 		indexP++;
 	}
-	return new_game_hr(nb_pieces + 1, p);
+	return new_game_hr(nb_pieces, p);
 }
 
 char* getIdFromGame(game g)
