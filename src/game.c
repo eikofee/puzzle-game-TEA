@@ -133,7 +133,7 @@ bool play_move(game g, int piece_num, dir d, int distance){
 	int ptestx = get_x(ptest);
 	int ptesty = get_y(ptest);
 
-	for (int step = 0; step < distance; step++)
+	for (int step = 0; step < abs(distance); step++)
 	{
 		move_piece(ptest,d,1);
 		for (int i = 0; i < game_nb_pieces(g); i++)
@@ -147,7 +147,7 @@ bool play_move(game g, int piece_num, dir d, int distance){
 		}	
 	}
 	// Si ptest n'a pas bougé, c'est que move_piece a trouvé que le mouvement sur distance n'était pas bon.
-	if (d != 0 && ((!is_horizontal(ptest) && get_y(ptest) == ptesty) || (is_horizontal(ptest) && get_x(ptest) == ptestx))) {
+	if (distance != 0 && ((!is_horizontal(ptest) && get_y(ptest) != ptesty + distance) || (is_horizontal(ptest) && get_x(ptest) != ptestx + distance))) {
 		delete_piece(ptest);
 		return false;
 	}

@@ -33,9 +33,9 @@ game test_level()
 	return g;
 }
 
-long revertLong(long n)
+long long revertLong(long long n)
 {
-	long a = 0;
+	long long a = 0;
 	while (n != 7)
 	{
 		a *=10;
@@ -57,12 +57,13 @@ int getNbPieces(long l)
 	return n / 3 + 1;
 }
 //73002221527
+//2147483647
 //---------
-void printl(long i)
+void printl(long long i)
 {
-	printf("id=%ld\n", i);
+	printf("id=%lld\n", i);
 }
-game getGameFromId(long id)
+game getGameFromId(long long id)
 {
 	//Syntaxe : 7abca2b2c2a3b3c37
 	//a = car type: +1 st horizontale, +2 si grand
@@ -94,9 +95,9 @@ game getGameFromId(long id)
 	return new_game_hr(nb_pieces, p);
 }
 
-long getIdFromGame(game g)
+long long getIdFromGame(game g)
 {
-	long id = 7;
+	long long id = 7;
 	for (int i = 1; i < game_nb_pieces(g); i++)
 	{
 		id *= 10;
@@ -128,7 +129,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-void draw_interface(game g, long seed)
+void draw_interface(game g, long long seed)
 {
 	//Test values
 	int moves = game_nb_moves(g);
@@ -318,7 +319,7 @@ void input_player(game g)
 					if (input[2] == '+')
 						play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
 					else{
-						play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), getNumber(input[3]));
+						play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), -1 * getNumber(input[3]));
 					}
 				}
 			}
