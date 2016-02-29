@@ -113,22 +113,22 @@ game getGameFromId(char* id)
 	return new_game_hr(nb_pieces + 1, p);
 }
 
-/*char* getIdFromGame(game g)
+char* getIdFromGame(game g)
 {
-	char* id = 7;
+	//char* id = (char*) malloc(sizeof(char) * (3 * game_nb_pieces(g) + 2));
+	char* id = (char*) malloc(sizeof(char) * 128);
+	id[0] = 48 + game_nb_pieces(g);
+	int indexChar = 1;
 	for (int i = 1; i < game_nb_pieces(g); i++)
 	{
-		id *= 10;
-		id += (is_horizontal(g -> pieces[i])?1:0) + ((g -> pieces[i] -> isSmall)?0:2);
-		id *= 10;
-		id += get_x(g -> pieces[i]);
-		id *= 10;
-		id += get_y(g -> pieces[i]);
+		id[indexChar] = 48 + (is_horizontal(g -> pieces[i])?1:0) + ((g -> pieces[i] -> isSmall)?0:2);
+		id[indexChar + 1] = 48 + get_x(g -> pieces[i]);
+		id[indexChar + 2] = 48 + get_y(g -> pieces[i]);
+		indexChar += 3;
 	}
-	id *= 10;
-	id += 7;
+	id[indexChar] = '\0';
 	return id;
-}*/
+}
 //TODO gameToID()
 int main(int argc, char* argv[])
 {
@@ -139,10 +139,12 @@ int main(int argc, char* argv[])
 	printf("Game done\n");
 	while (!game_over_hr(g))
 	{
-		draw_interface(g, "temp");
+		draw_interface(g, getIdFromGame(g));
+		//draw_interface(g, "TEST_VERSION");
 		input_player(g);
 	}
-	draw_interface(g, "temp");
+	//draw_interface(g, getIdFromGame(g));
+	draw_interface(g, "TEST_VERSION");
 	printf("************\n*--- GG ---*\n************\n");
 	return 0;
 }
@@ -176,8 +178,8 @@ void draw_interface(game g, char* seed)
 			printf("# Move %d / %d\n", moves, num_moves);
 			break;
 			case 1:	//Level's seed display (optional)
-			//printf("# Seed: %ld\n", seed);
-			printf("# TEST_VERSION\n");
+			printf("# Seed: %s\n", seed);
+			//printf("# TEST_VERSION\n");
 			break;
 			case 3: //Exit
 			printf(">\n");
