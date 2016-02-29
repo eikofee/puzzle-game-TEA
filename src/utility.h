@@ -13,14 +13,10 @@ struct game_s{
 	int nb_pieces;
 };
 
-
-
 void switchsMovePiece(piece p, dir d, int distance);
 bool estPositionValide(piece p);
 int** TableauDePieces(piece* tab_pieces, int taille);
 int** pieceEnTableau(piece p, int taille);
 void error(char* s);
-
-
 
 #endif

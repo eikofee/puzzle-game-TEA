@@ -4,7 +4,6 @@
 #include "utility.h"
 
 
-
 game new_game_hr( int nb_pieces, piece *pieces)
 {
 	//Allocation de l'espace nécessaire à la création de new_game
