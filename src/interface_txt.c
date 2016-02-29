@@ -93,6 +93,7 @@ game getGameFromId(char* id)
 	}
 
 	return new_game_hr(nb_pieces, p);*/
+	printf("%s\n", id);
 	int nb_pieces = getNumber(id[0]);
 	piece p[nb_pieces + 1];
 	p[0] = new_piece_rh(0, 3, true, true);
@@ -100,6 +101,7 @@ game getGameFromId(char* id)
 	int indexP = 1;
 	while (id[i] != '\0')
 	{
+		printf("id[%d] = %c, id[%d + 1] = %c, id[%d + 2] = %c;\n",i, id[i], i, id[i + 1], i, id[i + 2]);
 		bool isHorizontal = (id[i] == '1' || id[i] == '3');
 		bool isSmall = (id[i] == '0' || id[i] == '1');
 		int x = getNumber(id[i + 1]);
@@ -108,7 +110,7 @@ game getGameFromId(char* id)
 		i += 3;
 		indexP++;
 	}
-	return new_game_hr(nb_pieces, p);
+	return new_game_hr(nb_pieces + 1, p);
 }
 
 /*char* getIdFromGame(game g)
@@ -174,7 +176,8 @@ void draw_interface(game g, char* seed)
 			printf("# Move %d / %d\n", moves, num_moves);
 			break;
 			case 1:	//Level's seed display (optional)
-			printf("# Seed: %ld\n", seed);
+			//printf("# Seed: %ld\n", seed);
+			printf("# TEST_VERSION\n");
 			break;
 			case 3: //Exit
 			printf(">\n");
