@@ -53,18 +53,17 @@ void move_piece (piece p, dir d, int distance){
 	}
 
 	//A ce stade, tout est ok pour réaliser le mouvement.
-	// On vérifie juste si la distance est bien >0
 
 	switchsMovePiece(p, d, distance);
 
 }
 
-//Vérifie si la position de la piece est bien dans le plateau (6x6)
+//Vérifie si la position de la piece est bien dans le plateau
 bool estPositionValide(piece p){
 	if((get_x(p) < 0) || (get_y(p) < 0))
 		return false;
 
-	//Ici la piece est horizontal
+	//Pour le if, la piece est horizontal
 	if(is_horizontal(p))
 	{
 		if(p -> isSmall) // Ici la piece fait 2 cases
@@ -78,7 +77,7 @@ bool estPositionValide(piece p){
 				return false;
 		}
 	}
-	// ici la piece est a la verticale
+	//Pour le else la piece est a la verticale
 	else 
 	{
 		if(p -> isSmall) //ici la piece fait 2 cases
@@ -109,23 +108,19 @@ void switchsMovePiece(piece p, dir d, int distance){
 	
 	switch (d){
 		case UP:
-			//if((get_y(p_copy) + distance + taille_piece) <= TAILLE_PLATEAU - 1)
-				(p_copy -> position[1]) += distance;
+			(p_copy -> position[1]) += distance;
 			break;
 
 		case DOWN:
-			//if((get_y(p_copy) - distance) >= 0)
-				(p_copy -> position[1]) -= distance;
+			(p_copy -> position[1]) -= distance;
 			break;
 
 		case RIGHT:
-			//if((get_x(p_copy) + distance + taille_piece) <= TAILLE_PLATEAU - 1)
-				(p_copy -> position[0]) += distance;
+			(p_copy -> position[0]) += distance;
 			break;
 
 		case LEFT:
-			//if((get_x(p_copy) - distance) >= 0)
-				(p_copy -> position[0]) =get_x(p_copy) - distance;
+			(p_copy -> position[0]) =get_x(p_copy) - distance;
 			break;
 
 		default:
@@ -133,13 +128,12 @@ void switchsMovePiece(piece p, dir d, int distance){
 			break;
 	}
 	
-	//if(estPositionValide(p_copy))
 	copy_piece(p_copy, p);
 
 	delete_piece(p_copy);
 }
 
-//Retourne true si il deux pièces se chevauchent, false sinon.
+//Retourne true si les deux pièces se chevauchent, false sinon.
 //On emploi 2 tableau2D crées par la fonction pieceEnTableau afin de vérifier plus facilement
 //les problèmes de collisions.
 bool intersect(cpiece p1, cpiece p2){
