@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.c"
+#include "game.h"
 #include "utility.h"
 
 void draw_interface();
@@ -256,6 +256,8 @@ void getHelp(int input, bool* done)
 	}
 	//printf("Press Enter to go back to the help menu...\n");
 }
+
+
 void input_player(game g)
 {
 	char input[7] = "";
@@ -286,7 +288,7 @@ void input_player(game g)
 		//sauvegarde
 	}
 	
-	if (isNumber(input[0], g -> nb_pieces))
+	if (isNumber(input[0], g -> nb_pieces - 1))
 	{
 		//correct input
 		/*SYNTAXE :

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.c"
+#include "game.h"
+#include "utility.h"
 
 void display_pieces(piece *p, int taille)
 {
@@ -10,6 +11,8 @@ void display_pieces(piece *p, int taille)
 	}
 
 }
+
+
 int main(int argc, char* argv[])
 {
 	printf("> Préparation des tests:\n");

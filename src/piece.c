@@ -6,12 +6,6 @@
 //variable globale pour la taille du plateau
 int TAILLE_PLATEAU = 6;
 
-struct piece_s{
-	bool isHorizontal; // true si la piece est horizontal, false sinon.
-	bool isSmall; // true si la taille de la piece est 2, et false si 3.
-	int position[2]; // position de la case inférieur gauche. (x;y)
-};
-
 piece new_piece_rh (int x, int y, bool small, bool horizontal){
 	piece newPiece = (piece)malloc(sizeof(struct piece_s));
 
@@ -52,9 +46,6 @@ void move_piece (piece p, dir d, int distance){
 	if(p == NULL)
 		error("move_piece, p n'est pas alloué");
 
-	if(!estPositionValide(p))
-		error("move_piece, Position de la piece invalide");
-
 	//Simple vérification pour savoir si la direction est cohérente avec l'orientation de la pièce.
 	if( (is_horizontal(p) && ((d == UP) || (d == DOWN))) || ( (!(is_horizontal(p))) && ((d == RIGHT) || (d == LEFT))))
 	{
@@ -63,8 +54,8 @@ void move_piece (piece p, dir d, int distance){
 
 	//A ce stade, tout est ok pour réaliser le mouvement.
 	// On vérifie juste si la distance est bien >0
-	if(distance > 0)
-		switchsMovePiece(p, d, distance);
+
+	switchsMovePiece(p, d, distance);
 
 }
 
@@ -118,22 +109,22 @@ void switchsMovePiece(piece p, dir d, int distance){
 	
 	switch (d){
 		case UP:
-			if((get_y(p_copy) + distance + taille_piece) <= TAILLE_PLATEAU - 1)
+			//if((get_y(p_copy) + distance + taille_piece) <= TAILLE_PLATEAU - 1)
 				(p_copy -> position[1]) += distance;
 			break;
 
 		case DOWN:
-			if((get_y(p_copy) - distance) >= 0)
+			//if((get_y(p_copy) - distance) >= 0)
 				(p_copy -> position[1]) -= distance;
 			break;
 
 		case RIGHT:
-			if((get_x(p_copy) + distance + taille_piece) <= TAILLE_PLATEAU - 1)
+			//if((get_x(p_copy) + distance + taille_piece) <= TAILLE_PLATEAU - 1)
 				(p_copy -> position[0]) += distance;
 			break;
 
 		case LEFT:
-			if((get_x(p_copy) - distance) >= 0)
+			//if((get_x(p_copy) - distance) >= 0)
 				(p_copy -> position[0]) =get_x(p_copy) - distance;
 			break;
 
@@ -142,8 +133,8 @@ void switchsMovePiece(piece p, dir d, int distance){
 			break;
 	}
 	
-	if(estPositionValide(p_copy))
-		copy_piece(p_copy, p);
+	//if(estPositionValide(p_copy))
+	copy_piece(p_copy, p);
 
 	delete_piece(p_copy);
 }
