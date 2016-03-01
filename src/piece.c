@@ -223,6 +223,8 @@ int** TableauDePieces(piece* tab_pieces, int taille){
 		
 		for(int j = 0; j < taille_tab_tmp_piece; j++)
 			tab2Dpieces[ tab_tmp_piece[j][0] ][ tab_tmp_piece[j][1] ] = i;
+		free(tab_tmp_piece[0]);
+		free(tab_tmp_piece);
 	}
 
 	return tab2Dpieces;
