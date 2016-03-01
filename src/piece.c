@@ -31,6 +31,11 @@ void delete_piece (piece p){
 		free(p);
 }
 
+void freeTable(int **tableau){
+	free(tableau[0]);
+	free(tableau);
+}
+
 void copy_piece (cpiece src, piece dst){
 	if(src == NULL || dst == NULL)
 		error("copy_piece, src ou dst n'est pas alloué");
@@ -154,9 +159,15 @@ bool intersect(cpiece p1, cpiece p2){
 		for(int y = 0; y < taille_p2; y++)
 		{
 			if((tab_p1[x][0] == tab_p2[y][0]) && (tab_p1[x][1] == tab_p2[y][1]))
+			{
+				freeTable(tab_p1);
+				freeTable(tab_p2);
 				return true;
+			}
 		}
 	}
+	freeTable(tab_p1);
+	freeTable(tab_p2);
 	return false;
 }
 
@@ -268,3 +279,4 @@ bool is_horizontal(cpiece p){
 		return p->isHorizontal;
 	error("is_horizontal(), p n'est pas alloué");
 }
+
