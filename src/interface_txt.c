@@ -32,7 +32,7 @@ game getGameFromId(char* id)
 	//c = case axe y
 	printf("seed du niveau : %s\n", id);
 	int nb_pieces = getNumber(id[0]) ;
-	piece p[nb_pieces + 1];
+	piece p[nb_pieces];
 	int i = 1;
 	int indexP = 0;
 
@@ -46,7 +46,12 @@ game getGameFromId(char* id)
 		i += 3;
 		indexP++;
 	}
-	return new_game_hr(nb_pieces, p);
+	game g = new_game_hr(nb_pieces, p);
+
+	for(int j = 0; j < indexP; j++)
+		free(p[j]);
+
+	return g;
 }
 
 /*
@@ -112,7 +117,7 @@ void draw_interface(game g, char* seed)
 	}
 	printf("###############\n");
 	printf("Enter the car's number you want to move :\n");
-
+	freeTableau2D(t);
 }
 
 /*
@@ -237,7 +242,7 @@ void input_player(game g)
 			char i[4];
 			printf("What do you want to know ? (Type a number)\n\n\t1. What's this game ?\n\t2. How to play\n\t3. Advanced commands\n\t4. Get back to the game\n");
 			fgets(i, 3, stdin);
-			getHelp(getNumber(i), &done);
+			getHelp(getNumber(i[0]), &done);
 		}
 
 	}
@@ -297,4 +302,11 @@ void input_player(game g)
 		printf("Incorrect input.\n");
 	}
 
+}
+
+
+void freeTableau2D(int** tab)
+{
+	free(tab[0]);
+	free(tab);
 }
