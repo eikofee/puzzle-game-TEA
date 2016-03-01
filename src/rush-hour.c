@@ -9,15 +9,28 @@ void loadTheGame(char* seed)
 {
 	printf("\nLoading Game ...\n");
 	game g = getGameFromId(seed);
-	//display_pieces(g -> pieces, g -> nb_pieces);
 	printf("Done\n\n");
+
+	char* id = (char*) malloc(sizeof(char) * 128);
+	if(id == NULL)
+		error("getIdFromGame(), problème d'allocation mémoire");
+
+	getIdFromGame(g, id);
+
 	while (!game_over_hr(g))
 	{
-		draw_interface(g, getIdFromGame(g));
+		getIdFromGame(g, id);
+		draw_interface(g, id);
 		input_player(g);
 	}
-	draw_interface(g, getIdFromGame(g));
+
+	getIdFromGame(g, id);
+	draw_interface(g, id);
+	
 	printf("************\n*--- GG ---*\n************\n");
+
+	free(id);
+	delete_game(g);
 }
 
 int main(int argc, char* argv[])

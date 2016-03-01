@@ -232,11 +232,13 @@ int** TableauDePieces(piece* tab_pieces, int taille){
 int get_x(cpiece p){
 	if(p != NULL)
 		return p->position[0];
+	error("get_x(), p n'est pas alloué");
 }
 
 int get_y(cpiece p){
 	if(p != NULL)
 		return p->position[1];
+	error("get_y(), p n'est pas alloué");
 }
 
 int get_height(cpiece p){
@@ -262,4 +264,5 @@ int get_width(cpiece p){
 bool is_horizontal(cpiece p){
 	if(p != NULL)
 		return p->isHorizontal;
+	error("is_horizontal(), p n'est pas alloué");
 }

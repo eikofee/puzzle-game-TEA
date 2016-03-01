@@ -52,11 +52,8 @@ game getGameFromId(char* id)
 /*
 	Permet de convertir un game en id (pas une sauvegarde complète)
 */
-char* getIdFromGame(game g)
+void getIdFromGame(game g, char* id)
 {
-	char* id = (char*) malloc(sizeof(char) * 128);
-	if(id == NULL)
-		error("getIdFromeGame(), problème d'allocation mémoire");
 	id[0] = 48 + game_nb_pieces(g);
 	int indexChar = 1;
 	for (int i = 0; i < game_nb_pieces(g); i++)
@@ -67,7 +64,6 @@ char* getIdFromGame(game g)
 		indexChar += 3;
 	}
 	id[indexChar] = '\0';
-	return id;
 }
 
 /*
@@ -116,6 +112,7 @@ void draw_interface(game g, char* seed)
 	}
 	printf("###############\n");
 	printf("Enter the car's number you want to move :\n");
+
 }
 
 /*
@@ -246,7 +243,7 @@ void input_player(game g)
 	}
 	if (str_equal(input, "hint\n"))
 	{
-		printf("hint\n");
+		printf("hint [WIP]\n");
 		//Do a move 
 	}
 	if (str_equal(input, "exit\n"))
