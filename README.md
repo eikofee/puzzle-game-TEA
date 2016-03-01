@@ -44,3 +44,13 @@ $> git rebase --continue
 $> git push origin master
 [[Tout est ok]]
 ```
+
+##Afficher l'historique des commits et les modifier/supprimer
+Il faut que l'éditeur de texte de git soit **correctement** configuré.
+```
+$> git rebase -i HEAD~n
+```
+Cette commande ouvre l'éditeur avec les n derniers commits enregistrés, locaux comme push'd.
+Les instructions pour les modifiers sont affichées en commentaire, il suffit de modifier les 
+lignes de commit, d'enregistrer et de fermer l'éditeur, et des instructions seront affichées
+dans la console pour appliquer les changements souhaités. Useful as hell.
