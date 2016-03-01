@@ -15,79 +15,15 @@ void display_pieces(piece *p, int taille)
 			printf("isHorizontal");
 		printf("]\n");
 	}
-
 }
-
-game test_level()
-{
-
-	int nb_pieces = 4;
-	piece p[nb_pieces];
-	p[0] = new_piece_rh(0, 3, true, true);		//Voiture rouge
-	p[1] = new_piece_rh(2, 2, false, false);	    //Camion jaune sur l'ex
-	p[2] = new_piece_rh(5, 2, true, false);		//Voiture verte sur l'ex
-	p[3] = new_piece_rh(0, 0, false, true);		//Camion horizontal en 0,0
-	game g = new_game_hr(nb_pieces, p);
-
-	return g;
-}
-
-/*char* revertLong(char* n)
-{
-	char* a = (char) malloc(sizeof(char) * 128);
-	while (n[i] != '\0')
-		a *=10;
-		a += n % 10;
-		n /= 10;
-	}
-	a = a * 10 + 7;
-	return a;
-}*/
-/*int getNbPieces(long l)
-{
-	int n = 0;
-	while (l != 0)
-	{
-		l /= 10;
-		n++;
-	}
-	n -= 2;
-	return n / 3 + 1;
-}*/
-//73002221527
-//2147483647
-//---------
 
 game getGameFromId(char* id)
 {
-	//Syntaxe : 7abca2b2c2a3b3c37
+	//Syntaxe : Nabca2b2c2a3b3c3
+	//N = nombre de voitures
 	//a = car type: +1 st horizontale, +2 si grand
 	//b = case axe x
 	//c = case axe y
-	//7 to get start
-	/*printl(id);
-	id = revertLong(id);
-	printl(id);
-	int nb_pieces = getNbPieces(id);
-	id /= 10;
-	piece p[nb_pieces];
-	p[0] = new_piece_rh(0, 3, true, true);
-	int index = 1;
-	while (id != 7)
-	{
-		int c = id%10;
-		bool isHorizontal = (c == 1 || c == 3);
-		bool isSmall = (c == 0 || c == 1);
-		id /= 10;
-		int x = id%10;
-		id /= 10;
-		int y = id%10;
-		id /= 10; //Prochaine pièce
-		p[index] = new_piece_rh(x, y, isSmall, isHorizontal);
-		index++;
-	}
-
-	return new_game_hr(nb_pieces, p);*/
 	printf("seed du niveau : %s\n", id);
 	int nb_pieces = getNumber(id[0]) ;
 	piece p[nb_pieces + 1];
@@ -96,7 +32,6 @@ game getGameFromId(char* id)
 
 	while (id[i] != '\0')
 	{
-		//printf("id[%d] = %c, id[%d + 1] = %c, id[%d + 2] = %c;\n",i, id[i], i, id[i + 1], i, id[i + 2]);
 		bool isHorizontal = (id[i] == '1' || id[i] == '3');
 		bool isSmall = (id[i] == '0' || id[i] == '1');
 		int x = getNumber(id[i + 1]);
@@ -105,13 +40,11 @@ game getGameFromId(char* id)
 		i += 3;
 		indexP++;
 	}
-	//display_pieces(p, nb_pieces);
 	return new_game_hr(nb_pieces, p);
 }
 
 char* getIdFromGame(game g)
 {
-	//char* id = (char*) malloc(sizeof(char) * (3 * game_nb_pieces(g) + 2));
 	char* id = (char*) malloc(sizeof(char) * 128);
 	if(id == NULL)
 		error("getIdFromeGame(), problème d'allocation mémoire");
@@ -131,10 +64,7 @@ char* getIdFromGame(game g)
 
 void draw_interface(game g, char* seed)
 {
-	//Test values
 	int moves = game_nb_moves(g);
-	//int num_moves = 10;
-	//char* seed = "0b4aaf345e";
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
 	printf("############### Rush Hour\n");
 
@@ -154,23 +84,23 @@ void draw_interface(game g, char* seed)
 		
 		switch(i){
 			//let's check if we have to display more informations on the right:
-			case 4:	//Move num display
-			//printf("# Move %d / %d\n", moves, num_moves);
-			printf("# Move %d\n", moves);
-			break;
-			case 1:	//Level's seed display (optional)
-			printf("# Seed: %s\n", seed);
-			//printf("# TEST_VERSION\n");
-			break;
-			case 3: //Exit
-			printf(">\n");
-			break;
 			case 0: 
-			printf("# Type 'help' for more informations\n");
-			break;
+				printf("# Type 'help' for more informations\n");
+				break;
+			case 1:	//Level's seed display (optional)
+				printf("# Seed: %s\n", seed);
+				//printf("# TEST_VERSION\n");
+				break;
+			case 3: //Exit
+				printf(">\n");
+				break;
+			case 4:	//Move num display
+				//printf("# Move %d / %d\n", moves, num_moves);
+				printf("# Move %d\n", moves);
+				break;
 			default:
-			printf("#\n");
-			break;
+				printf("#\n");
+				break;
 		}
 	}
 	printf("###############\n");
@@ -234,34 +164,32 @@ void getHelp(int input, bool* done)
 {
 	switch(input)
 	{
-		case 4:
-		*(done) = true;
-		break;
 		case 1:
-		printf("\tRules are simple. You're the car n°0 and you need to go to the exit (\">\"). To do that, you need\n");
-		printf("to move the other cars to free yourself a passage. Cars can't cross others or go outside the game area.\n");
-		confirm();
-		break;
+			printf("\tRules are simple. You're the car n°0 and you need to go to the exit (\">\"). To do that, you need\n");
+			printf("to move the other cars to free yourself a passage. Cars can't cross others or go outside the game area.\n");
+			confirm();
+			break;
 		case 2:
-		printf("\tSyntaxe is as it follows : a b where a is the car number you want to move and b the distance to\n");
-		printf("translate it. Positive numbers go to up and right and negative ones go to down and left.\n");
-		printf("e.g. 2 -3 with the car number 2 being a horizontal car will go 3 cases to the left. You can also input\n");
-		printf("the car number first and then input the distance.\n");
-		confirm();
-		break;
+			printf("\tSyntaxe is as it follows : a b where a is the car number you want to move and b the distance to\n");
+			printf("translate it. Positive numbers go to up and right and negative ones go to down and left.\n");
+			printf("e.g. 2 -3 with the car number 2 being a horizontal car will go 3 cases to the left. You can also input\n");
+			printf("the car number first and then input the distance.\n");
+			confirm();
+			break;
 		case 3:
-		printf("\tList of available commands:\n\n");
-		printf("\thelp: Display this menu\n");
-		printf("\thint: Get closer to the end by cheating\n");
-		printf("\tskip: skip the current game for another\n");
-		printf("\tsave: Save the current run for later\n");
-		printf("\tload: Load a run\n");
-		printf("\texit: Close the game\n");
-		confirm();
-		break;
-	//Help pages here
+			printf("\tList of available commands:\n\n");
+			printf("\thelp: Display this menu\n");
+			printf("\thint: Get closer to the end by cheating\n");
+			printf("\tskip: skip the current game for another\n");
+			printf("\tsave: Save the current run for later\n");
+			printf("\tload: Load a run\n");
+			printf("\texit: Close the game\n");
+			confirm();
+			break;
+		case 4:
+			*(done) = true;
+			break;
 	}
-	//printf("Press Enter to go back to the help menu...\n");
 }
 
 
@@ -321,7 +249,6 @@ void input_player(game g)
 			}
 			if (input[1] == ' ' && isNumber(input[2], 9))
 			{
-					//TODO : Check if piece actually exists
 				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
 			}else{
 				if (isOperatorSimple(input[2]))
