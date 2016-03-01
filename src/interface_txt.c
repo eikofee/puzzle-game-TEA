@@ -89,7 +89,7 @@ void draw_interface(game g, char* seed)
 				printf(".");
 			else
 			{
-				printf("%d", t[j][i]);
+				printf("%c", getHexa(t[j][i]));
 			}
 			printf(" ");
 		}
@@ -141,7 +141,7 @@ bool str_equal(char* a, char* b)
 */
 bool isNumber(char s, int max_number)
 {
-	return ((s >= 48 && s <= 48 + max_number) || (s >= 97 && s <= 92 + max_number);
+	return ((s >= 48 && s <= 48 + max_number) || (s >= 97 && s <= 92 + max_number));
 }
 
 /*
@@ -168,7 +168,7 @@ int getNumber(char s)
 */
 char getHexa(int n)
 {
-	if (n > 0 && n < 10)
+	if (n >= 0 && n < 10)
 		return n + 48;
 	if (n > 9 && n < 16)
 		return n + 87;
