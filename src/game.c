@@ -41,7 +41,6 @@ game new_game_hr( int nb_pieces, piece *pieces)
 
 void delete_game (game g)
 {
-	printf("nbpiece %d\n", g -> nb_pieces);
 	if(g != NULL)
 	{
 		//On libère d'abord le tableau des pieces
