@@ -41,6 +41,7 @@ game new_game_hr( int nb_pieces, piece *pieces)
 
 void delete_game (game g)
 {
+	printf("nbpiece %d\n", g -> nb_pieces);
 	if(g != NULL)
 	{
 		//On libère d'abord le tableau des pieces
@@ -130,7 +131,10 @@ bool play_move(game g, int piece_num, dir d, int distance)
 	{
 		move_piece(ptest,d,1);
 		if(!estPositionValide(ptest))
+		{
+			delete_piece(ptest);
 			return false;
+		}
 
 		//Boucle qui vérifie la colision avec les autres pieces
 		for (int i = 0; i < game_nb_pieces(g); i++)

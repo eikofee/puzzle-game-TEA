@@ -26,7 +26,7 @@ void loadTheGame(char* seed)
 
 	getIdFromGame(g, id);
 	draw_interface(g, id);
-	
+
 	printf("************\n*--- GG ---*\n************\n");
 
 	free(id);
@@ -37,8 +37,8 @@ int main(int argc, char* argv[])
 {
 	// Construction de l'id : 0 -> Petit/Vertical | 1 -> petit/horizon | 2 -> grand/vertical | 3 -> grand/horizon
 	char* Game1 = "4103300222052";
-	char* Game2 = "8103022024034144301040250";
-	char* Game3 = "8123024012040042145250301";
+	// char* Game2 = "8103022024034144301040250";
+	// char* Game3 = "8123024012040042145250301";
 
 	loadTheGame(Game1);
 	// loadTheGame(Game2);
