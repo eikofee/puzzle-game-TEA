@@ -94,7 +94,9 @@ game getGameFromId(char* id)
 	p[0] = new_piece_rh(0, 3, true, true);
 	int i = 1;
 	int indexP = 1;
-	while (id[i] != '\0')
+
+	//TODO VERIFIER SI L ID EST CORRECT !
+	while (id[i] != '7')
 	{
 		printf("id[%d] = %c, id[%d + 1] = %c, id[%d + 2] = %c;\n",i, id[i], i, id[i + 1], i, id[i + 2]);
 		bool isHorizontal = (id[i] == '1' || id[i] == '3');
