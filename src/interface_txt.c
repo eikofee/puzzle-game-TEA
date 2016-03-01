@@ -4,6 +4,9 @@
 #include "utility.h"
 #include "interface_txt.h"
 
+/*
+	Affiche la liste des pièces de façon lisible
+*/
 void display_pieces(piece *p, int taille)
 {
 	for (int i = 0; i < taille; i++)
@@ -17,6 +20,9 @@ void display_pieces(piece *p, int taille)
 	}
 }
 
+/*
+	Permet de générer un niveau à partir d'un id (non seed)
+*/
 game getGameFromId(char* id)
 {
 	//Syntaxe : Nabca2b2c2a3b3c3
@@ -43,6 +49,9 @@ game getGameFromId(char* id)
 	return new_game_hr(nb_pieces, p);
 }
 
+/*
+	Permet de convertir un game en id (pas une sauvegarde complète)
+*/
 char* getIdFromGame(game g)
 {
 	char* id = (char*) malloc(sizeof(char) * 128);
@@ -61,7 +70,9 @@ char* getIdFromGame(game g)
 	return id;
 }
 
-
+/*
+	Affiche la zone de jeu
+*/
 void draw_interface(game g, char* seed)
 {
 	int moves = game_nb_moves(g);
@@ -107,6 +118,9 @@ void draw_interface(game g, char* seed)
 	printf("Enter the car's number you want to move :\n");
 }
 
+/*
+	Comparaison de deux chaines de caractères (true/false)
+*/
 bool str_equal(char* a, char* b)
 {
 	int i = 0;
@@ -119,21 +133,33 @@ bool str_equal(char* a, char* b)
 	return true;
 }
 
+/*
+	Vérifie si le char passé en paramètre est un chiffre et ne dépasse pas max_number
+*/
 bool isNumber(char s, int max_number)
 {
 	return (s >= 48 && s <= 48 + max_number);
 }
 
+/*
+	Vérifie si s est un + ou un -
+*/
 bool isOperatorSimple(char s)
 {
 	return (s == '+' || s == '-');
 }
 
+/*
+	Convertion d'un caractère en int
+*/
 int getNumber(char s)
 {
 	return s - 48;
 }
 
+/*
+	Récupère la direction que doit prendre une pièce en fonction du signe entré
+*/
 dir getDirection(piece p, char sign)
 {
 	if (sign == '+')
@@ -152,6 +178,9 @@ dir getDirection(piece p, char sign)
 	}
 }
 
+/*
+	Bloque l'affichage tant que la touche Entrée n'est pas utilisée
+*/
 void confirm()
 {
 	printf("\n\tPress 'Enter' to go back to the help menu");
@@ -160,6 +189,9 @@ void confirm()
 		cha = getchar();	
 }
 
+/*
+	Affiche l'interface d'aide du jeu
+*/
 void getHelp(int input, bool* done)
 {
 	switch(input)
@@ -192,7 +224,9 @@ void getHelp(int input, bool* done)
 	}
 }
 
-
+/*
+	Récupère les commandes du joueur (imparfait)
+*/
 void input_player(game g)
 {
 	char input[7] = "";
