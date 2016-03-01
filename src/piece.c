@@ -12,13 +12,16 @@ piece new_piece_rh (int x, int y, bool small, bool horizontal){
 	if(newPiece == NULL)
 		error("Problème d'allocation sur newPiece");
 
-	if(x < 0 || x > (TAILLE_PLATEAU - 1) || y < 0 || y >= (TAILLE_PLATEAU - 1))
-		error("new_piece_rh, x ou y invalide.");
-
 	newPiece -> isHorizontal = horizontal;
 	newPiece -> isSmall = small;
 	newPiece -> position[0] = x;
 	newPiece -> position[1] = y;
+
+	if(!estPositionValide(newPiece))
+	{
+		delete_piece(newPiece);
+		error("new_piece_rh(), Paramètres invalides...");
+	}
 
 	return newPiece;
 }

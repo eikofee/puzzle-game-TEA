@@ -88,17 +88,15 @@ game getGameFromId(char* id)
 	}
 
 	return new_game_hr(nb_pieces, p);*/
-	printf("%s\n", id);
-	int nb_pieces = getNumber(id[0]) + 1;
+	printf("seed du niveau : %s\n", id);
+	int nb_pieces = getNumber(id[0]) ;
 	piece p[nb_pieces + 1];
-	p[0] = new_piece_rh(0, 3, true, true);
 	int i = 1;
-	int indexP = 1;
+	int indexP = 0;
 
-	//TODO VERIFIER SI L ID EST CORRECT !
-	while (id[i] != '7')
+	while (id[i] != '\0')
 	{
-		printf("id[%d] = %c, id[%d + 1] = %c, id[%d + 2] = %c;\n",i, id[i], i, id[i + 1], i, id[i + 2]);
+		//printf("id[%d] = %c, id[%d + 1] = %c, id[%d + 2] = %c;\n",i, id[i], i, id[i + 1], i, id[i + 2]);
 		bool isHorizontal = (id[i] == '1' || id[i] == '3');
 		bool isSmall = (id[i] == '0' || id[i] == '1');
 		int x = getNumber(id[i + 1]);
@@ -107,7 +105,7 @@ game getGameFromId(char* id)
 		i += 3;
 		indexP++;
 	}
-	display_pieces(p, nb_pieces);
+	//display_pieces(p, nb_pieces);
 	return new_game_hr(nb_pieces, p);
 }
 
@@ -115,9 +113,11 @@ char* getIdFromGame(game g)
 {
 	//char* id = (char*) malloc(sizeof(char) * (3 * game_nb_pieces(g) + 2));
 	char* id = (char*) malloc(sizeof(char) * 128);
+	if(id == NULL)
+		error("getIdFromeGame(), problème d'allocation mémoire");
 	id[0] = 48 + game_nb_pieces(g);
 	int indexChar = 1;
-	for (int i = 1; i < game_nb_pieces(g); i++)
+	for (int i = 0; i < game_nb_pieces(g); i++)
 	{
 		id[indexChar] = 48 + (is_horizontal(g -> pieces[i])?1:0) + ((g -> pieces[i] -> isSmall)?0:2);
 		id[indexChar + 1] = 48 + get_x(g -> pieces[i]);
@@ -133,7 +133,7 @@ void draw_interface(game g, char* seed)
 {
 	//Test values
 	int moves = game_nb_moves(g);
-	int num_moves = 10;
+	//int num_moves = 10;
 	//char* seed = "0b4aaf345e";
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
 	printf("############### Rush Hour\n");
@@ -155,7 +155,8 @@ void draw_interface(game g, char* seed)
 		switch(i){
 			//let's check if we have to display more informations on the right:
 			case 4:	//Move num display
-			printf("# Move %d / %d\n", moves, num_moves);
+			//printf("# Move %d / %d\n", moves, num_moves);
+			printf("# Move %d\n", moves);
 			break;
 			case 1:	//Level's seed display (optional)
 			printf("# Seed: %s\n", seed);
