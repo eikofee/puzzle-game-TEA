@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
 	char* Game3 = "8123024012040042145250301";
 
 	loadTheGame(Game1);
-	loadTheGame(Game2);
-	loadTheGame(Game3);
+	// loadTheGame(Game2);
+	// loadTheGame(Game3);
 	
 	return 0;
 }

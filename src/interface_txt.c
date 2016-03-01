@@ -112,7 +112,7 @@ void draw_interface(game g, char* seed)
 	}
 	printf("###############\n");
 	printf("Enter the car's number you want to move :\n");
-
+	freeTableau2D(t, g -> nb_pieces);
 }
 
 /*
@@ -297,4 +297,14 @@ void input_player(game g)
 		printf("Incorrect input.\n");
 	}
 
+}
+
+
+void freeTableau2D(int** tab, int taille)
+{
+	for(int x = 0; x < taille; x++)
+	{
+		free(tab[x]);
+	}
+	free(tab);
 }

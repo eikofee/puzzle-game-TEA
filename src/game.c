@@ -46,7 +46,6 @@ void delete_game (game g)
 		//On libère d'abord le tableau des pieces
 		for (int i = 0; i < g -> nb_pieces; i++)
 		{
-			printf("i=%d\n", i);
 			delete_piece(g -> pieces[i]);
 		}
 		free(g -> pieces);
