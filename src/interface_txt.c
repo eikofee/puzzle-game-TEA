@@ -59,13 +59,13 @@ game getGameFromId(char* id)
 */
 void getIdFromGame(game g, char* id)
 {
-	id[0] = 48 + game_nb_pieces(g);
+	id[0] = getHexa(game_nb_pieces(g));
 	int indexChar = 1;
 	for (int i = 0; i < game_nb_pieces(g); i++)
 	{
-		id[indexChar] = 48 + (is_horizontal(g -> pieces[i])?1:0) + ((g -> pieces[i] -> isSmall)?0:2);
-		id[indexChar + 1] = 48 + get_x(g -> pieces[i]);
-		id[indexChar + 2] = 48 + get_y(g -> pieces[i]);
+		id[indexChar] = getHexa((is_horizontal(g -> pieces[i])?1:0) + ((g -> pieces[i] -> isSmall)?0:2));
+		id[indexChar + 1] = getHexa(get_x(g -> pieces[i]));
+		id[indexChar + 2] = getHexa(get_y(g -> pieces[i]));
 		indexChar += 3;
 	}
 	id[indexChar] = '\0';
@@ -137,10 +137,11 @@ bool str_equal(char* a, char* b)
 
 /*
 	Vérifie si le char passé en paramètre est un chiffre et ne dépasse pas max_number
+	Hexa inclus mais sans doute imparfait
 */
 bool isNumber(char s, int max_number)
 {
-	return (s >= 48 && s <= 48 + max_number);
+	return ((s >= 48 && s <= 48 + max_number) || (s >= 97 && s <= 92 + max_number);
 }
 
 /*
@@ -152,13 +153,26 @@ bool isOperatorSimple(char s)
 }
 
 /*
-	Convertion d'un caractère en int
+	Conversion d'un caractère en int (hexa minuscule permis)
 */
 int getNumber(char s)
 {
-	return s - 48;
+	if (s >= 48 && s <= 58)
+		return s - 48;
+	if (s >= 97 && s <= 102)
+		return s - 87;
 }
 
+/*
+	Conversion d'un int en char (hexa minuscule)
+*/
+char getHexa(int n)
+{
+	if (n > 0 && n < 10)
+		return n + 48;
+	if (n > 9 && n < 16)
+		return n + 87;
+}
 /*
 	Récupère la direction que doit prendre une pièce en fonction du signe entré
 */

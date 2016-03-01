@@ -15,5 +15,6 @@ void confirm();
 void getHelp(int input, bool* done);
 void input_player(game g);
 void freeTableau2D(int** tab);
+char getHexa(int n);
 
 #endif
