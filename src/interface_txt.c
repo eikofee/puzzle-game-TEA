@@ -213,10 +213,10 @@ void getHelp(int input, bool* done)
 		case 3:
 			printf("\tList of available commands:\n\n");
 			printf("\thelp: Display this menu\n");
-			printf("\thint: Get closer to the end by cheating\n");
-			printf("\tskip: skip the current game for another\n");
-			printf("\tsave: Save the current run for later\n");
-			printf("\tload: Load a run\n");
+			printf("\t[WIP]hint: Get closer to the end by cheating\n");
+			printf("\t[WIP]skip: skip the current game for another\n");
+			printf("\t[WIP]save: Save the current run for later\n");
+			printf("\t[WIP]load: Load a run\n");
 			printf("\texit: Close the game\n");
 			confirm();
 			break;
@@ -233,9 +233,11 @@ void input_player(game g)
 {
 	char input[7] = "";
 	fgets(input, 6, stdin);
+	bool correct = false;
 
 	if (str_equal(input, "help\n"))
 	{
+		correct = true;
 		bool done = false;
 		while (!done)
 		{
@@ -248,20 +250,24 @@ void input_player(game g)
 	}
 	if (str_equal(input, "hint\n"))
 	{
+		correct = true;
 		printf("hint [WIP]\n");
 		//Do a move 
 	}
 	if (str_equal(input, "exit\n"))
 	{
+		correct = true;
 		exit(EXIT_SUCCESS);
 	}
 	if (str_equal(input, "save\n"))
 	{
+		correct = true;
 		//sauvegarde
 	}
 	
 	if (isNumber(input[0], g -> nb_pieces - 1))
 	{
+		correct = true;
 		//correct input
 		/*SYNTAXE :
 			0 2 : Avance la voiture rouge de 2 cases vers la droite
@@ -299,9 +305,9 @@ void input_player(game g)
 		}
 	else
 	{
-		printf("Incorrect input.\n");
+		if (!correct)
+			printf("Incorrect input.\n");
 	}
-
 }
 
 
