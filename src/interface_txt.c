@@ -241,39 +241,20 @@ void getHelp(int input, bool* done)
 }
 
 /*
-	Enlève les espaces d'une chaine de caractères
+	Ignore l'overflow de stdin
 */
-void removeSpaces(char* s)
+void ignoreOverflow(char* input, int taille)
 {
-	int i = 0;
-	int j = 0;
-	//On enlève les espaces du début
-	while (s[j] == ' ')
-		j++;
-	while (s[j] != '\0')
-	{
-		s[i] = s[j];
-		i++;
-		j++;
-	}
-	//On enlève les espaces de fin
-	while (s[i] == ' ')
-	{
-		i--;
-	}
-	s[i + 1] = '\n';
-	s[i + 2] = '\0';
+	int overflow;
+	while ((overflow = getchar()) != EOF && overflow != '\n');	//On ignore les caractères en overflow
 }
-
 /*
 	Récupère les commandes du joueur (imparfait)
 */
 void input_player(game g)
 {
-	char input[7] = "";
+	char input[7] = "000000";
 	fgets(input, 6, stdin);
-	int overflow;
-	while ((overflow = getchar()) != EOF && overflow != '\n');	//On ignore les caractères en overflow
 	bool correct = false;
 	if (str_equal(input, "help\n"))
 	{
@@ -346,8 +327,13 @@ void input_player(game g)
 	else
 	{
 		if (!correct)
+		{
 			printf("Incorrect input.\n");
+			ignoreOverflow(input, 6);
+		}
 	}
+	printf("%s\n", input);
+
 }
 
 
