@@ -1,5 +1,7 @@
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+file(WRITE ${CMAKE_BINARY_DIR}/bin/games.txt "4103300222052\n")
+file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8103022024034144301040250\n")
+file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8123024012040042145250301\n")
 add_library(game game.c piece.c interface_txt)
 add_executable(rush-hour rush-hour)
 target_link_libraries(rush-hour game)
-
