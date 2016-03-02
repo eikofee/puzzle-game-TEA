@@ -245,8 +245,16 @@ void getHelp(int input, bool* done)
 */
 void ignoreOverflow(char* input, int taille)
 {
-	int overflow;
-	while ((overflow = getchar()) != '\n');	//On ignore les caractères en overflow
+	int i = 0;
+	while (input[i] != 0 && i < taille)
+		i++;
+	if(i == taille)
+	{
+		int overflow;
+		while ((overflow = getchar()) != '\n');	//On ignore les caractères en overflow
+	}
+}
+
 }
 /*
 	Récupère les commandes du joueur (imparfait)
@@ -328,12 +336,8 @@ void input_player(game g)
 	{
 		if (!correct)
 		{
-			int i = 0;
-			while (input[i] != 0 && i < 6)
-				i++;
 			printf("Incorrect input.\n");
-			if (i == 6)
-				ignoreOverflow(input, 6);
+			ignoreOverflow(input, 6);
 		}
 	}
 }
