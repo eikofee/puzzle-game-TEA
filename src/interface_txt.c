@@ -99,15 +99,13 @@ void draw_interface(game g, char* seed)
 			case 0: 
 				printf("# Type 'help' for more informations\n");
 				break;
-			case 1:	//Level's seed display (optional)
-				printf("# Seed: %s\n", seed);
-				//printf("# TEST_VERSION\n");
+			case 1: //ID/Seed du jeu
+				printf("# ID: %s\n", seed);
 				break;
-			case 3: //Exit
+			case 3: //Sortie du parking
 				printf(">\n");
 				break;
 			case 4:	//Move num display
-				//printf("# Move %d / %d\n", moves, num_moves);
 				printf("# Move %d\n", moves);
 				break;
 			default:
@@ -173,6 +171,7 @@ char getHexa(int n)
 	if (n > 9 && n < 16)
 		return n + 87;
 }
+
 /*
 	Récupère la direction que doit prendre une pièce en fonction du signe entré
 */
@@ -255,9 +254,13 @@ void ignoreOverflow(char* input, int taille)
 	}
 }
 
+/*
+	Permet d'obtenir le mouvement de la pièce entrée dans un premier temps
+	(Améliore la lisibilité)
+*/
 void getSecondInput(char* input)
 {
-	//Current input is "[N][\n][ ][ ][ ][ ]"
+												//Current input is "[N][\n][ ][ ][ ][ ]"
 	char input2[5];
 	printf("Enter the distance for car n°%c :\n", input[0]);
 	fgets(input2, 4, stdin);
@@ -285,7 +288,6 @@ bool checkFormat(char* s, char* format)
 	int j = 0;
 	while (format[i] != '\0')
 	{
-		printf("Compare : format[%d] = %c ; s[%d] = %c ; \n", i, format[i], j, s[j]);
 		if (format[i] != '%')
 		{
 			if (s[j] != format[i])
@@ -313,6 +315,7 @@ bool checkFormat(char* s, char* format)
 	}
 	return true;
 }
+
 /*
 	Récupère les commandes du joueur (imparfait)
 */
@@ -343,7 +346,7 @@ void input_player(game g)
 	if (str_equal(input, "exit\n"))
 	{
 		correct = true;
-		exit(EXIT_SUCCESS);
+		exit(EXIT_SUCCESS);		//FUITE MEMOIRE
 	}
 	if (str_equal(input, "save\n"))
 	{
@@ -354,16 +357,13 @@ void input_player(game g)
 	if (isNumber(input[0], g -> nb_pieces - 1))
 	{
 		correct = true;
-		//correct input
 		/*SYNTAXE :
 			0 2 : Avance la voiture rouge de 2 cases vers la droite
 			1 -1 : Recule la voiture 1 vers le bas si verticale ou la gauche si horizontale
 			2 : Demande un déplacement de la voiture 2 (nouveau scanf)
 		*/ 
-			//syntaxe check
 		if (input[1] == '\n')
 			getSecondInput(input);
-			//if (input[1] == ' ' && isNumber(input[2], 6))
 		if (checkFormat(input, "%n %n"))
 		{
 			play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
@@ -381,13 +381,15 @@ void input_player(game g)
 	{
 		if (!correct)
 		{
-			printf("Incorrect input.\n");
+			printf("Incorrect input. Type 'help' for more informations.\n");
 			ignoreOverflow(input, 6);
 		}
 	}
 }
 
-
+/*
+	Free un tableau 2D passé en paramètre
+*/
 void freeTableau2D(int** tab)
 {
 	free(tab[0]);
