@@ -241,14 +241,40 @@ void getHelp(int input, bool* done)
 }
 
 /*
+	Enlève les espaces d'une chaine de caractères
+*/
+void removeSpaces(char* s)
+{
+	int i = 0;
+	int j = 0;
+	//On enlève les espaces du début
+	while (s[j] == ' ')
+		j++;
+	while (s[j] != '\0')
+	{
+		s[i] = s[j];
+		i++;
+		j++;
+	}
+	//On enlève les espaces de fin
+	while (s[i] == ' ')
+	{
+		i--;
+	}
+	s[i + 1] = '\n';
+	s[i + 2] = '\0';
+}
+
+/*
 	Récupère les commandes du joueur (imparfait)
 */
 void input_player(game g)
 {
 	char input[7] = "";
 	fgets(input, 6, stdin);
+	int overflow;
+	while ((overflow = getchar()) != EOF && overflow != '\n');	//On ignore les caractères en overflow
 	bool correct = false;
-
 	if (str_equal(input, "help\n"))
 	{
 		correct = true;
