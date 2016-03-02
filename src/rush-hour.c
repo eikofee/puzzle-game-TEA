@@ -5,10 +5,10 @@
 #include "interface_txt.h"
 
 //Fonction qui permet le chargement et l'affichage d'une partie à partir d'une seed
-void loadTheGame(char* seed)
+void loadTheGame(char* id_src)
 {
 	printf("\nLoading Game ...\n");
-	game g = getGameFromId(seed);
+	game g = getGameFromId(id_src);
 	printf("Done\n\n");
 
 	char* id = (char*) malloc(sizeof(char) * 128);
@@ -16,12 +16,15 @@ void loadTheGame(char* seed)
 		error("getIdFromGame(), problème d'allocation mémoire");
 
 	getIdFromGame(g, id);
+	draw_interface(g, id);
 
 	while (!game_over_hr(g))
 	{
+		input_player(g, id);
+		
+		g = getGameFromId(id);
 		getIdFromGame(g, id);
 		draw_interface(g, id);
-		input_player(g);
 	}
 
 	getIdFromGame(g, id);
