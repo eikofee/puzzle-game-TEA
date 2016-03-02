@@ -255,6 +255,63 @@ void ignoreOverflow(char* input, int taille)
 	}
 }
 
+void getSecondInput(char* input)
+{
+	//Current input is "[N][\n][ ][ ][ ][ ]"
+	char input2[5];
+	printf("Enter the distance for car n°%c :\n", input[0]);
+	fgets(input2, 4, stdin);
+	input[1] = ' ';								//Current input is "[N][_][ ][ ][ ][ ]"					
+	if (isOperatorSimple(input2[0]))
+	{
+		input[2] = input2[0];					//Current input is "[N][_][+-][ ][ ][ ]"
+		input[3] = input2[1];					//Current input is "[N][_][+-][n][ ][ ]"
+	}else{
+		input[2] = input2[0];					//Current input is "[N][_][n][ ][ ][ ]"
+	}
+	ignoreOverflow(input2, 3);
+}
+
+/*
+	Vérifie si s suit un format correct (un peu à la façon de printf)
+*/
+bool checkFormat(char* s, char* format)
+{
+	/*Syntaxe:
+		%n : le char est un nombre
+		%o : le char est un opérateur simple
+	*/
+	int i = 0;
+	int j = 0;
+	while (format[i] != '\0')
+	{
+		printf("Compare : format[%d] = %c ; s[%d] = %c ; \n", i, format[i], j, s[j]);
+		if (format[i] != '%')
+		{
+			if (s[j] != format[i])
+				return false;
+		}
+		else{
+			switch(format[++i])
+			{
+				case 'n':
+					if (!isNumber(s[j], 9))
+						return false;
+					break;
+
+				case 'o':
+					if (!isOperatorSimple(s[j]))
+						return false;
+					break;
+				default:
+					error("Syntaxe checkFormat incorrecte.");
+					break;
+			}
+		}
+		i++;
+		j++;
+	}
+	return true;
 }
 /*
 	Récupère les commandes du joueur (imparfait)
@@ -275,8 +332,8 @@ void input_player(game g)
 			fgets(i, 3, stdin);
 			getHelp(getNumber(i[0]), &done);
 		}
-
 	}
+
 	if (str_equal(input, "hint\n"))
 	{
 		correct = true;
@@ -304,34 +361,22 @@ void input_player(game g)
 			2 : Demande un déplacement de la voiture 2 (nouveau scanf)
 		*/ 
 			//syntaxe check
-			if (input[1] == '\n')
-			{
-				char input2[5];
-				printf("Enter the distance for car n°%c :\n", input[0]);
-				fgets(input2, 4, stdin);
-				input[1] = ' ';
-				if (isOperatorSimple(input2[0]))
-				{
-					input[2] = input2[0];
-					input[3] = input2[1];
-				}else{
-					input[2] = input2[0];
-				}
-			}
-			if (input[1] == ' ' && isNumber(input[2], 9))
-			{
-				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
-			}else{
-				if (isOperatorSimple(input[2]))
-				{
-					if (input[2] == '+')
-						play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
-					else{
-						play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), -1 * getNumber(input[3]));
-					}
-				}
+		if (input[1] == '\n')
+			getSecondInput(input);
+			//if (input[1] == ' ' && isNumber(input[2], 6))
+		if (checkFormat(input, "%n %n"))
+		{
+			play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
+		}
+		if (checkFormat(input, "%n %o%n"))
+		{
+			if (input[2] == '+')
+				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
+			else{
+				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), -1 * getNumber(input[3]));
 			}
 		}
+	}
 	else
 	{
 		if (!correct)
