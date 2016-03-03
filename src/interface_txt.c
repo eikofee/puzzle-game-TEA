@@ -21,7 +21,7 @@ void display_pieces(piece *p, int taille)
 }
 
 /*
-	Permet de générer un niveau à partir d'un id (non seed)
+	Permet de générer un niveau à partir d'un id
 */
 game getGameFromId(char* id)
 {
@@ -30,7 +30,7 @@ game getGameFromId(char* id)
 	//a = car type: +1 st horizontale, +2 si grand
 	//b = case axe x
 	//c = case axe y
-	printf("seed du niveau : %s\n", id);
+	printf("id du niveau : %s\n", id);
 	int nb_pieces = getNumber(id[0]) ;
 	piece p[nb_pieces];
 	int i = 1;
@@ -74,7 +74,7 @@ void getIdFromGame(game g, char* id)
 /*
 	Affiche la zone de jeu
 */
-void draw_interface(game g, char* seed)
+void draw_interface(game g, char* id)
 {
 	int moves = game_nb_moves(g);
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
@@ -99,8 +99,8 @@ void draw_interface(game g, char* seed)
 			case 0: 
 				printf("# Type 'help' for more informations\n");
 				break;
-			case 1:	//Level's seed display (optional)
-				printf("# Seed: %s\n", seed);
+			case 1:	//Level's id display (optional)
+				printf("# ID: %s\n", id);
 				//printf("# TEST_VERSION\n");
 				break;
 			case 3: //Exit
@@ -243,7 +243,7 @@ void getHelp(int input, bool* done)
 /*
 	Récupère les commandes du joueur (imparfait)
 */
-void input_player(game g)
+void input_player(game g, char* id)
 {
 	char input[7] = "";
 	fgets(input, 6, stdin);
@@ -271,6 +271,8 @@ void input_player(game g)
 	if (str_equal(input, "exit\n"))
 	{
 		correct = true;
+		free(id);
+		delete_game(g);
 		exit(EXIT_SUCCESS);
 	}
 	if (str_equal(input, "save\n"))

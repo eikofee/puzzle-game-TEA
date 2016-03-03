@@ -14,6 +14,7 @@ void display_pieces(piece *p, int taille)
 
 int main(int argc, char* argv[])
 {
+	bool result = true;
 	printf("> Préparation des tests:\n");
 	printf("> création des pièces...\n");
 	int nb_pieces = 4;
@@ -27,10 +28,6 @@ int main(int argc, char* argv[])
 	printf("> new_game_hr...\n");
 	game g = new_game_hr(nb_pieces, p);
 	display_pieces(g -> pieces, nb_pieces);
-	printf("Done.\n\n");
-
-	printf("> game_piece...\n");
-	bool result = true;
 	for(int i = 0; i < nb_pieces; i++)
 	{
 		piece p_tmp = game_piece(g, i);
@@ -73,7 +70,19 @@ int main(int argc, char* argv[])
 	
 	printf("Pieces src : \n");
 	display_pieces(g -> pieces, g -> nb_pieces);
-
+	if (g -> nb_pieces != g2 -> nb_pieces)
+		result = false;
+	for (int i; i < g -> nb_pieces; i++)
+	{
+		if(get_x(g -> pieces[i]) != get_x(g2 -> pieces[i]))
+			result = false;
+		if(get_y(g -> pieces[i]) != get_y(g2 -> pieces[i]))
+			result = false;
+		if(is_horizontal(g -> pieces[i]) != is_horizontal(g2 -> pieces[i]))
+			result = false;
+		if(g -> pieces[i] -> isSmall != g2 -> pieces[i] -> isSmall)
+			result = false;
+	}
 	printf("Pièces dst : \n");
 	display_pieces(g2 -> pieces, g2 -> nb_pieces);
 	printf("Done.\n\n");
@@ -85,6 +94,8 @@ int main(int argc, char* argv[])
 	printf("> game_nb_piece...\n");
 	int a = game_nb_pieces(g);
 	printf("Done, attendu = %d, reçu = %d.\n\n", nb_pieces, a);
+	if (nb_pieces != a)
+		result = false;
 
 	printf("> delete_game(g)...\n");
 	delete_game(g);
@@ -96,6 +107,7 @@ int main(int argc, char* argv[])
 	delete_piece(p[3]);
 	delete_piece(q[0]);
 
-	return 0;
+	if(result)
+		printf("Good.");
 }
 
