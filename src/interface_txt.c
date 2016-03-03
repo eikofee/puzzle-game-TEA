@@ -4,7 +4,7 @@
 #include "utility.h"
 #include "interface_txt.h"
 
-/*
+/*	DEBUG
 	Affiche la liste des pièces de façon lisible
 */
 void display_pieces(piece *p, int taille)
@@ -43,7 +43,6 @@ game getGameFromId(char* id)
 	//a = car type: +1 st horizontale, +2 si grand
 	//b = case axe x
 	//c = case axe y
-	printf("seed du niveau : %s\n", id);
 	int nb_pieces = getNumber(id[0]) ;
 	piece p[nb_pieces];
 	int i = 1;
@@ -148,7 +147,6 @@ bool str_equal(char* a, char* b)
 
 /*
 	Vérifie si le char passé en paramètre est un chiffre et ne dépasse pas max_number
-	Hexa inclus mais sans doute imparfait
 */
 bool isNumber(char s, int max_number)
 {
@@ -212,9 +210,9 @@ dir getDirection(piece p, char sign)
 void confirm()
 {
 	printf("\n\tPress 'Enter' to go back to the help menu");
-	int cha;
-	while (cha != '\r' && cha != '\n')
-		cha = getchar();	
+	int c;
+	while (c != '\r' && c != '\n')
+		c = getchar();	
 }
 
 /*
@@ -360,7 +358,7 @@ void input_player(game g)
 	if (str_equal(input, "exit\n"))
 	{
 		correct = true;
-		exit(EXIT_SUCCESS);		//FUITE MEMOIRE
+		exit(EXIT_SUCCESS);
 	}
 	if (str_equal(input, "save\n"))
 	{
