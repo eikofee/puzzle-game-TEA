@@ -21,7 +21,7 @@ void loadTheGame(char* seed)
 	{
 		getIdFromGame(g, id);
 		draw_interface(g, id);
-		input_player(g);
+		input_player(g, id);
 	}
 
 	getIdFromGame(g, id);

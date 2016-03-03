@@ -229,7 +229,7 @@ void getHelp(int input, bool* done)
 /*
 	Récupère les commandes du joueur (imparfait)
 */
-void input_player(game g)
+void input_player(game g, char* id)
 {
 	char input[7] = "";
 	fgets(input, 6, stdin);
@@ -257,6 +257,8 @@ void input_player(game g)
 	if (str_equal(input, "exit\n"))
 	{
 		correct = true;
+		free(id);
+		delete_game(g);
 		exit(EXIT_SUCCESS);
 	}
 	if (str_equal(input, "save\n"))
