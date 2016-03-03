@@ -104,8 +104,9 @@ void draw_interface(game g, char* seed)
 {
 	int moves = game_nb_moves(g);
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
+	char* alreadyWritten = (char*) malloc(sizeof(char)*11);
+	strcpy(alreadyWritten,"1111111111");
 	printf("############### Rush Hour\n");
-
 	for (int i = 5; i > -1; i--)
 	{
 		printf("# ");
@@ -115,10 +116,13 @@ void draw_interface(game g, char* seed)
 				printf(". ");
 			else
 			{
+
 				//printf("%c", getHexa(t[j][i]));
-				char* s = setColor(getHexa(t[j][i]), t[j][i], true, true);
+				char* s = setColor(getHexa(t[j][i]), t[j][i], true, true, (alreadyWritten[t[j][i]] == '1'?true:false));
 				printf("%s", s);
 				free(s);
+				int a = t[j][i];
+				alreadyWritten[a] = '0';
 			}
 		}
 		
