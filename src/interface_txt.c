@@ -85,15 +85,14 @@ void getIdFromGame(game g, char* id)
 
 
 /*
-	
+	Change la couleur d'une pièce
 */
-char* setColor(char c, int id, bool isBackground, bool isBright, bool fill)
+char* setColorPiece(char c, int id, bool fill)
 {
 	char* s = (char*) malloc(sizeof(char) * 17);
 	//strcpy(s, "\x1b[XY;1mC\x1b[0m");
-	strcpy(s, "\x1b[XYmC \x1b[0m");
-	s[2] = (isBackground?'4':'3');
-	s[3] = getHexa(id + 1);
+	strcpy(s, "\x1b[4YmC \x1b[0m");
+	s[3] = (!id ?'1':getHexa(id % 5 + 2));
 	s[5] = (fill?c:' ');
 	return s;
 }
@@ -104,8 +103,9 @@ void draw_interface(game g, char* seed)
 {
 	int moves = game_nb_moves(g);
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
-	char* alreadyWritten = (char*) malloc(sizeof(char)*11);
-	strcpy(alreadyWritten,"1111111111");
+	bool* toWrite = (bool*) malloc(sizeof(bool) * g -> nb_pieces);
+	for (int i = 0; i < g -> nb_pieces; i++)
+		toWrite[i] = true;
 	printf("############### Rush Hour\n");
 	for (int i = 5; i > -1; i--)
 	{
@@ -118,11 +118,10 @@ void draw_interface(game g, char* seed)
 			{
 
 				//printf("%c", getHexa(t[j][i]));
-				char* s = setColor(getHexa(t[j][i]), t[j][i], true, true, (alreadyWritten[t[j][i]] == '1'?true:false));
+				char* s = setColorPiece(getHexa(t[j][i]), t[j][i], (toWrite[t[j][i]]?true:false));
 				printf("%s", s);
 				free(s);
-				int a = t[j][i];
-				alreadyWritten[a] = '0';
+				toWrite[t[j][i]] = false;
 			}
 		}
 		
@@ -148,6 +147,7 @@ void draw_interface(game g, char* seed)
 	printf("###############\n");
 	printf("Enter the car's number you want to move :\n");
 	freeTableau2D(t);
+	free(toWrite);
 }
 
 /*
