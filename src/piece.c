@@ -17,12 +17,6 @@ piece new_piece_rh (int x, int y, bool small, bool horizontal){
 	newPiece -> position[0] = x;
 	newPiece -> position[1] = y;
 
-	if(!estPositionValide(newPiece))
-	{
-		delete_piece(newPiece);
-		error("new_piece_rh(), Paramètres invalides...");
-	}
-
 	return newPiece;
 }
 
