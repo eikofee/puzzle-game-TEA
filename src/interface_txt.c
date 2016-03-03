@@ -21,6 +21,19 @@ void display_pieces(piece *p, int taille)
 }
 
 /*
+	Change les majuscules en minuscule
+*/
+void toLower(char* s)
+{
+	int i = 0;
+	while(s[i] != '\0')
+	{
+		if (s[i] > 64 && s[i] < 91)
+			s[i] += 32;
+		i++;
+	}
+}
+/*
 	Permet de générer un niveau à partir d'un id (non seed)
 */
 game getGameFromId(char* id)
@@ -323,6 +336,7 @@ void input_player(game g)
 {
 	char input[7] = {0, 0, 0, 0, 0, 0, 0};
 	fgets(input, sizeof(input), stdin);
+	toLower(input);
 	bool correct = false;
 	if (str_equal(input, "help\n"))
 	{
