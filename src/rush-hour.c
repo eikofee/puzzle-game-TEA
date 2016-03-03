@@ -38,9 +38,9 @@ int main(int argc, char* argv[])
 	char* Game1 = "4103300222052";
 	char* Game2 = "8103022024034144301040250";
 	char* Game3 = "8123024012040042145250301";
-	char* Game0 = "f103105104102101100125124123122121120145144143";
+	//char* Game0 = "f103105104102101100125124123122121120145144143";
 
-	loadTheGame(Game0);
+	//loadTheGame(Game0);
 	loadTheGame(Game1);
 	loadTheGame(Game2);
 	loadTheGame(Game3);

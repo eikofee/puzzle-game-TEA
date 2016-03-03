@@ -3,7 +3,7 @@
 #include "game.h"
 #include "utility.h"
 #include "interface_txt.h"
-
+#include <string.h>
 /*	DEBUG
 	Affiche la liste des pièces de façon lisible
 */
@@ -83,6 +83,20 @@ void getIdFromGame(game g, char* id)
 	id[indexChar] = '\0';
 }
 
+
+/*
+	
+*/
+char* setColor(char c, int id, bool isBackground, bool isBright, bool fill)
+{
+	char* s = (char*) malloc(sizeof(char) * 17);
+	//strcpy(s, "\x1b[XY;1mC\x1b[0m");
+	strcpy(s, "\x1b[XYmC \x1b[0m");
+	s[2] = (isBackground?'4':'3');
+	s[3] = getHexa(id + 1);
+	s[5] = (fill?c:' ');
+	return s;
+}
 /*
 	Affiche la zone de jeu
 */
@@ -98,12 +112,14 @@ void draw_interface(game g, char* seed)
 		for (int j = 0; j < 6; j++)
 		{
 			if (t[j][i] == -1)
-				printf(".");
+				printf(". ");
 			else
 			{
-				printf("%c", getHexa(t[j][i]));
+				//printf("%c", getHexa(t[j][i]));
+				char* s = setColor(getHexa(t[j][i]), t[j][i], true, true);
+				printf("%s", s);
+				free(s);
 			}
-			printf(" ");
 		}
 		
 		switch(i){
