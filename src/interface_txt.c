@@ -4,7 +4,7 @@
 #include "utility.h"
 #include "interface_txt.h"
 
-/*
+/*	DEBUG
 	Affiche la liste des pièces de façon lisible
 */
 void display_pieces(piece *p, int taille)
@@ -21,6 +21,19 @@ void display_pieces(piece *p, int taille)
 }
 
 /*
+	Change les majuscules en minuscule
+*/
+void toLower(char* s)
+{
+	int i = 0;
+	while(s[i] != '\0')
+	{
+		if (s[i] > 64 && s[i] < 91)
+			s[i] += 32;
+		i++;
+	}
+}
+/*
 	Permet de générer un niveau à partir d'un id (non seed)
 */
 game getGameFromId(char* id)
@@ -30,7 +43,6 @@ game getGameFromId(char* id)
 	//a = car type: +1 st horizontale, +2 si grand
 	//b = case axe x
 	//c = case axe y
-	printf("seed du niveau : %s\n", id);
 	int nb_pieces = getNumber(id[0]) ;
 	piece p[nb_pieces];
 	int i = 1;
@@ -99,15 +111,13 @@ void draw_interface(game g, char* seed)
 			case 0: 
 				printf("# Type 'help' for more informations\n");
 				break;
-			case 1:	//Level's seed display (optional)
-				printf("# Seed: %s\n", seed);
-				//printf("# TEST_VERSION\n");
+			case 1: //ID/Seed du jeu
+				printf("# ID: %s\n", seed);
 				break;
-			case 3: //Exit
+			case 3: //Sortie du parking
 				printf(">\n");
 				break;
 			case 4:	//Move num display
-				//printf("# Move %d / %d\n", moves, num_moves);
 				printf("# Move %d\n", moves);
 				break;
 			default:
@@ -137,7 +147,6 @@ bool str_equal(char* a, char* b)
 
 /*
 	Vérifie si le char passé en paramètre est un chiffre et ne dépasse pas max_number
-	Hexa inclus mais sans doute imparfait
 */
 bool isNumber(char s, int max_number)
 {
@@ -173,6 +182,7 @@ char getHexa(int n)
 	if (n > 9 && n < 16)
 		return n + 87;
 }
+
 /*
 	Récupère la direction que doit prendre une pièce en fonction du signe entré
 */
@@ -200,9 +210,9 @@ dir getDirection(piece p, char sign)
 void confirm()
 {
 	printf("\n\tPress 'Enter' to go back to the help menu");
-	int cha;
-	while (cha != '\r' && cha != '\n')
-		cha = getchar();	
+	int c;
+	while (c != '\r' && c != '\n')
+		c = getchar();	
 }
 
 /*
@@ -255,9 +265,13 @@ void ignoreOverflow(char* input, int taille)
 	}
 }
 
+/*
+	Permet d'obtenir le mouvement de la pièce entrée dans un premier temps
+	(Améliore la lisibilité)
+*/
 void getSecondInput(char* input)
 {
-	//Current input is "[N][\n][ ][ ][ ][ ]"
+												//Current input is "[N][\n][ ][ ][ ][ ]"
 	char input2[5];
 	printf("Enter the distance for car n°%c :\n", input[0]);
 	fgets(input2, 4, stdin);
@@ -285,7 +299,6 @@ bool checkFormat(char* s, char* format)
 	int j = 0;
 	while (format[i] != '\0')
 	{
-		printf("Compare : format[%d] = %c ; s[%d] = %c ; \n", i, format[i], j, s[j]);
 		if (format[i] != '%')
 		{
 			if (s[j] != format[i])
@@ -323,6 +336,7 @@ void input_player(game g, char* id)
 {
 	char input[7] = {0, 0, 0, 0, 0, 0, 0};
 	fgets(input, sizeof(input), stdin);
+	toLower(input);
 	bool correct = false;
 	if (str_equal(input, "help\n"))
 	{
@@ -363,22 +377,21 @@ void input_player(game g, char* id)
 		fgets(num, 127, stdin);
 		num = loadGameFromNum(num);
 		sprintf(id,"%s",num);
+		return;
+
 
 	}
 	
 	if (isNumber(input[0], g -> nb_pieces - 1))
 	{
 		correct = true;
-		//correct input
 		/*SYNTAXE :
 			0 2 : Avance la voiture rouge de 2 cases vers la droite
 			1 -1 : Recule la voiture 1 vers le bas si verticale ou la gauche si horizontale
 			2 : Demande un déplacement de la voiture 2 (nouveau scanf)
 		*/ 
-			//syntaxe check
 		if (input[1] == '\n')
 			getSecondInput(input);
-			//if (input[1] == ' ' && isNumber(input[2], 6))
 		if (checkFormat(input, "%n %n"))
 		{
 			play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
@@ -396,10 +409,11 @@ void input_player(game g, char* id)
 	{
 		if (!correct)
 		{
-			printf("Incorrect input.\n");
+			printf("Incorrect input. Type 'help' for more informations.\n");
 			ignoreOverflow(input, 6);
 		}
 	}
+	getIdFromGame(g, id);
 }
 
 void saveGameFromId(char* id)
@@ -456,9 +470,8 @@ char* loadGameFromNum(char* num)
 
 	s2[i] ='\0';
 	free(s);
-	return s;
+	return s2;
 }
-
 void freeTableau2D(int** tab)
 {
 	free(tab[0]);

@@ -21,10 +21,11 @@ void loadTheGame(char* id_src)
 	while (!game_over_hr(g))
 	{
 		input_player(g, id);
-		
-		g = getGameFromId(id);
-		getIdFromGame(g, id);
+		game g2 = getGameFromId(id);
+		copy_game(g2, g);
+		delete_game(g2);
 		draw_interface(g, id);
+		
 	}
 
 	getIdFromGame(g, id);
@@ -41,12 +42,12 @@ int main(int argc, char* argv[])
 	char* Game1 = "4103300222052";
 	char* Game2 = "8103022024034144301040250";
 	char* Game3 = "8123024012040042145250301";
-	//char* Game0 = "f103105104102101100125124123122121120145144143";
+	char* Game0 = "f103105104102101100125124123122121120145144143";
 
-	//loadTheGame(Game0);
+	// loadTheGame(Game0);
 	loadTheGame(Game1);
-	loadTheGame(Game2);
-	loadTheGame(Game3);
+	// loadTheGame(Game2);
+	// loadTheGame(Game3);
 	
 	return 0;
 }
