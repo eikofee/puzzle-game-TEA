@@ -16,5 +16,6 @@ void getHelp(int input, bool* done);
 void input_player(game g, char* id);
 void freeTableau2D(int** tab);
 char getHexa(int n);
+void ignoreOverflow(char* input, int taille);
 
 #endif

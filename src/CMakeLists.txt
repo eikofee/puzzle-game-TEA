@@ -1,3 +1,15 @@
+#tests
+enable_testing()
+add_test(piece test_piece1)
+add_test(game game_test)
+#test_piece1.c
+set_tests_properties(piece PROPERTIES PASS_REGULAR_EXPRESSION "Youpi !")
+
+#game-test.c
+set_tests_properties(game PROPERTIES PASS_REGULAR_EXPRESSION "Good.")
+
+
+#Définit le répertoire d'installation du programme (-> /bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 
