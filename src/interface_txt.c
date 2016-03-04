@@ -3,7 +3,7 @@
 #include "game.h"
 #include "utility.h"
 #include "interface_txt.h"
-
+#include <string.h>
 /*	DEBUG
 	Affiche la liste des pièces de façon lisible
 */
@@ -83,6 +83,34 @@ void getIdFromGame(game g, char* id)
 	id[indexChar] = '\0';
 }
 
+
+/*
+	Change la couleur d'une pièce
+*/
+void setColorPiece(char c, int id, bool fill)
+{
+	//char* s = (char*) malloc(sizeof(char) * 17);
+	//strcpy(s, "\x1b[XY;1mC\x1b[0m");
+	//strcpy(s, "\x1b[4YmC \x1b[0m");
+	//s[3] = (!id ?'1':getHexa(id % 6 + 2));
+	//s[5] = (fill?c:' ');
+	if (id)
+		printf("\x1b[%s%cm", (id % 12 >= 6 && id % 7 + 1 != 1?"10":"4"),getHexa(id % 7 + 1));
+	else
+		printf("\x1b[101m");
+	switch(id % 7 + 1 + (id >= 6 && id % 7 + 1 != 1?100:40))
+	{
+		case 107:
+		case 102:
+		case 103:
+		case 105:
+			printf("\x1b[30m");
+			break;
+		default:
+			printf("\x1b[97m");
+	}
+	printf("%c \x1b[0m", (fill?c:' '));
+}
 /*
 	Affiche la zone de jeu
 */
@@ -90,44 +118,54 @@ void draw_interface(game g, char* seed)
 {
 	int moves = game_nb_moves(g);
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
-	printf("############### Rush Hour\n");
-
+	bool* toWrite = (bool*) malloc(sizeof(bool) * g -> nb_pieces);
+	for (int i = 0; i < g -> nb_pieces; i++)
+	{
+		toWrite[i] = true;
+		printf("Piece [%d] : %s%c\n", i, (i % 12 >= 6 && i % 7 + 1 != 1?"10":"4"),getHexa(i % 7 + 1));
+	}
+	printf("\x1b[47;90m################\x1b[0m Rush Hour\n");
 	for (int i = 5; i > -1; i--)
 	{
-		printf("# ");
+		printf("\x1b[47;90m##\x1b[0m");
 		for (int j = 0; j < 6; j++)
 		{
 			if (t[j][i] == -1)
-				printf(".");
+				printf(". ");
 			else
 			{
-				printf("%c", getHexa(t[j][i]));
+
+				//printf("%c", getHexa(t[j][i]));
+				setColorPiece(getHexa(t[j][i]), t[j][i], (toWrite[t[j][i]]?true:false));
+				//printf("%s", s);
+				//free(s);
+				toWrite[t[j][i]] = false;
 			}
-			printf(" ");
 		}
 		
 		switch(i){
 			//let's check if we have to display more informations on the right:
 			case 0: 
-				printf("# Type 'help' for more informations\n");
+				printf("\x1b[47;90m##\x1b[0m Type 'help' for more informations\n");
 				break;
 			case 1: //ID/Seed du jeu
-				printf("# ID: %s\n", seed);
+				printf("\x1b[47;90m##\x1b[0m ID: %s\n", seed);
 				break;
 			case 3: //Sortie du parking
-				printf(">\n");
+				printf(">>\n");
 				break;
 			case 4:	//Move num display
-				printf("# Move %d\n", moves);
+				printf("\x1b[47;90m##\x1b[0m Move %d\n", moves);
 				break;
 			default:
-				printf("#\n");
+				printf("\x1b[47;90m##\x1b[0m\n");
 				break;
 		}
 	}
-	printf("###############\n");
+	printf("\x1b[47;90m################\x1b[0m\n");
 	printf("Enter the car's number you want to move :\n");
 	freeTableau2D(t);
+	free(toWrite);
 }
 
 /*

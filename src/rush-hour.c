@@ -4,7 +4,7 @@
 #include "utility.h"
 #include "interface_txt.h"
 
-//Fonction qui permet le chargement et l'affichage d'une partie Ã  partir d'une seed
+//Fonction qui permet le chargement et l'affichage d'une partie Ã? partir d'une seed
 void loadTheGame(char* id_src)
 {
 	printf("\nLoading Game ...\n");
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	char* Game1 = "4103300222052";
 	char* Game2 = "8103022024034144301040250";
 	char* Game3 = "8123024012040042145250301";
-	char* Game0 = "f103105104102101100125124123122121120145144143";
+	//char* Game0 = "f103105104102101100125124123122121120145144143";
 
 	// loadTheGame(Game0);
 	loadTheGame(Game1);
