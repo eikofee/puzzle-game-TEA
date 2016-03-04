@@ -328,7 +328,7 @@ bool checkFormat(char* s, char* format)
 }
 
 void saveGameFromId(char* id);
-char* loadGameFromNum(char* num);
+char* loadGameFromNum(FILE* fichier, char* num);
 /*
 	Récupère les commandes du joueur (imparfait)
 */
@@ -375,7 +375,14 @@ void input_player(game g, char* id)
 		printf("Level combien ?");
 		char* num = (char*)malloc(sizeof(char)*128);
 		fgets(num, 127, stdin);
-		num = loadGameFromNum(num);
+		if(str_equal(num, "save\n"))
+		{
+			num = loadGameFromNum("save.txt", num);
+		}
+		else
+		{
+			num = loadGameFromNum("games.txt", num);
+		}
 		sprintf(id,"%s",num);
 		return;
 
@@ -424,11 +431,11 @@ void saveGameFromId(char* id)
 	if(fichier == NULL)
 		error("saveGameFromId(), problème d'ouverture du fichier");
 
-	fprintf(fichier,"%s",id);
+	fprintf(fichier,"%s\n",id);
 	fclose(fichier);
 }
 
-char* loadGameFromNum(char* num)
+char* loadGameFromNum(FILE* fichier, char* num)
 {
 	int taille_num = 0;
 	while(num[taille_num] != '\n')
@@ -442,11 +449,11 @@ char* loadGameFromNum(char* num)
 	}
 
 	//int taille = 100;
-	FILE *fichier = NULL;
-	fichier = fopen("games.txt", "r");
+	FILE* fichier_tmp = NULL;
+	fichier_tmp = fopen(fichier, "r");
 
-	if(fichier == NULL)
-		error("loadGameFromId(), problème d'ouverture du fichier");
+	if(fichier_tmp == NULL)
+		error("loadGameFromId(), problème d'ouverture du fichier_tmp");
 
 	char* s = (char*)malloc(sizeof(char) * 128);
 	// char s[128];
@@ -454,11 +461,11 @@ char* loadGameFromNum(char* num)
 	printf("numId : %d\n", numId);
 	while(i != numId)
 	{
-		fgets(s, 128, fichier);
+		fgets(s, 128, fichier_tmp);
 		i++;
 	}
 	// printf("seed = %s\n", s);
-	fclose(fichier);
+	fclose(fichier_tmp);
 	// char s2[128];
 	char* s2 = (char*)malloc(sizeof(char) * 128);
 	i = 0;
