@@ -95,15 +95,15 @@ void setColorPiece(char c, int id, bool fill)
 	//s[3] = (!id ?'1':getHexa(id % 6 + 2));
 	//s[5] = (fill?c:' ');
 	if (id)
-		printf("\x1b[%s%cm", (id % 12 >= 6 && id % 6 + 1 != 1?"10":"4"),getHexa(id % 6 + 1));
+		printf("\x1b[%s%cm", (id % 12 >= 6 && id % 7 + 1 != 1?"10":"4"),getHexa(id % 7 + 1));
 	else
 		printf("\x1b[101m");
-	switch(id % 6 + 1 + (id >= 6 && id % 6 + 1 != 1?100:40))
+	switch(id % 7 + 1 + (id >= 6 && id % 7 + 1 != 1?100:40))
 	{
+		case 107:
 		case 102:
 		case 103:
 		case 105:
-		case 106:
 			printf("\x1b[30m");
 			break;
 		default:
@@ -122,7 +122,7 @@ void draw_interface(game g, char* seed)
 	for (int i = 0; i < g -> nb_pieces; i++)
 	{
 		toWrite[i] = true;
-		printf("Piece [%d] : %s%c\n", i, (i >= 6?";10":"4"),getHexa(i % 6 + 1));
+		printf("Piece [%d] : %s%c\n", i, (i % 12 >= 6 && i % 7 + 1 != 1?"10":"4"),getHexa(i % 7 + 1));
 	}
 	printf("\x1b[47;90m################\x1b[0m Rush Hour\n");
 	for (int i = 5; i > -1; i--)
