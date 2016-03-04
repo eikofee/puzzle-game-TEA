@@ -87,14 +87,23 @@ void getIdFromGame(game g, char* id)
 /*
 	Change la couleur d'une pièce
 */
-char* setColorPiece(char c, int id, bool fill)
+void setColorPiece(char c, int id, bool fill)
 {
-	char* s = (char*) malloc(sizeof(char) * 17);
+	//char* s = (char*) malloc(sizeof(char) * 17);
 	//strcpy(s, "\x1b[XY;1mC\x1b[0m");
-	strcpy(s, "\x1b[4YmC \x1b[0m");
-	s[3] = (!id ?'1':getHexa(id % 5 + 2));
-	s[5] = (fill?c:' ');
-	return s;
+	//strcpy(s, "\x1b[4YmC \x1b[0m");
+	//s[3] = (!id ?'1':getHexa(id % 6 + 2));
+	//s[5] = (fill?c:' ');
+	if (id)
+		printf("\x1b[%s%cm", (id >= 6?";10":"4"),getHexa(id % 6 + 1));
+	else
+		printf("\x1b[101m");
+	switch(id % 6 + 1)
+	{
+		default:
+			printf("\x1b[97m");
+	}
+	printf("%c \x1b[0m", (fill?c:' '));
 }
 /*
 	Affiche la zone de jeu
@@ -118,9 +127,9 @@ void draw_interface(game g, char* seed)
 			{
 
 				//printf("%c", getHexa(t[j][i]));
-				char* s = setColorPiece(getHexa(t[j][i]), t[j][i], (toWrite[t[j][i]]?true:false));
-				printf("%s", s);
-				free(s);
+				setColorPiece(getHexa(t[j][i]), t[j][i], (toWrite[t[j][i]]?true:false));
+				//printf("%s", s);
+				//free(s);
 				toWrite[t[j][i]] = false;
 			}
 		}
