@@ -95,11 +95,17 @@ void setColorPiece(char c, int id, bool fill)
 	//s[3] = (!id ?'1':getHexa(id % 6 + 2));
 	//s[5] = (fill?c:' ');
 	if (id)
-		printf("\x1b[%s%cm", (id >= 6?";10":"4"),getHexa(id % 6 + 1));
+		printf("\x1b[%s%cm", (id % 12 >= 6 && id % 6 + 1 != 1?"10":"4"),getHexa(id % 6 + 1));
 	else
 		printf("\x1b[101m");
-	switch(id % 6 + 1)
+	switch(id % 6 + 1 + (id >= 6 && id % 6 + 1 != 1?100:40))
 	{
+		case 102:
+		case 103:
+		case 105:
+		case 106:
+			printf("\x1b[30m");
+			break;
 		default:
 			printf("\x1b[97m");
 	}
@@ -114,11 +120,14 @@ void draw_interface(game g, char* seed)
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
 	bool* toWrite = (bool*) malloc(sizeof(bool) * g -> nb_pieces);
 	for (int i = 0; i < g -> nb_pieces; i++)
+	{
 		toWrite[i] = true;
-	printf("\x1b[47;30m################\x1b[0m Rush Hour\n");
+		printf("Piece [%d] : %s%c\n", i, (i >= 6?";10":"4"),getHexa(i % 6 + 1));
+	}
+	printf("\x1b[47;90m################\x1b[0m Rush Hour\n");
 	for (int i = 5; i > -1; i--)
 	{
-		printf("\x1b[47;30m##\x1b[0m");
+		printf("\x1b[47;90m##\x1b[0m");
 		for (int j = 0; j < 6; j++)
 		{
 			if (t[j][i] == -1)
@@ -137,23 +146,23 @@ void draw_interface(game g, char* seed)
 		switch(i){
 			//let's check if we have to display more informations on the right:
 			case 0: 
-				printf("\x1b[47;30m##\x1b[0m Type 'help' for more informations\n");
+				printf("\x1b[47;90m##\x1b[0m Type 'help' for more informations\n");
 				break;
 			case 1: //ID/Seed du jeu
-				printf("\x1b[47;30m##\x1b[0m ID: %s\n", seed);
+				printf("\x1b[47;90m##\x1b[0m ID: %s\n", seed);
 				break;
 			case 3: //Sortie du parking
 				printf(">>\n");
 				break;
 			case 4:	//Move num display
-				printf("\x1b[47;30m##\x1b[0m Move %d\n", moves);
+				printf("\x1b[47;90m##\x1b[0m Move %d\n", moves);
 				break;
 			default:
-				printf("\x1b[47;30m##\x1b[0m\n");
+				printf("\x1b[47;90m##\x1b[0m\n");
 				break;
 		}
 	}
-	printf("\x1b[47;30m################\x1b[0m\n");
+	printf("\x1b[47;90m################\x1b[0m\n");
 	printf("Enter the car's number you want to move :\n");
 	freeTableau2D(t);
 	free(toWrite);
