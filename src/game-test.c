@@ -30,7 +30,8 @@ int main(int argc, char* argv[])
 	display_pieces(g -> pieces, nb_pieces);
 	for(int i = 0; i < nb_pieces; i++)
 	{
-		piece p_tmp = game_piece(g, i);
+		piece p_tmp = (piece)malloc(sizeof(struct piece_s));
+		copy_piece(game_piece(g, i),p_tmp);
 		printf("Valeur de x attendue : %d || Valeur obtenue : %d\n", get_x(p[i]), get_x(p_tmp));
 		if(get_x(p[i]) != get_x(p_tmp))
 			result = false;
@@ -49,7 +50,6 @@ int main(int argc, char* argv[])
 		delete_piece(p_tmp);
 	}
 	printf(result ? "game_piece Done\n\n" : "Erreur: game_piece\n\n");
-
 	printf("> création d'un jeu vide...\n");
 	piece q[nb_pieces];
 
@@ -96,7 +96,15 @@ int main(int argc, char* argv[])
 	printf("Done, attendu = %d, reçu = %d.\n\n", nb_pieces, a);
 	if (nb_pieces != a)
 		result = false;
-
+	printf("play_move\n");
+	if (play_move(g,0,LEFT,-1))
+		result = false;
+	if (!play_move(g,1,UP,1))
+		result = false;
+	if (!play_move(g,2,DOWN,-1))
+		result = false;
+	if (!play_move(g,3,RIGHT,1))
+		result = false;
 	printf("> delete_game(g)...\n");
 	delete_game(g);
 	printf("Done.\n\n");
