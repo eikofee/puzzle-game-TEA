@@ -411,20 +411,21 @@ void input_player(game g, char* id)
 		correct = true;
 		//load
 		printf("Level combien ?");
-		char* num = (char*)malloc(sizeof(char)*128);
-		fgets(num, 127, stdin);
-		if(str_equal(num, "save\n"))
+		char* level = (char*)malloc(sizeof(char)*128);
+		fgets(level, 127, stdin);
+		char* new_id;
+		if(str_equal(level, "save\n"))
 		{
-			num = loadGameFromNum("save.txt", num);
+			new_id = loadGameFromNum("save.txt", level);
 		}
 		else
 		{
-			num = loadGameFromNum("games.txt", num);
+			new_id = loadGameFromNum("games.txt", level);
 		}
-		sprintf(id,"%s",num);
+		sprintf(id,"%s",new_id);
+		free(level);
+		free(new_id);
 		return;
-
-
 	}
 	
 	if (isNumber(input[0], g -> nb_pieces - 1))
@@ -504,7 +505,7 @@ char* loadGameFromNum(FILE* fichier, char* num)
 	}
 	// printf("seed = %s\n", s);
 	fclose(fichier_tmp);
-	// char s2[128];
+	//char s2[128] = "";
 	char* s2 = (char*)malloc(sizeof(char) * 128);
 	i = 0;
 	while(s[i] != '\n')
