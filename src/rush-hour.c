@@ -4,16 +4,18 @@
 #include "utility.h"
 #include "interface_txt.h"
 
-//Fonction qui permet le chargement et l'affichage d'une partie Ã? partir d'une seed
+//Fonction qui permet le chargement et l'affichage d'une partie a partir d'un id
 void loadTheGame(char* id_src)
 {
+	//On crée le game g à partir d'un id source
 	printf("\nLoading Game ...\n");
 	game g = getGameFromId(id_src);
 	printf("Done\n\n");
 
+	//On malloc un id qu'on utilisera pour etre modifié pendant la partie
 	char* id = (char*) malloc(sizeof(char) * 128);
 	if(id == NULL)
-		error("getIdFromGame(), problÃ¨me d'allocation mÃ©moire");
+		error("getIdFromGame(), probleme d'allocation memoire");
 
 	getIdFromGame(g, id);
 	draw_interface(g, id);
@@ -22,9 +24,6 @@ void loadTheGame(char* id_src)
 	{
 		printf("Enter the car's number you want to move :\n");
 		input_player(g, id);
-		game g2 = getGameFromId(id);
-		copy_game(g2, g);
-		delete_game(g2);
 		draw_interface(g, id);
 	}
 
@@ -41,9 +40,7 @@ int main(int argc, char* argv[])
 	char* Game1 = "4103300222052";
 	char* Game2 = "8103022024034144301040250";
 	char* Game3 = "8123024012040042145250301";
-	//char* Game0 = "f103105104102101100125124123122121120145144143";
-
-	//loadTheGame(Game0);
+	
 	loadTheGame(Game1);
 	loadTheGame(Game2);
 	loadTheGame(Game3);
