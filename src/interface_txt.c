@@ -3,7 +3,6 @@
 #include "game.h"
 #include "utility.h"
 #include "interface_txt.h"
-#include <string.h>
 
 //Ce fichier permet de gérer l'affichage en mode texte du jeu
 
