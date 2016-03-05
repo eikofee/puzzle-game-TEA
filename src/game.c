@@ -66,10 +66,7 @@ void copy_game(cgame src, game dst)
 
 	//D'abord les propriétés directes
 	dst -> nb_pieces = src -> nb_pieces;
-	printf("nb_pieces Done : attendu : %d, recu : %d.\n", src->nb_pieces, dst->nb_pieces);
-
 	dst -> nb_moves = src -> nb_moves;
-	printf("nb_moves Done : attendu : %d, recu : %d.\n", src->nb_moves, dst->nb_moves);
 
 	//...Ensuite le tableau des pièces
 	//On réalloue du tableau des pieces
@@ -89,7 +86,7 @@ void copy_game(cgame src, game dst)
 	}
 }
 
-int game_nb_pieces(cgame g)	//Not sure about this one tbh
+int game_nb_pieces(cgame g)
 {
 	if (!g)
 		error("Allocation cgame game_nb_pieces");
@@ -159,6 +156,7 @@ bool play_move(game g, int piece_num, dir d, int distance)
 	return true;
 }
 
+//retourne le nombre de move fait
 int game_nb_moves(cgame g)
 {
 	if(g != NULL)

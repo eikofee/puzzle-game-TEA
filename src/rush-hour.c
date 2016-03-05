@@ -20,6 +20,7 @@ void loadTheGame(char* id_src)
 
 	while (!game_over_hr(g))
 	{
+		printf("Enter the car's number you want to move :\n");
 		input_player(g, id);
 		game g2 = getGameFromId(id);
 		copy_game(g2, g);
@@ -28,7 +29,6 @@ void loadTheGame(char* id_src)
 	}
 
 	getIdFromGame(g, id);
-	draw_interface(g, id);
 
 	printf("************\n*--- GG ---*\n************\n");
 

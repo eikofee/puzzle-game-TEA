@@ -5,13 +5,13 @@
 #include "interface_txt.h"
 #include <string.h>
 /*	DEBUG
-	Affiche la liste des pièces de façon lisible
+	Affiche la liste des pieces de facon lisible
 */
 void display_pieces(piece *p, int taille)
 {
 	for (int i = 0; i < taille; i++)
 	{
-		printf("Pièce [%d] : x = %d, y = %d, ",i ,get_x(p[i]), get_y(p[i]));
+		printf("Piece [%d] : x = %d, y = %d, ",i ,get_x(p[i]), get_y(p[i]));
 		if (p[i] -> isSmall)
 			printf("isSmall, ");
 		if (p[i] -> isHorizontal)
@@ -34,7 +34,7 @@ void toLower(char* s)
 	}
 }
 /*
-	Permet de générer un niveau �? partir d'un id (non seed)
+	Permet de g�n�rer un niveau � partir d'un id (non seed)
 */
 game getGameFromId(char* id)
 {
@@ -43,7 +43,7 @@ game getGameFromId(char* id)
 	//a = car type: +1 st horizontale, +2 si grand
 	//b = case axe x
 	//c = case axe y
-	printf("id du niveau : %s\n", id);
+	// printf("id du niveau : %s\n", id);
 	int nb_pieces = getNumber(id[0]) ;
 	piece p[nb_pieces];
 	int i = 1;
@@ -68,7 +68,7 @@ game getGameFromId(char* id)
 }
 
 /*
-	Permet de convertir un game en id (pas une sauvegarde complète)
+	Permet de convertir un game en id (pas une sauvegarde compl�te)
 */
 void getIdFromGame(game g, char* id)
 {
@@ -85,19 +85,15 @@ void getIdFromGame(game g, char* id)
 }
 
 /*
-	Change la couleur d'une pièce
+	Change la couleur d'une pi�ce
 */
 void setColorPiece(char c, int id, bool fill)
 {
-	//char* s = (char*) malloc(sizeof(char) * 17);
-	//strcpy(s, "\x1b[XY;1mC\x1b[0m");
-	//strcpy(s, "\x1b[4YmC \x1b[0m");
-	//s[3] = (!id ?'1':getHexa(id % 6 + 2));
-	//s[5] = (fill?c:' ');
 	if (id)
 		printf("\x1b[%s%cm", (id % 12 >= 6 && id % 7 + 1 != 1?"10":"4"),getHexa(id % 7 + 1));
 	else
 		printf("\x1b[101m");
+
 	switch(id % 7 + 1 + (id >= 6 && id % 7 + 1 != 1?100:40))
 	{
 		case 107:
@@ -120,10 +116,8 @@ void draw_interface(game g, char* id)
 	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
 	bool* toWrite = (bool*) malloc(sizeof(bool) * g -> nb_pieces);
 	for (int i = 0; i < g -> nb_pieces; i++)
-	{
 		toWrite[i] = true;
-		printf("Piece [%d] : %s%c\n", i, (i % 12 >= 6 && i % 7 + 1 != 1?"10":"4"),getHexa(i % 7 + 1));
-	}
+
 	printf("\x1b[47;90m################\x1b[0m Rush Hour\n");
 	for (int i = 5; i > -1; i--)
 	{
@@ -134,11 +128,7 @@ void draw_interface(game g, char* id)
 				printf(". ");
 			else
 			{
-
-				//printf("%c", getHexa(t[j][i]));
 				setColorPiece(getHexa(t[j][i]), t[j][i], (toWrite[t[j][i]]?true:false));
-				//printf("%s", s);
-				//free(s);
 				toWrite[t[j][i]] = false;
 			}
 		}
@@ -149,7 +139,7 @@ void draw_interface(game g, char* id)
 				printf("\x1b[47;90m##\x1b[0m Type 'help' for more informations\n");
 				break;
 			case 1: //ID/Seed du jeu
-				printf("\x1b[47;90m##\x1b[0m ID: %s\n", seed);
+				printf("\x1b[47;90m##\x1b[0m ID: %s\n", id);
 				break;
 			case 3: //Sortie du parking
 				printf(">>\n");
@@ -163,13 +153,12 @@ void draw_interface(game g, char* id)
 		}
 	}
 	printf("\x1b[47;90m################\x1b[0m\n");
-	printf("Enter the car's number you want to move :\n");
 	freeTableau2D(t);
 	free(toWrite);
 }
 
 /*
-	Comparaison de deux chaines de caractères (true/false)
+	Comparaison de deux chaines de caract�res (true/false)
 */
 bool str_equal(char* a, char* b)
 {
@@ -184,7 +173,7 @@ bool str_equal(char* a, char* b)
 }
 
 /*
-	Vérifie si le char passé en paramètre est un chiffre et ne dépasse pas max_number
+	Verifie si le char pass� en param�tre est un chiffre et ne d�passe pas max_number
 */
 bool isNumber(char s, int max_number)
 {
@@ -192,7 +181,7 @@ bool isNumber(char s, int max_number)
 }
 
 /*
-	Vérifie si s est un + ou un -
+	Verifie si s est un + ou un -
 */
 bool isOperatorSimple(char s)
 {
@@ -200,7 +189,7 @@ bool isOperatorSimple(char s)
 }
 
 /*
-	Conversion d'un caractère en int (hexa minuscule permis)
+	Conversion d'un caractere en int (hexa minuscule permis)
 */
 int getNumber(char s)
 {
@@ -222,7 +211,7 @@ char getHexa(int n)
 }
 
 /*
-	Récupère la direction que doit prendre une pièce en fonction du signe entré
+	Recupere la direction que doit prendre une piece en fonction du signe entre
 */
 dir getDirection(piece p, char sign)
 {
@@ -243,7 +232,7 @@ dir getDirection(piece p, char sign)
 }
 
 /*
-	Bloque l'affichage tant que la touche Entrée n'est pas utilisée
+	Bloque l'affichage tant que la touche Entree n'est pas utilisee
 */
 void confirm()
 {
@@ -277,8 +266,8 @@ void getHelp(int input, bool* done)
 			printf("\thelp: Display this menu\n");
 			printf("\t[WIP]hint: Get closer to the end by cheating\n");
 			printf("\t[WIP]skip: skip the current game for another\n");
-			printf("\t[WIP]save: Save the current run for later\n");
-			printf("\t[WIP]load: Load a run\n");
+			printf("\tsave: Save the current run for later\n");
+			printf("\tload: Load a run\n");
 			printf("\texit: Close the game\n");
 			confirm();
 			break;
@@ -304,14 +293,14 @@ void ignoreOverflow(char* input, int taille)
 }
 
 /*
-	Permet d'obtenir le mouvement de la pièce entrée dans un premier temps
-	(Améliore la lisibilité)
+	Permet d'obtenir le mouvement de la piece entree dans un premier temps
+	(Ameliore la lisibilite)
 */
 void getSecondInput(char* input)
 {
 												//Current input is "[N][\n][ ][ ][ ][ ]"
 	char input2[5];
-	printf("Enter the distance for car n°%c :\n", input[0]);
+	printf("Enter the distance for car n�%c :\n", input[0]);
 	fgets(input2, 4, stdin);
 	input[1] = ' ';								//Current input is "[N][_][ ][ ][ ][ ]"					
 	if (isOperatorSimple(input2[0]))
@@ -325,13 +314,13 @@ void getSecondInput(char* input)
 }
 
 /*
-	Vérifie si s suit un format correct (un peu �? la façon de printf)
+	Verifie si s suit un format correct (un peu a la facon de printf)
 */
 bool checkFormat(char* s, char* format)
 {
 	/*Syntaxe:
 		%n : le char est un nombre
-		%o : le char est un opérateur simple
+		%o : le char est un operateur simple
 	*/
 	int i = 0;
 	int j = 0;
@@ -367,8 +356,10 @@ bool checkFormat(char* s, char* format)
 
 void saveGameFromId(char* id);
 char* loadGameFromNum(FILE* fichier, char* num);
+
 /*
-	Récupère les commandes du joueur (imparfait)
+	Recupere les commandes du joueur (imparfait)
+	Permet de gerer les inputs pour deplacer les vehicules, ainsi que de gerer les menus
 */
 void input_player(game g, char* id)
 {
@@ -395,9 +386,15 @@ void input_player(game g, char* id)
 		printf("hint [WIP]\n");
 		//Do a move 
 	}
+	if(str_equal(input, "skip\n"))
+	{
+		correct = true;
+		printf("skip [WIP]\n");
+	}
 	if (str_equal(input, "exit\n"))
 	{
 		correct = true;
+		//exit the game
 		free(id);
 		delete_game(g);
 		exit(EXIT_SUCCESS);
@@ -411,19 +408,21 @@ void input_player(game g, char* id)
 	if (str_equal(input, "load\n"))
 	{
 		correct = true;
-		//load
-		printf("Level combien ?");
+		//On charge la partie que l'on veut, save 1 2 ou 3
+		//On alloue le char* level qui va prendre l'input du fgets
+		//On met dans new_id le nouvel id du niveau charg�
+		//On recopie le new_id dans id et on lib�re level et new_id
+		printf("level number :\n(1, 2 or 3 | Type save to load your last save)\n");
 		char* level = (char*)malloc(sizeof(char)*128);
 		fgets(level, 127, stdin);
 		char* new_id;
+
 		if(str_equal(level, "save\n"))
-		{
 			new_id = loadGameFromNum("save.txt", level);
-		}
+
 		else
-		{
 			new_id = loadGameFromNum("games.txt", level);
-		}
+
 		sprintf(id,"%s",new_id);
 		free(level);
 		free(new_id);
@@ -464,24 +463,30 @@ void input_player(game g, char* id)
 	getIdFromGame(g, id);
 }
 
+//Permet de sauvegarder dans le fichier save.txt la partie.
+//On ecrase l'ancienne partie � chaque fois qu'on fait appelle a cette fonction.
 void saveGameFromId(char* id)
 {
 	FILE *fichier = NULL;
 	fichier = fopen("save.txt", "w");
 
 	if(fichier == NULL)
-		error("saveGameFromId(), problème d'ouverture du fichier");
+		error("saveGameFromId(), probleme d'ouverture du fichier");
 
 	fprintf(fichier,"%s\n",id);
 	fclose(fichier);
 }
 
+//Permet de charger une partie a partir d'un fichier et d'un numero de level
 char* loadGameFromNum(FILE* fichier, char* num)
 {
+	//num repr�sente le numero du level
+	//on commence par obtenir la taille de num
 	int taille_num = 0;
 	while(num[taille_num] != '\n')
 		taille_num++;
 
+	//On convertit le char* num en int (numId)
 	int numId = 0;
 	for(int j = taille_num - 1; j >= 0; j--)
 	{
@@ -489,37 +494,41 @@ char* loadGameFromNum(FILE* fichier, char* num)
 		numId = numId + getNumber(num[j]);
 	}
 
-	//int taille = 100;
+	//On ouvre le fichier (save.txt ou games.txt)
 	FILE* fichier_tmp = NULL;
 	fichier_tmp = fopen(fichier, "r");
 
 	if(fichier_tmp == NULL)
-		error("loadGameFromId(), problème d'ouverture du fichier_tmp");
+		error("loadGameFromId(), probleme d'ouverture du fichier");
 
+	//On recupere l'id du niveau
 	char* s = (char*)malloc(sizeof(char) * 128);
-	// char s[128];
+
 	int i = 0;
-	printf("numId : %d\n", numId);
 	while(i != numId)
 	{
 		fgets(s, 128, fichier_tmp);
 		i++;
 	}
-	// printf("seed = %s\n", s);
 	fclose(fichier_tmp);
-	//char s2[128] = "";
+	//On ferme le fichier apres avoir recurerer l'information ( l'id du niveau )
+	//Et on recopie la chaine de caratere `s` dans `s2` et on retourne s2
+
 	char* s2 = (char*)malloc(sizeof(char) * 128);
+
 	i = 0;
 	while(s[i] != '\n')
 	{
 		s2[i] = s[i];
 		i++;
 	}
-
 	s2[i] ='\0';
+
 	free(s);
 	return s2;
 }
+
+//Libere l'allocation d'un tableau 2D
 void freeTableau2D(int** tab)
 {
 	free(tab[0]);
