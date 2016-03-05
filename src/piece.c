@@ -102,9 +102,6 @@ bool estPositionValide(piece p){
 //Et on recopie dans p
 void switchsMovePiece(piece p, dir d, int distance){
 
-	int taille_piece;
-	taille_piece = p->isSmall ? 1 : 2;
-
 	piece p_copy = new_piece_rh(0,0,true,true);
 	copy_piece(p, p_copy);
 	

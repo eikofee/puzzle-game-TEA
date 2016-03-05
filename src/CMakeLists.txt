@@ -21,7 +21,7 @@ file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8123024012040042145250301\n")
 
 
 # On définit les éléments nécessaires �? libgame.a puis on la crée
-add_library(game game.c piece.c interface_txt)
+add_library(game game.c piece.c interface_txt function_interface)
 # On crée l'exécutable rush-hour �? partir du fichier rush-hour.c 
 add_executable(rush-hour rush-hour)
 
