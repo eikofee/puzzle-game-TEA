@@ -4,7 +4,10 @@
 #include "utility.h"
 #include "function_interface.h"
 
-/*	DEBUG
+//Ce fichier sert a alleger le fichier interface_txt en y mettant les fonctions annexes à celle
+//présentes dans interface_txt
+
+/*	fonction de DEBUG
 	Affiche la liste des pieces de facon lisible
 */
 void display_pieces(piece *p, int taille)

@@ -5,7 +5,7 @@
 #include "interface_txt.h"
 #include <string.h>
 
-
+//Ce fichier permet de gérer l'affichage en mode texte du jeu
 
 /*
 	Permet de générer un niveau à partir d'un id (non seed)
@@ -17,7 +17,6 @@ game getGameFromId(char* id)
 	//a = car type: +1 st horizontale, +2 si grand
 	//b = case axe x
 	//c = case axe y
-	// printf("id du niveau : %s\n", id);
 	int nb_pieces = getNumber(id[0]) ;
 	piece p[nb_pieces];
 	int i = 1;
