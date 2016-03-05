@@ -355,6 +355,7 @@ bool checkFormat(char* s, char* format)
 }
 
 void saveGameFromId(game g, char* id);
+void loadGameFromSave(FILE* fichier, game g);
 char* loadGameFromNum(FILE* fichier, char* num);
 
 /*
@@ -410,11 +411,10 @@ void input_player(game g, char* id)
 		correct = true;
 		//On charge la partie que l'on veut, save 1 2 ou 3
 		//On alloue le char* level qui va prendre l'input du fgets
-		//On met dans new_id le nouvel id du niveau chargé
-		//On recopie le new_id dans id et on libère level et new_id
+		
 		printf("level number :\n(1, 2 or 3 | Type save to load your last save)\n");
 		char* level = (char*)malloc(sizeof(char)*128);
-		fgets(level, 127, stdin);
+		fgets(level, 128, stdin);
 
 		if(str_equal(level, "save\n"))
 		{
@@ -422,18 +422,19 @@ void input_player(game g, char* id)
 			free(level);
 			return;
 		}
-		else
-		{
-			char* new_id;
-			new_id = loadGameFromNum("games.txt", level);
-			sprintf(id,"%s",new_id);
-			free(level);
-			free(new_id);
-			game g2 = getGameFromId(id);
-			copy_game(g2, g);
-			delete_game(g2);
-			return;
-		}
+		//On met dans new_id le nouvel id du niveau chargé
+		//On recopie le new_id dans id et on libère level et new_id
+		
+		char* new_id;
+		new_id = loadGameFromNum("games.txt", level);
+		sprintf(id,"%s",new_id);
+		free(level);
+		free(new_id);
+		game g2 = getGameFromId(id);
+		copy_game(g2, g);
+		delete_game(g2);
+		return;
+		
 	}
 	
 	if (isNumber(input[0], g -> nb_pieces - 1))
@@ -486,15 +487,19 @@ void saveGameFromId(game g, char* id)
 	fclose(fichier);
 }
 
+//Permet de charger une partir a partir de la save.
+//Cette fonction est exclusif a la save.
 void loadGameFromSave(FILE* fichier, game g)
 {
 	FILE* fichier_tmp = NULL;
 	fichier_tmp = fopen(fichier, "r");
+	
 	if(fichier_tmp == NULL)
 		error("loadGameFromSave(), probleme d'ouverture du fichier");
 
-	char* s = (char*)malloc(sizeof(char) * 128);
+	char s[128] = "";
 	fgets(s, 128, fichier_tmp);
+
 	game g_tmp = getGameFromId(s);
 	copy_game(g_tmp, g);
 
@@ -502,7 +507,6 @@ void loadGameFromSave(FILE* fichier, game g)
 	g->nb_moves = atoi(s);
 
 	fclose(fichier_tmp);
-	free(s);
 	delete_game(g_tmp);
 
 }
