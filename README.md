@@ -20,4 +20,4 @@ HALNAUT Adrien (Echoffee) - ORDONEZ Romain (Apodeus) - MARTY Yoan (tlanvaldear)
 
 - Pour lancer le jeu Rush Hour, Entrer la commande : `./rush-hour`
 
-- Pour lancer la batterie de test, Entrer la commande : `ctest`
+- Pour lancer la batterie de test, se placer de nouveau dans le répertoire parent rush-hour, Entrer la commande : `ctest`
