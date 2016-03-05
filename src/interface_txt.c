@@ -307,10 +307,12 @@ void getSecondInput(char* input)
 	{
 		input[2] = input2[0];					//Current input is "[N][_][+-][ ][ ][ ]"
 		input[3] = input2[1];					//Current input is "[N][_][+-][n][ ][ ]"
+		input[4] = '\n';
 	}else{
-		input[2] = input2[0];					//Current input is "[N][_][n][ ][ ][ ]"
+		input[2] = input2[0];
+		input[3] = '\n';					//Current input is "[N][_][n][ ][ ][ ]"
 	}
-	ignoreOverflow(input2, 3);
+	ignoreOverflow(input2, 4);
 }
 
 /*
