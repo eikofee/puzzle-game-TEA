@@ -141,7 +141,7 @@ dir getDirection(piece p, char sign)
 void confirm()
 {
 	printf("\n\tPress 'Enter' to go back to the help menu");
-	int c;
+	int c = NULL;
 	while (c != '\r' && c != '\n')
 		c = getchar();	
 }
