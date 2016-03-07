@@ -10,24 +10,19 @@ piece new_piece_rh (int x, int y, bool small, bool horizontal){
 
 	int width;
 	int height;
-	bool move_x;
-	bool move_y;
+
 	if(horizontal)
 	{
 		height = 1;
 		width = small ? 2 : 3;
-		move_x = true;
-		move_y = false;
 	}
 	else
 	{
 		height = small ? 2 : 3;
 		width = 1;
-		move_x = false;
-		move_y = true;
 	}
 
-	piece newPiece = new_piece(x, y, width, height, move_x, move_y);
+	piece newPiece = new_piece(x, y, width, height, horizontal, !horizontal);
 	
 	return newPiece;
 }
@@ -89,8 +84,9 @@ void move_piece (piece p, dir d, int distance){
 	// }
 
 	//A ce stade, tout est ok pour réaliser le mouvement.
-
-	switchsMovePiece(p, d, distance);
+	if( ((d == UP || d == DOWN) && can_move_y(p)) || ((d == LEFT || d == RIGHT) && can_move_x(p)) )
+		switchsMovePiece(p, d, distance);
+	
 
 }
 
@@ -136,7 +132,7 @@ void move_piece (piece p, dir d, int distance){
 //Et on recopie dans p
 void switchsMovePiece(piece p, dir d, int distance){
 
-	piece p_copy = new_piece_rh(0,0,true,true);
+	piece p_copy = new_piece(0, 0, 0, 0, true, true);
 	copy_piece(p, p_copy);
 	
 	switch (d){
@@ -153,7 +149,7 @@ void switchsMovePiece(piece p, dir d, int distance){
 			break;
 
 		case LEFT:
-			(p_copy -> position[0]) =get_x(p_copy) - distance;
+			(p_copy -> position[0]) -= distance;
 			break;
 
 		default:
@@ -183,7 +179,7 @@ bool intersect(cpiece p1, cpiece p2){
 	{
 		for(int y = 0; y < taille_p2; y++)
 		{
-			if((get_x(tab_p1[x]) == get_x(tab_p2[y])) && (get_y(tab_p1[x]) == get_y(tab_p2[y])))
+			if((tab_p1[x][0] ==tab_p2[y][0]) && (tab_p1[x][1] == tab_p2[y][1]))
 			{
 				freeTable(tab_p1);
 				freeTable(tab_p2);
@@ -223,26 +219,28 @@ int** pieceEnTableau(piece p, int taille){
 	// 		tab[j][1] = (p->position[1]) + j;
 	// 	}
 	// }
-	for(int x = 0; x < get_width(p); x++)
-	{
-		for(int y = 0; y < get_height(p); y++)
-		{
-			tab[x][0] = get_x(p) + x;
-			tab[x][0] = get_y(p) + y + x;
-		}
-	}
+	// for(int x = 0; x < get_width(p); x++)
+	// {
+	// 	for(int y = 0; y < get_height(p); y++)
+	// 	{
+	// 		tab[x][0] = get_x(p) + x;
+	// 		tab[x][0] = get_y(p) + y + x;
+	// 	}
+	// }
 
-	for(int i = 0; i < taille; i++)
+	// for(int i = 0; i < taille; i++)
+	// {
+	int i = 0;
+	for(int x = get_x(p); x < get_x(p) + get_width(p); x++)
 	{
-		for(int x = get_x(p); x < get_x(p) + get_width(p); x++)
+		for(int y = get_y(p); y < get_y(p) + get_height(p); y++)
 		{
-			for(int y = get_y(p); y < get_y(p) + get_height(p); y++)
-			{
-				tab[i][0] = x;
-				tab[i][1] = y;
-			}
+			tab[i][0] = x;
+			tab[i][1] = y;
+			i++;
 		}
 	}
+	// }
 
 	return tab;
 }
