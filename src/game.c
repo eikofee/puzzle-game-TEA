@@ -2,14 +2,21 @@
 #include <stdlib.h>
 #include "game.h"
 #include "utility.h"
-
+#define TAILLE_PLATEAU_RH 6
 
 game new_game_hr( int nb_pieces, piece *pieces)
 {
-	game new_game = (game) malloc(sizeof(struct game_s));
+	game new_game = new_game(TAILLE_PLATEAU_RH, TAILLE_PLATEAU_RH, nb_pieces, pieces);
+	if(new_game == NULL)
+		error("new_game_hr(), porbleme d allocation memoire");
+	return new_game;
+}
 
-	if(!new_game)
-		error("Allocation new_game");
+game new_game (int width, int height, int nb_pieces, piece *pieces){
+	game new_game = (game)malloc(sizeof(struct game_s));
+
+	if(new_game == NULL)
+		error("new_game(), probleme d allocation memoire");
 
 	new_game -> pieces = (piece*) malloc(sizeof(struct piece_s) * nb_pieces);
 	
@@ -34,8 +41,9 @@ game new_game_hr( int nb_pieces, piece *pieces)
 		}
 	}
 
-	//Initialisation des valeurs de jeu
-	new_game -> nb_moves = 0;
+	new_game -> width = width;
+	new_game -> height = height;
+
 	return new_game;
 }
 
@@ -165,6 +173,16 @@ int game_nb_moves(cgame g)
     return -1;
 }
 
+int game_square_piece (game g, int x, int y){
+	int taille = (g -> width) * (g -> height);
+	int** tab = TableauDePieces(g->pieces, taille);
+	for(int i = 0; i < taille; i++)
+	{
+		if(tab[i][0] == x && tab[i][0] == y)
+			return i;
+	}
+	return -1;
+}
 //error est une fonction qui permet d'envoyer un message sur stderr et de faire un exit(EXIT_FAILURE). 
 //Elle permet d'éviter de recopier a chaque fois 2 à 3 lignes.
 void error(char* s)

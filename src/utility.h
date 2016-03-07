@@ -12,6 +12,8 @@ struct piece_s{
 };
 
 struct game_s{
+	int width;
+	int height;
 	piece *pieces;	//malloc nécessaire
 	int	nb_moves;
 	int nb_pieces;
