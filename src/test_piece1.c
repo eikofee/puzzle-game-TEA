@@ -83,6 +83,8 @@ bool test_intersect() {
   piece pb_piece2 = new_piece_rh(3, 1, false, false);
   result = result && test_equality_bool(true, intersect(pieces[0], pb_piece1),"intersect pb1");
   result = result && test_equality_bool(true, intersect(pb_piece2, pb_piece1),"intersect pb2");
+  delete_piece(pb_piece1);
+  delete_piece(pb_piece2);
   tear_down();
   return result;
 }
@@ -153,10 +155,8 @@ int main (int argc, char *argv[])
   result = result && test_equality_bool(true, test_move(), "move");
   result = result && test_equality_bool(true, test_copy(), "copy");
 
-  if (result) {
-    printf("Youpi !\n");
+  if (result)
     return EXIT_SUCCESS;
-  }
   else
     return EXIT_FAILURE;
 }
