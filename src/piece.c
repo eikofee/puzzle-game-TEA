@@ -20,6 +20,24 @@ piece new_piece_rh (int x, int y, bool small, bool horizontal){
 	return newPiece;
 }
 
+
+piece new_piece (int x, int y, int width, int height, bool move_x, bool move_y){
+	piece newPiece = (piece)malloc(sizeof(struct piece_s));
+	
+	if(newPiece == NULL)
+		error("new_piece(), Probleme d'allocation mémoire");
+
+	newPiece -> position[0] = x;
+	newPiece -> position[1] = y;
+	newPiece -> width = width;
+	newPiece -> height = height;
+	newPiece -> move_x = move_x;
+	newPiece -> move_y = move_y;
+
+	return newPiece;
+}
+
+
 void delete_piece (piece p){
 	if(p != NULL)
 		free(p);
@@ -271,3 +289,14 @@ bool is_horizontal(cpiece p){
 	error("is_horizontal(), p n'est pas alloué");
 }
 
+bool can_move_x(cpiece p){
+	if(p != NULL)
+		return p -> move_x;
+	error("can_move_x(), la piece p n'est pas alloue");
+}
+
+bool can_move_y(cpiece p){
+	if(p != NULL)
+		return p -> move_y;
+	error("can_move_y(), la piece p n'est pas alloue");
+}
