@@ -7,15 +7,27 @@
 int TAILLE_PLATEAU = 6;
 
 piece new_piece_rh (int x, int y, bool small, bool horizontal){
-	piece newPiece = (piece)malloc(sizeof(struct piece_s));
 
-	if(newPiece == NULL)
-		error("Problème d'allocation sur newPiece");
+	int width;
+	int height;
+	bool move_x;
+	bool move_y;
+	if(horizontal)
+	{
+		height = 1;
+		width = small ? 2 : 3;
+		move_x = true;
+		move_y = false;
+	}
+	else
+	{
+		height = small ? 2 : 3;
+		width = 1;
+		move_x = false;
+		move_y = true;
+	}
 
-	newPiece -> isHorizontal = horizontal;
-	newPiece -> isSmall = small;
-	newPiece -> position[0] = x;
-	newPiece -> position[1] = y;
+	piece newPiece = new_piece(x, y, width, height, move_x, move_y);
 	
 	return newPiece;
 }
@@ -52,10 +64,14 @@ void copy_piece (cpiece src, piece dst){
 	if(src == NULL || dst == NULL)
 		error("copy_piece, src ou dst n'est pas alloué");
 
-	dst -> isHorizontal = is_horizontal(src);
-	dst -> isSmall = src -> isSmall;
+	// dst -> isHorizontal = is_horizontal(src);
+	// dst -> isSmall = src -> isSmall;
 	dst -> position[0] = get_x(src);
 	dst -> position[1] = get_y(src);
+	dst -> width = get_width(src);
+	dst -> height = get_height(src);
+	dst -> move_x = can_move_x(src);
+	dst -> move_y = can_move_y(src);
 }
 
 //Cette fonction permet de bouger une piece sur une distance donnée
@@ -67,10 +83,10 @@ void move_piece (piece p, dir d, int distance){
 		error("move_piece, p n'est pas alloué");
 
 	//Simple vérification pour savoir si la direction est cohérente avec l'orientation de la pièce.
-	if( (is_horizontal(p) && ((d == UP) || (d == DOWN))) || ( (!(is_horizontal(p))) && ((d == RIGHT) || (d == LEFT))))
-	{
-		return;
-	}
+	// if( (is_horizontal(p) && ((d == UP) || (d == DOWN))) || ( (!(is_horizontal(p))) && ((d == RIGHT) || (d == LEFT))))
+	// {
+	// 	return;
+	// }
 
 	//A ce stade, tout est ok pour réaliser le mouvement.
 
@@ -79,40 +95,40 @@ void move_piece (piece p, dir d, int distance){
 }
 
 //Vérifie si la position de la piece est bien dans le plateau
-bool estPositionValide(piece p){
-	if((get_x(p) < 0) || (get_y(p) < 0))
-		return false;
+// bool estPositionValide(piece p){
+// 	if((get_x(p) < 0) || (get_y(p) < 0))
+// 		return false;
 
-	//Pour le if, la piece est horizontal
-	if(is_horizontal(p))
-	{
-		if(p -> isSmall) // Ici la piece fait 2 cases
-		{
-			if(get_x(p) > (TAILLE_PLATEAU - 2) || get_y(p) > (TAILLE_PLATEAU - 1))
-				return false;
-		}
-		else // ici la piece fait 3 cases
-		{
-			if(get_x(p) > (TAILLE_PLATEAU - 3) || get_y(p) > (TAILLE_PLATEAU - 1))
-				return false;
-		}
-	}
-	//Pour le else la piece est a la verticale
-	else 
-	{
-		if(p -> isSmall) //ici la piece fait 2 cases
-		{
-			if(get_x(p) > (TAILLE_PLATEAU - 1) || get_y(p) > (TAILLE_PLATEAU - 2))
-				return false;
-		}
-		else //ici la piece fait 3 cases
-		{ 
-			if(get_x(p) > (TAILLE_PLATEAU - 1) || get_y(p) > (TAILLE_PLATEAU - 3))
-				return false;
-		}
-	}
-	return true;
-}
+// 	//Pour le if, la piece est horizontal
+// 	if(is_horizontal(p))
+// 	{
+// 		if(p -> isSmall) // Ici la piece fait 2 cases
+// 		{
+// 			if(get_x(p) > (TAILLE_PLATEAU - 2) || get_y(p) > (TAILLE_PLATEAU - 1))
+// 				return false;
+// 		}
+// 		else // ici la piece fait 3 cases
+// 		{
+// 			if(get_x(p) > (TAILLE_PLATEAU - 3) || get_y(p) > (TAILLE_PLATEAU - 1))
+// 				return false;
+// 		}
+// 	}
+// 	//Pour le else la piece est a la verticale
+// 	else 
+// 	{
+// 		if(p -> isSmall) //ici la piece fait 2 cases
+// 		{
+// 			if(get_x(p) > (TAILLE_PLATEAU - 1) || get_y(p) > (TAILLE_PLATEAU - 2))
+// 				return false;
+// 		}
+// 		else //ici la piece fait 3 cases
+// 		{ 
+// 			if(get_x(p) > (TAILLE_PLATEAU - 1) || get_y(p) > (TAILLE_PLATEAU - 3))
+// 				return false;
+// 		}
+// 	}
+// 	return true;
+// }
 
 
 //Fonction qui effectue le mouvement en passant par une copie (p_copy)
@@ -157,8 +173,8 @@ bool intersect(cpiece p1, cpiece p2){
 	int taille_p1;
 	int taille_p2;
 
-	taille_p1 = p1->isSmall ? 2 : 3;
-	taille_p2 = p2->isSmall ? 2 : 3;
+	taille_p1 = get_height(p1) * get_width(p1);
+	taille_p2 = get_height(p2) * get_width(p2);
 
 	int** tab_p1 = pieceEnTableau(p1, taille_p1);
 	int** tab_p2 = pieceEnTableau(p2, taille_p2);
@@ -167,7 +183,7 @@ bool intersect(cpiece p1, cpiece p2){
 	{
 		for(int y = 0; y < taille_p2; y++)
 		{
-			if((tab_p1[x][0] == tab_p2[y][0]) && (tab_p1[x][1] == tab_p2[y][1]))
+			if((get_x(tab_p1[x]) == get_x(tab_p2[y])) && (get_y(tab_p1[x]) == get_y(tab_p2[y])))
 			{
 				freeTable(tab_p1);
 				freeTable(tab_p2);
@@ -184,28 +200,50 @@ bool intersect(cpiece p1, cpiece p2){
 //Cela nous permet de mieux gérer les conflits entre 2 pieces dans intersect.
 //Prend en paramètre une piece et sa taille.
 int** pieceEnTableau(piece p, int taille){
+	// int taille = get_height(p) * get_width(p);
 	int **tab = (int **)malloc(taille * sizeof(int*));
 	int *tab2 =(int *)malloc(taille * 2 * sizeof(int));
 
 	for(int i = 0; i < taille; i++)
 		tab[i] = &tab2[i*2];
 
-	if(p -> isHorizontal)
-	{ 
-		for(int j = 0; j < taille; j++)
-		{
-			tab[j][0] = (p->position[0]) + j;
-			tab[j][1] = p->position[1];
-		}
-	}
-	else
+	// if(p -> isHorizontal)
+	// { 
+	// 	for(int j = 0; j < taille; j++)
+	// 	{
+	// 		tab[j][0] = (p->position[0]) + j;
+	// 		tab[j][1] = p->position[1];
+	// 	}
+	// }
+	// else
+	// {
+	// 	for(int j = 0; j < taille; j++)
+	// 	{
+	// 		tab[j][0] = p->position[0];
+	// 		tab[j][1] = (p->position[1]) + j;
+	// 	}
+	// }
+	for(int x = 0; x < get_width(p); x++)
 	{
-		for(int j = 0; j < taille; j++)
+		for(int y = 0; y < get_height(p); y++)
 		{
-			tab[j][0] = p->position[0];
-			tab[j][1] = (p->position[1]) + j;
+			tab[x][0] = get_x(p) + x;
+			tab[x][0] = get_y(p) + y + x;
 		}
 	}
+
+	for(int i = 0; i < taille; i++)
+	{
+		for(int x = get_x(p); x < get_x(p) + get_width(p); x++)
+		{
+			for(int y = get_y(p); y < get_y(p) + get_height(p); y++)
+			{
+				tab[i][0] = x;
+				tab[i][1] = y;
+			}
+		}
+	}
+
 	return tab;
 }
 
@@ -237,7 +275,7 @@ int** TableauDePieces(piece* tab_pieces, int taille){
 
 	for(int i = 0; i < taille; i++)
 	{
-		taille_tab_tmp_piece = tab_pieces[i]->isSmall ? 2 : 3;
+		taille_tab_tmp_piece = get_width(tab_pieces[i]) * get_height(tab_pieces[i]);
 
 		tab_tmp_piece = pieceEnTableau(tab_pieces[i], taille_tab_tmp_piece);
 		
@@ -264,29 +302,15 @@ int get_y(cpiece p){
 }
 
 int get_height(cpiece p){
-	if(!(p->isHorizontal))
-	{
-		if(p->isSmall)
-			return 2;
-		return 3;
-	}
-	return 1;
+	return p -> height;
 }
 
 int get_width(cpiece p){
-	if(p->isHorizontal)
-	{
-		if(p->isSmall)
-			return 2;
-		return 3;
-	}
-	return 1;
+	return p -> width;
 }
 
 bool is_horizontal(cpiece p){
-	if(p != NULL)
-		return p->isHorizontal;
-	error("is_horizontal(), p n'est pas alloué");
+	return can_move_x(p);
 }
 
 bool can_move_x(cpiece p){

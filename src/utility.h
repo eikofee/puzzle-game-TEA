@@ -2,10 +2,12 @@
 #define _UTILITY_H_
 
 struct piece_s{
-	bool isHorizontal; // true si la piece est horizontal, false sinon.
-	bool isSmall; // true si la taille de la piece est 2, et false si 3.
+	// bool isHorizontal; // true si la piece est horizontal, false sinon.
+	// bool isSmall; // true si la taille de la piece est 2, et false si 3.
 	bool move_x;
 	bool move_y;
+	int width;
+	int height;
 	int position[2]; // position de la case inférieur gauche. (x;y)
 };
 
