@@ -15,10 +15,11 @@ void display_pieces(piece *p, int taille)
 	for (int i = 0; i < taille; i++)
 	{
 		printf("Piece [%d] : x = %d, y = %d, ",i ,get_x(p[i]), get_y(p[i]));
-		if (p[i] -> isSmall)
-			printf("isSmall, ");
-		if (p[i] -> isHorizontal)
+		printf("Width = %d | Height = %d, ", get_width(p), get_height(p));
+		if (is_horizontal(p[i]))
 			printf("isHorizontal");
+		else
+			printf("isVertical");
 		printf("]\n");
 	}
 }
@@ -117,23 +118,24 @@ char getHexa(int n)
 /*
 	Recupere la direction que doit prendre une piece en fonction du signe entre
 */
-dir getDirection(piece p, char sign)
-{
-	if (sign == '+')
-	{
-		if (p -> isHorizontal)
-			return RIGHT;
-		else{
-			return UP;
-		}
-	}else{
-		if (p -> isHorizontal)
-			return LEFT;
-		else{
-			return DOWN;
-		}
-	}
-}
+// ********************** Fonctions inutiles V2 *******************************
+// dir getDirection(piece p, char sign)
+// {
+// 	if (sign == '+')
+// 	{
+// 		if (p -> isHorizontal)
+// 			return RIGHT;
+// 		else{
+// 			return UP;
+// 		}
+// 	}else{
+// 		if (p -> isHorizontal)
+// 			return LEFT;
+// 		else{
+// 			return DOWN;
+// 		}
+// 	}
+// }
 
 /*
 	Bloque l'affichage tant que la touche Entree n'est pas utilisee

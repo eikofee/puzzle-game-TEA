@@ -4,6 +4,12 @@
 #include "utility.h"
 #include "interface_txt.h"
 
+// TODO : 	Gerer differement le déplacement d'une piece.
+//			Revoir la construction d'une id
+// 			Fonctions utiles exclusivement à RUsh hour : getDirection()
+
+
+
 //Ce fichier permet de gérer l'affichage en mode texte du jeu
 
 /*
@@ -63,9 +69,9 @@ void getIdFromGame(game g, char* id)
 void draw_interface(game g, char* id)
 {
 	int moves = game_nb_moves(g);
-	int** t = TableauDePieces(g -> pieces, g -> nb_pieces);
-	bool* toWrite = (bool*) malloc(sizeof(bool) * g -> nb_pieces);
-	for (int i = 0; i < g -> nb_pieces; i++)
+	int** t = TableauDePieces(g -> pieces, game_nb_pieces(g));
+	bool* toWrite = (bool*) malloc(sizeof(bool) * game_nb_pieces(g));
+	for (int i = 0; i < game_nb_pieces(g); i++)
 		toWrite[i] = true;
 
 	printf("\x1b[47;90m################\x1b[0m Rush Hour\n");
@@ -298,7 +304,7 @@ void input_player(game g, char* id)
 		*/ 
 		if (input[1] == '\n')
 			getSecondInput(input);
-		if (checkFormat(input, "%n %n"))
+		if (checkFormat(input, "%n %n")) // ********** FAIRE LES MODIFICATIONS SUR getDirection ICI ********
 		{
 			play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
 		}
