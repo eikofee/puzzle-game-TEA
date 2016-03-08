@@ -97,7 +97,7 @@ void move_piece (piece p, dir d, int distance){
 void switchsMovePiece(piece p, dir d, int distance){
 
 	piece p_copy = new_piece(0, 0, 0, 0, true, true);
-	copy_piece(p, p_copy);
+	copy_piece((cpiece)p, p_copy);
 	
 	switch (d){
 		case UP:
@@ -121,7 +121,7 @@ void switchsMovePiece(piece p, dir d, int distance){
 			break;
 	}
 	
-	copy_piece(p_copy, p);
+	copy_piece((cpiece)p_copy, p);
 
 	delete_piece(p_copy);
 }
@@ -136,8 +136,8 @@ bool intersect(cpiece p1, cpiece p2){
 	taille_p1 = get_height(p1) * get_width(p1);
 	taille_p2 = get_height(p2) * get_width(p2);
 
-	int** tab_p1 = pieceEnTableau(p1, taille_p1);
-	int** tab_p2 = pieceEnTableau(p2, taille_p2);
+	int** tab_p1 = pieceEnTableau((piece)p1, taille_p1);
+	int** tab_p2 = pieceEnTableau((piece)p2, taille_p2);
 
 	for(int x = 0; x < taille_p1; x++)
 	{
@@ -167,33 +167,6 @@ int** pieceEnTableau(piece p, int taille){
 	for(int i = 0; i < taille; i++)
 		tab[i] = &tab2[i*2];
 
-	// if(p -> isHorizontal)
-	// { 
-	// 	for(int j = 0; j < taille; j++)
-	// 	{
-	// 		tab[j][0] = (p->position[0]) + j;
-	// 		tab[j][1] = p->position[1];
-	// 	}
-	// }
-	// else
-	// {
-	// 	for(int j = 0; j < taille; j++)
-	// 	{
-	// 		tab[j][0] = p->position[0];
-	// 		tab[j][1] = (p->position[1]) + j;
-	// 	}
-	// }
-	// for(int x = 0; x < get_width(p); x++)
-	// {
-	// 	for(int y = 0; y < get_height(p); y++)
-	// 	{
-	// 		tab[x][0] = get_x(p) + x;
-	// 		tab[x][0] = get_y(p) + y + x;
-	// 	}
-	// }
-
-	// for(int i = 0; i < taille; i++)
-	// {
 	int i = 0;
 	for(int x = get_x(p); x < get_x(p) + get_width(p); x++)
 	{
