@@ -9,7 +9,7 @@ void loadTheGame(char* id_src)
 {
 	//On crée le game g à partir d'un id source
 	printf("\nLoading Game ...\n");
-	game g = getGameFromId(id_src);
+	game g = NULL;//getGameFromId(id_src);
 	printf("Done\n\n");
 
 	//On malloc un id qu'on utilisera pour etre modifié pendant la partie
@@ -17,7 +17,7 @@ void loadTheGame(char* id_src)
 	if(id == NULL)
 		error("getIdFromGame(), probleme d'allocation memoire");
 
-	getIdFromGame(g, id);
+	//getIdFromGame(g, id);
 	draw_interface(g, id);
 
 	while (!game_over_hr(g))
@@ -27,7 +27,7 @@ void loadTheGame(char* id_src)
 		draw_interface(g, id);
 	}
 
-	getIdFromGame(g, id);
+	//getIdFromGame(g, id);
 
 	printf("************\n*--- GG ---*\n************\n");
 
@@ -41,9 +41,11 @@ int main(int argc, char* argv[])
 	char* Game2 = "8103022024034144301040250";
 	char* Game3 = "8123024012040042145250301";
 	
-	loadTheGame(Game1);
-	loadTheGame(Game2);
-	loadTheGame(Game3);
-	
+	//loadTheGame(Game1);
+	//loadTheGame(Game2);
+	//loadTheGame(Game3);
+	game g = getGameFromIdAR("1n10x10p3w4h2x2y2");
+	draw_interface(g, "VERSION TEST");
+
 	return 0;
 }

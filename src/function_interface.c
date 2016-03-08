@@ -192,7 +192,7 @@ void loadGameFromSave(FILE* fichier, game g)
 	char s[128] = "";
 	fgets(s, 128, fichier_tmp);
 
-	game g_tmp = getGameFromId(s);
+	game g_tmp = NULL; //getGameFromId(s);
 	copy_game(g_tmp, g);
 
 	fgets(s, 128, fichier_tmp);

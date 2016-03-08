@@ -12,16 +12,108 @@
 
 //Ce fichier permet de gérer l'affichage en mode texte du jeu
 
+int readUntilChar(char* s, int* pos)
+{
+	int n = 0;
+	while (s[*(pos)] >= '0' && s[*(pos)] <= '9')
+	{
+		printf("%c\n", s[*(pos)]);
+		n *= 10;
+		n += s[*(pos)] - '0';
+		*(pos) += 1;
+	}
+
+	printf("end RUC\n");
+	return n;
+}
+
+piece getPieceFromIdAR(char* id, int* pos)
+{
+	int w = 0;
+	int h = 0;
+	int x = 0;
+	int y = 0;
+	int type = 0;
+	piece p = (piece) malloc(sizeof(struct piece_s));
+	int state = 0; // 0 = type, 1 = w, 2 = h, 3 = x, 4 = y
+	while (id[*(pos)] != 'p' && id[*(pos)] != '\0')
+	{
+		switch(state)
+		{
+			case 0:
+				type = readUntilChar(id, pos);
+				break;
+			case 1:
+				w = readUntilChar(id, pos);
+				break;
+			case 2:
+				h = readUntilChar(id, pos);
+				break;
+			case 3:
+				x = readUntilChar(id, pos);
+				break;
+			case 4:
+				y = readUntilChar(id, pos);
+				break;
+		}
+		state++;
+		*(pos) += 1;
+	}
+	p = new_piece(x, y, w, h, ((type >= 2)?true:false), ((type == 1 || type == 3)?true:false));
+	return p;
+}
+
+/*Syntaxe version 2:
+		(nb_pieces)n(taille_x)x(taille_y)p(1,2 ou 3)(width)w(height)h(pos_x)x(pos_y)yp(next)
+	*/
+game getGameFromIdAR(char* id)
+{
+	int i = 0;
+	int nb_pieces = readUntilChar(id, &i);
+	i++;
+	piece p[nb_pieces];
+	int n_piece = 0;	//index de p
+	int taille_x = 0;
+	int taille_y = 0;
+	game g = (game) malloc(sizeof(struct game_s));
+	int state = 1; // 1 = taille_x, 2 = taille_y, 3 = piece
+	printf("Start switch\n");
+	while (id[i] != '\0')
+	{
+		switch(state)
+		{
+			case 1:
+				taille_x = readUntilChar(id, &i);
+				printf("State = %d\n", state);
+				break;
+			case 2:
+				taille_y = readUntilChar(id, &i);
+				printf("State = %d\n", state);
+				break;
+			case 3:
+				p[n_piece] = getPieceFromIdAR(id, &i);
+				printf("State = %d\n", state);
+				n_piece++;
+				state--;
+				break;
+		}
+		i++;
+		state++;
+	}
+	g = new_game(taille_x, taille_y, nb_pieces, p);
+	return g;
+}
 /*
 	Permet de générer un niveau à partir d'un id (non seed)
 */
-game getGameFromId(char* id)
+game getGameFromIdRH(char* id)
 {
 	//Syntaxe : Nabca2b2c2a3b3c3
 	//N = nombre de voitures
 	//a = car type: +1 st horizontale, +2 si grand
 	//b = case axe x
 	//c = case axe y
+
 	int nb_pieces = getNumber(id[0]) ;
 	piece p[nb_pieces];
 	int i = 1;
@@ -33,7 +125,7 @@ game getGameFromId(char* id)
 		bool isSmall = (id[i] == '0' || id[i] == '1');
 		int x = getNumber(id[i + 1]);
 		int y = getNumber(id[i + 2]);
-		p[indexP] = new_piece_rh(x, y, isSmall, isHorizontal);
+		p[indexP] = new_piece_rh(x, y, true, isHorizontal); //isSmall
 		i += 3;
 		indexP++;
 	}
@@ -48,7 +140,7 @@ game getGameFromId(char* id)
 /*
 	Permet de convertir un game en id (pas une sauvegarde complète)
 */
-void getIdFromGame(game g, char* id)
+/*void getIdFromGame(game g, char* id)
 {
 	id[0] = getHexa(game_nb_pieces(g));
 	int indexChar = 1;
@@ -61,7 +153,7 @@ void getIdFromGame(game g, char* id)
 	}
 	id[indexChar] = '\0';
 }
-
+*/
 
 /*
 	Affiche la zone de jeu
@@ -70,16 +162,19 @@ void getIdFromGame(game g, char* id)
 void draw_interface(game g, char* id)
 {
 	int moves = game_nb_moves(g);
-	int** t = TableauDePieces(g -> pieces, game_nb_pieces(g));
+	int** t = TableauDePieces(g -> pieces, game_nb_pieces(g), game_width(g), game_height(g));
 	bool* toWrite = (bool*) malloc(sizeof(bool) * game_nb_pieces(g));
 	for (int i = 0; i < game_nb_pieces(g); i++)
 		toWrite[i] = true;
 
-	printf("\x1b[47;90m################\x1b[0m Rush Hour\n");
-	for (int i = 5; i > -1; i--)
+	printf("\x1b[47;90m##");
+	for (int i = 0; i < game_width(g); i++)
+		printf("##");			//Affiche le bord supérieur
+	printf("##\x1b[0m Rush Hour or Red Anne VERSION 2\n");
+	for (int i = game_height(g) - 1; i > -1; i--)
 	{
 		printf("\x1b[47;90m##\x1b[0m");
-		for (int j = 0; j < 6; j++)
+		for (int j = 0; j < game_width(g); j++)
 		{
 			if (t[j][i] == -1)
 				printf(". ");
@@ -109,7 +204,10 @@ void draw_interface(game g, char* id)
 				break;
 		}
 	}
-	printf("\x1b[47;90m################\x1b[0m\n");
+	printf("\x1b[47;90m");
+	for (int i = 0; i < game_width(g) + 2; i++)
+		printf("##");		//Affiche le bord inférieur
+	printf("\x1b[0m\n");
 	freeTableau2D(t);
 	free(toWrite);
 }
@@ -288,7 +386,7 @@ void input_player(game g, char* id)
 		sprintf(id,"%s",new_id);
 		free(level);
 		free(new_id);
-		game g2 = getGameFromId(id);
+		game g2 = NULL; //getGameFromId(id);
 		copy_game(g2, g);
 		delete_game(g2);
 		return;
@@ -303,7 +401,7 @@ void input_player(game g, char* id)
 			1 -1 : Recule la voiture 1 vers le bas si verticale ou la gauche si horizontale
 			2 : Demande un dÃ©placement de la voiture 2 (nouveau scanf)
 		*/ 
-		if (input[1] == '\n')
+		/*if (input[1] == '\n')
 			getSecondInput(input);
 		if (checkFormat(input, "%n %n")) // ********** FAIRE LES MODIFICATIONS SUR getDirection ICI ********
 		{
@@ -316,7 +414,7 @@ void input_player(game g, char* id)
 			else{
 				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), -1 * getNumber(input[3]));
 			}
-		}
+		}*/
 	}
 	else
 	{
@@ -326,6 +424,6 @@ void input_player(game g, char* id)
 			ignoreOverflow(input, 6);
 		}
 	}
-	getIdFromGame(g, id);
+	//getIdFromGame(g, id);
 }
 
