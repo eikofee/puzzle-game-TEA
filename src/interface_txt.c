@@ -58,7 +58,8 @@ piece getPieceFromIdAR(char* id, int* pos)
 				break;
 		}
 		state++;
-		*(pos) += 1;
+		if (id[*(pos)])
+			*(pos) += 1;
 	}
 	p = new_piece(x, y, w, h, ((type >= 2)?true:false), ((type == 1 || type == 3)?true:false));
 	return p;
@@ -98,7 +99,8 @@ game getGameFromIdAR(char* id)
 				state--;
 				break;
 		}
-		i++;
+		if (id[i])
+			i++;
 		state++;
 	}
 	g = new_game(taille_x, taille_y, nb_pieces, p);
