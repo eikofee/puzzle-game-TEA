@@ -142,14 +142,14 @@ bool play_move(game g, int piece_num, dir d, int distance)
 		}	
 	}
 	// Si ptest n'a pas bougé, c'est que move_piece a trouvé que le mouvement sur distance n'était pas bon.
-	if (distance != 0 && ((!is_horizontal(ptest) && get_y(ptest) != ptesty + distance) || (is_horizontal(ptest) && get_x(ptest) != ptestx + distance))) {
+	if (distance != 0 && ((can_move_y(ptest) && (d == UP || d == DOWN) && get_y(ptest) != ptesty + distance) || (can_move_x(ptest) && (d == LEFT || d == RIGHT) && get_x(ptest) != ptestx + distance))) {
 		delete_piece(ptest);
 		return false;
 	}
 
 	delete_piece(ptest);
     //Si tout est bon, alors on lance l'algorithme de déplacement de la pièce, puis on ajoute les moves correspondant.
-	move_piece(g -> pieces[piece_num], d, abs(distance));
+	move_piece(g -> pieces[piece_num], d, abs(distance));	
 	g -> nb_moves += abs(distance);
 	return true;
 }
@@ -168,7 +168,7 @@ bool estPositionValide(game g, piece p){
 // --------- Fonctions Simples ----------------
 int game_square_piece (game g, int x, int y){
 	int** tab = TableauDePieces(g->pieces, game_nb_pieces(g), game_width(g), game_height(g));
-	for(int i = 0; i < game_width; i++)
+	for(int i = 0; i < game_width(g); i++)
 	{
 		if(tab[i][0] == x && tab[i][0] == y)
 			return i;
