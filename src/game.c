@@ -15,6 +15,7 @@ game new_game_hr( int nb_pieces, piece *pieces)
 }
 
 game new_game (int width, int height, int nb_pieces, piece *pieces){
+	//les allocations mémoires du game et de son tableau de piece...
 	game new_game = (game)malloc(sizeof(struct game_s));
 
 	if(new_game == NULL)
@@ -25,7 +26,7 @@ game new_game (int width, int height, int nb_pieces, piece *pieces){
 	if(!new_game -> pieces)
 		error("Allocation new_game -> pieces");
 
-	//Affectation des valeurs par copie
+	//... Affectation des valeurs par copie
 	new_game -> nb_pieces = nb_pieces;
 	for (int i = 0; i < nb_pieces; i++)
 	{
@@ -191,6 +192,17 @@ int game_nb_pieces(cgame g)
 		error("Allocation cgame game_nb_pieces");
 
 	return g -> nb_pieces;
+}
+int game_width(cgame g){
+	if(g == NULL)
+		error("game_width(), g n'est pas alloue");
+	return g -> width;
+}
+
+int game_height(cgame g){
+	if(g == NULL)
+		error("game_height(), g n'est pas alloue");
+	return g -> height;
 }
 
 cpiece game_piece(cgame g, int piece_num)
