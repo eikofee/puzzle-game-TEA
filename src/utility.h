@@ -17,6 +17,7 @@ struct game_s{
 	piece *pieces;	//malloc nécessaire
 	int	nb_moves;
 	int nb_pieces;
+	int coord_fin[2];
 };
 
 void switchsMovePiece(piece p, dir d, int distance);
