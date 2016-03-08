@@ -212,7 +212,7 @@ int** pieceEnTableau(piece p, int taille){
 //Génere un tableau 2D correspondant au plateau du jeu
 //Il est rempli par la valeur -1 par défaut. Les vehicules sont mis grace
 // au tableau de piece.
-int** TableauDePieces(piece* tab_pieces, int taille_x, int taille_y){
+int** TableauDePieces(piece* tab_pieces, int taille, int taille_x, int taille_y){
 
 	// ---	Début de l'allocation ---
 	int **tab2Dpieces = (int **) malloc(taille_x * sizeof(int*));

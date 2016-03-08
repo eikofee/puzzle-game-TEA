@@ -167,7 +167,7 @@ bool estPositionValide(game g, piece p){
 
 // --------- Fonctions Simples ----------------
 int game_square_piece (game g, int x, int y){
-	int** tab = TableauDePieces(g->pieces, game_width(g), game_height(g));
+	int** tab = TableauDePieces(g->pieces, game_nb_pieces(g), game_width(g), game_height(g));
 	for(int i = 0; i < game_width; i++)
 	{
 		if(tab[i][0] == x && tab[i][0] == y)
