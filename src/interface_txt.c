@@ -66,6 +66,7 @@ void getIdFromGame(game g, char* id)
 /*
 	Affiche la zone de jeu
 */
+	// ************************* Changement de la forme TableauDePieces(tableau de piece, taille axe x, taille axe y)
 void draw_interface(game g, char* id)
 {
 	int moves = game_nb_moves(g);

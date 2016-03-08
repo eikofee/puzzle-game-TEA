@@ -212,23 +212,23 @@ int** pieceEnTableau(piece p, int taille){
 //Génere un tableau 2D correspondant au plateau du jeu
 //Il est rempli par la valeur -1 par défaut. Les vehicules sont mis grace
 // au tableau de piece.
-int** TableauDePieces(piece* tab_pieces, int taille){
+int** TableauDePieces(piece* tab_pieces, int taille_x, int taille_y){
 
 	// ---	Début de l'allocation ---
-	int **tab2Dpieces = (int **) malloc(TAILLE_PLATEAU * sizeof(int*));
-	int *tab2Dpieces2 = (int *) malloc(TAILLE_PLATEAU * TAILLE_PLATEAU * sizeof(int));
+	int **tab2Dpieces = (int **) malloc(taille_x * sizeof(int*));
+	int *tab2Dpieces2 = (int *) malloc(taille_x * taille_y * sizeof(int));
 
 	if(tab2Dpieces == NULL)
 		error("TableauDePieces, Problème d'allocation sur tab2Dpieces");
 	if(tab2Dpieces2 == NULL)
 		error("TableauDePieces, Problème d'allocation sur tab2Dpieces2");
 
-	for(int i = 0; i < TAILLE_PLATEAU; i++)
-			tab2Dpieces[i] = &tab2Dpieces2[i*TAILLE_PLATEAU];
+	for(int i = 0; i < taille_x; i++)
+			tab2Dpieces[i] = &tab2Dpieces2[i*taille_y];
 	// --- Fin de l'allocation ---
 	// On rempli le tableau de -1
-	for(int x = 0; x < TAILLE_PLATEAU; x++)
-		for(int y = 0; y < TAILLE_PLATEAU; y++)
+	for(int x = 0; x < taille_x; x++)
+		for(int y = 0; y < taille_y; y++)
 			tab2Dpieces[x][y] = -1;
 
 	// Tableau temporaire
