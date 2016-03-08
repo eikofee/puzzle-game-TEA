@@ -54,6 +54,7 @@ piece getPieceFromIdAR(char* id, int* pos)
 				break;
 			case 4:
 				y = readUntilChar(id, pos);
+				*(pos) -= 1;
 				break;
 		}
 		state++;
