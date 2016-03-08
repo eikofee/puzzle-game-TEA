@@ -168,12 +168,7 @@ bool estPositionValide(game g, piece p){
 // --------- Fonctions Simples ----------------
 int game_square_piece (game g, int x, int y){
 	int** tab = TableauDePieces(g->pieces, game_nb_pieces(g), game_width(g), game_height(g));
-	for(int i = 0; i < game_width(g); i++)
-	{
-		if(tab[i][0] == x && tab[i][0] == y)
-			return i;
-	}
-	return -1;
+	return tab[x][y];
 }
 
 //retourne le nombre de move fait
