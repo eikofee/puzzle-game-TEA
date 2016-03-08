@@ -4,12 +4,14 @@
 #include "utility.h"
 #define TAILLE_PLATEAU_RH 6
 
+bool estPositionValide(game g, piece p);
+
 game new_game_hr( int nb_pieces, piece *pieces)
 {
-	game new_game = new_game(TAILLE_PLATEAU_RH, TAILLE_PLATEAU_RH, nb_pieces, pieces);
-	if(new_game == NULL)
+	game newGame_rh = new_game(TAILLE_PLATEAU_RH, TAILLE_PLATEAU_RH, nb_pieces, pieces);
+	if(newGame_rh == NULL)
 		error("new_game_hr(), porbleme d allocation memoire");
-	return new_game;
+	return newGame_rh;
 }
 
 game new_game (int width, int height, int nb_pieces, piece *pieces){
@@ -41,8 +43,9 @@ game new_game (int width, int height, int nb_pieces, piece *pieces){
 		}
 	}
 
-	new_game -> width = width;
-	new_game -> height = height;
+	new_game -> width = abs(width);
+	new_game -> height = abs(height);
+	new_game -> nb_moves = 0;
 
 	return new_game;
 }
@@ -73,8 +76,10 @@ void copy_game(cgame src, game dst)
 	free(dst -> pieces);
 
 	//D'abord les propriétés directes
-	dst -> nb_pieces = src -> nb_pieces;
-	dst -> nb_moves = src -> nb_moves;
+	dst -> nb_pieces = game_nb_pieces(src);
+	dst -> nb_moves = game_nb_moves(src);
+	dst -> width = game_width(src);
+	dst -> height = game_height(src);
 
 	//...Ensuite le tableau des pièces
 	//On réalloue du tableau des pieces
@@ -94,23 +99,6 @@ void copy_game(cgame src, game dst)
 	}
 }
 
-int game_nb_pieces(cgame g)
-{
-	if (!g)
-		error("Allocation cgame game_nb_pieces");
-
-	return g -> nb_pieces;
-}
-
-cpiece game_piece(cgame g, int piece_num)
-{
-	//Vérifie que l'indice piece_num pièce est bien dans le jeu
-    if (piece_num < 0 || piece_num > game_nb_pieces(g) - 1)
-		error("L'index de la pièce recherchée est impossible (trop grand ou négatif)");
-
-	//Si elle existe, on la renvoie
-	return g -> pieces[piece_num];
-}
 
 bool game_over_hr(cgame g)
 {
@@ -124,7 +112,8 @@ bool game_over_hr(cgame g)
 bool play_move(game g, int piece_num, dir d, int distance)
 {
     //On vérifie qu'il n'entre au contact d'aucune pièce et qu'il reste sur le plateau en utilisant un clone-cobaye (ptest)
-	piece ptest = new_piece_rh(0, 0, true, true);
+	//piece ptest = new_piece_rh(0, 0, true, true);
+	piece ptest = new_piece(0, 0, 0, 0, true, true);
 	copy_piece(g -> pieces[piece_num], ptest);
 
 	int ptestx = get_x(ptest);
@@ -134,7 +123,7 @@ bool play_move(game g, int piece_num, dir d, int distance)
 	for (int step = 0; step < abs(distance); step++)
 	{
 		move_piece(ptest,d,1);
-		if(!estPositionValide(ptest))
+		if(!estPositionValide(g, ptest))
 		{
 			delete_piece(ptest);
 			return false;
@@ -164,15 +153,18 @@ bool play_move(game g, int piece_num, dir d, int distance)
 	return true;
 }
 
-//retourne le nombre de move fait
-int game_nb_moves(cgame g)
-{
-	if(g != NULL)
-    	return g -> nb_moves;
-    
-    return -1;
-}
+//Vérifie si la position de la piece est bien dans le plateau
+bool estPositionValide(game g, piece p){
+ 	if((get_x(p) < 0) || (get_y(p) < 0))
+ 		return false;
 
+	if(get_x(p) + get_width(p) > game_width(g) || get_y(p) + get_height(p) > game_height(g) )
+		return false;
+ 
+ 	return true;
+ }
+
+// --------- Fonctions Simples ----------------
 int game_square_piece (game g, int x, int y){
 	int taille = (g -> width) * (g -> height);
 	int** tab = TableauDePieces(g->pieces, taille);
@@ -183,6 +175,34 @@ int game_square_piece (game g, int x, int y){
 	}
 	return -1;
 }
+
+//retourne le nombre de move fait
+int game_nb_moves(cgame g)
+{
+	if(g != NULL)
+    	return g -> nb_moves;
+    
+    return -1;
+}
+
+int game_nb_pieces(cgame g)
+{
+	if (!g)
+		error("Allocation cgame game_nb_pieces");
+
+	return g -> nb_pieces;
+}
+
+cpiece game_piece(cgame g, int piece_num)
+{
+	//Vérifie que l'indice piece_num pièce est bien dans le jeu
+    if (piece_num < 0 || piece_num > game_nb_pieces(g) - 1)
+		error("L'index de la pièce recherchée est impossible (trop grand ou négatif)");
+
+	//Si elle existe, on la renvoie
+	return g -> pieces[piece_num];
+}
+
 //error est une fonction qui permet d'envoyer un message sur stderr et de faire un exit(EXIT_FAILURE). 
 //Elle permet d'éviter de recopier a chaque fois 2 à 3 lignes.
 void error(char* s)

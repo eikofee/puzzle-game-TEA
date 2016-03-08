@@ -90,42 +90,6 @@ void move_piece (piece p, dir d, int distance){
 
 }
 
-//Vérifie si la position de la piece est bien dans le plateau
-// bool estPositionValide(piece p){
-// 	if((get_x(p) < 0) || (get_y(p) < 0))
-// 		return false;
-
-// 	//Pour le if, la piece est horizontal
-// 	if(is_horizontal(p))
-// 	{
-// 		if(p -> isSmall) // Ici la piece fait 2 cases
-// 		{
-// 			if(get_x(p) > (TAILLE_PLATEAU - 2) || get_y(p) > (TAILLE_PLATEAU - 1))
-// 				return false;
-// 		}
-// 		else // ici la piece fait 3 cases
-// 		{
-// 			if(get_x(p) > (TAILLE_PLATEAU - 3) || get_y(p) > (TAILLE_PLATEAU - 1))
-// 				return false;
-// 		}
-// 	}
-// 	//Pour le else la piece est a la verticale
-// 	else 
-// 	{
-// 		if(p -> isSmall) //ici la piece fait 2 cases
-// 		{
-// 			if(get_x(p) > (TAILLE_PLATEAU - 1) || get_y(p) > (TAILLE_PLATEAU - 2))
-// 				return false;
-// 		}
-// 		else //ici la piece fait 3 cases
-// 		{ 
-// 			if(get_x(p) > (TAILLE_PLATEAU - 1) || get_y(p) > (TAILLE_PLATEAU - 3))
-// 				return false;
-// 		}
-// 	}
-// 	return true;
-// }
-
 
 //Fonction qui effectue le mouvement en passant par une copie (p_copy)
 //Ainsi, on vérifie seulement a la fin si la position est valide de la copie
