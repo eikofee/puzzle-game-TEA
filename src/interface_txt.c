@@ -5,12 +5,14 @@
 #include "interface_txt.h"
 
 // TODO : 	Gerer differement le déplacement d'une piece.
-//			Revoir la construction d'une id
+//			[Done] Revoir la construction d'une id
 // 			Fonctions utiles exclusivement à RUsh hour : getDirection()
 
 
 
 //Ce fichier permet de gérer l'affichage en mode texte du jeu
+
+
 
 int readUntilChar(char* s, int* pos)
 {
@@ -340,6 +342,8 @@ bool checkFormat(char* s, char* format)
 	/*Syntaxe:
 		%n : le char est un nombre
 		%o : le char est un operateur simple
+		%i : int
+		%d : direction (u, d, l, r)
 	*/
 	int i = 0;
 	int j = 0;
@@ -362,6 +366,17 @@ bool checkFormat(char* s, char* format)
 					if (!isOperatorSimple(s[j]))
 						return false;
 					break;
+
+				case 'i':
+					if (!isInt(s, &j))
+						return false;
+					break;
+
+				case 'd':
+					if (!isDirection(s[j]))
+						return false;
+					break;
+
 				default:
 					error("Syntaxe checkFormat incorrecte.");
 					break;
@@ -450,7 +465,6 @@ void input_player(game g, char* id)
 		copy_game(g2, g);
 		delete_game(g2);
 		return;
-		
 	}
 	
 	if (isNumber(input[0], g -> nb_pieces - 1))
@@ -460,7 +474,9 @@ void input_player(game g, char* id)
 			0 2 : Avance la voiture rouge de 2 cases vers la droite
 			1 -1 : Recule la voiture 1 vers le bas si verticale ou la gauche si horizontale
 			2 : Demande un dÃ©placement de la voiture 2 (nouveau scanf)
-		*/ 
+		*/
+
+		//OLD 
 		/*if (input[1] == '\n')
 			getSecondInput(input);
 		if (checkFormat(input, "%n %n")) // ********** FAIRE LES MODIFICATIONS SUR getDirection ICI ********
@@ -475,6 +491,19 @@ void input_player(game g, char* id)
 				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), -1 * getNumber(input[3]));
 			}
 		}*/
+
+		//NEW
+		if (checkFormat(input, "%i %d %i"))
+		{
+			int pos = 0;	//Va être modifié pendant l'appel de getDirection
+			int n_piece = readUntilChar(input, &pos);
+			pos++;
+			dir direction = getDirection(input, &pos);
+			pos += 2;
+			int dist = readUntilChar(input, &pos);
+			play_move(g, n_piece, direction, dist);
+		}	
+
 	}
 	else
 	{

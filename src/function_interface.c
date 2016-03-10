@@ -86,6 +86,28 @@ bool isNumber(char s, int max_number)
 }
 
 /*
+	Vérifie que le char* commence bien par un nombre (positif/négatif)
+*/
+bool isInt(char* s, int* pos)
+{
+	if (isOperatorSimple(s[*pos]))
+	{
+		*(pos) += 1;
+		if (!isInt(s, &pos))
+			return false;
+	}
+	return isNumber(s[*pos], 9);
+}
+
+/*
+	Vérifie si le char est une direction (u, d, l, r)
+*/
+bool isDirection(char s)
+{
+	return (s == 'u' || s == 'd' || s =='l' || s == 'r');
+}
+
+/*
 	Verifie si s est un + ou un -
 */
 bool isOperatorSimple(char s)
@@ -115,6 +137,39 @@ char getHexa(int n)
 		return n + 87;
 }
 
+/*
+	Convertie la direction en input en dir
+*/
+dir getDirection(char* s, int* pos)
+{
+	while (s[*(pos)] != '\n')
+	{
+		switch(s[*(pos)])
+		{
+			case 'u':
+				return UP;
+			break;
+
+			case 'd':
+				return DOWN;
+			break;
+
+			case 'l':
+				return LEFT;
+			break;
+
+			case 'r':
+				return RIGHT;
+			break;
+
+			default:
+				*(pos)++;
+			break;
+		}
+	}
+
+	//ERREUR
+}
 /*
 	Recupere la direction que doit prendre une piece en fonction du signe entre
 */
