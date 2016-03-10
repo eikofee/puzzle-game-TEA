@@ -97,11 +97,11 @@ int main(int argc, char* argv[])
 	if (nb_pieces != a)
 		exit(EXIT_FAILURE);
 	printf("play_move\n");
-	if (play_move(g,0,LEFT,-1))
+	if (play_move(g,0,LEFT,1))
 		exit(EXIT_FAILURE);	
 	if (!play_move(g,1,UP,1))
 		exit(EXIT_FAILURE);
-	if (!play_move(g,2,DOWN,-1))
+	if (!play_move(g,2,DOWN,1))
 		exit(EXIT_FAILURE);
 	if (!play_move(g,3,RIGHT,1))
 		exit(EXIT_FAILURE);

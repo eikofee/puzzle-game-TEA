@@ -112,6 +112,8 @@ bool game_over_hr(cgame g)
 
 bool play_move(game g, int piece_num, dir d, int distance)
 {
+	//Variable pour la vérification du parcours (distance à parcourir sur les axes)
+	int dist_dir = (d == DOWN ||d == LEFT) ? -1 * distance : distance ;
     //On vérifie qu'il n'entre au contact d'aucune pièce et qu'il reste sur le plateau en utilisant un clone-cobaye (ptest)
 	//piece ptest = new_piece_rh(0, 0, true, true);
 	piece ptest = new_piece(0, 0, 0, 0, true, true);
@@ -142,7 +144,7 @@ bool play_move(game g, int piece_num, dir d, int distance)
 		}	
 	}
 	// Si ptest n'a pas bougé, c'est que move_piece a trouvé que le mouvement sur distance n'était pas bon.
-	if (distance != 0 && ((can_move_y(ptest) && (d == UP || d == DOWN) && get_y(ptest) != ptesty + distance) || (can_move_x(ptest) && (d == LEFT || d == RIGHT) && get_x(ptest) != ptestx + distance))) {
+	if (distance != 0 && ((can_move_y(ptest) && (d == UP || d == DOWN) && get_y(ptest) != ptesty + dist_dir) || (can_move_x(ptest) && (d == LEFT || d == RIGHT) && get_x(ptest) != ptestx + dist_dir))) {
 		delete_piece(ptest);
 		return false;
 	}
