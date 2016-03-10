@@ -86,6 +86,28 @@ bool isNumber(char s, int max_number)
 }
 
 /*
+	Vérifie que le char* commence bien par un nombre (positif/négatif)
+*/
+bool isInt(char* s, int* pos)
+{
+	if (isOperatorSimple(s[*pos]))
+	{
+		*(pos) += 1;
+		if (!isInt(s, &pos))
+			return false;
+	}
+	return isNumber(s[*pos], 9);
+}
+
+/*
+	Vérifie si le char est une direction (u, d, l, r)
+*/
+bool isDirection(char s)
+{
+	return (s == 'u' || s == 'd' || s =='l' || s == 'r');
+}
+
+/*
 	Verifie si s est un + ou un -
 */
 bool isOperatorSimple(char s)
@@ -115,6 +137,39 @@ char getHexa(int n)
 		return n + 87;
 }
 
+/*
+	Convertie la direction en input en dir
+*/
+dir getDirection(char* s, int* pos)
+{
+	while (s[*(pos)] != '\n')
+	{
+		switch(s[*(pos)])
+		{
+			case 'u':
+				return UP;
+			break;
+
+			case 'd':
+				return DOWN;
+			break;
+
+			case 'l':
+				return LEFT;
+			break;
+
+			case 'r':
+				return RIGHT;
+			break;
+
+			default:
+				*(pos)++;
+			break;
+		}
+	}
+
+	//ERREUR
+}
 /*
 	Recupere la direction que doit prendre une piece en fonction du signe entre
 */
@@ -181,7 +236,7 @@ void saveGameFromId(game g, char* id)
 
 //Permet de charger une partir a partir de la save.
 //Cette fonction est exclusif a la save.
-void loadGameFromSave(char* fichier, game g)
+void loadGameFromSave(FILE* fichier, game g)
 {
 	FILE* fichier_tmp = NULL;
 	fichier_tmp = fopen(fichier, "r");
@@ -192,7 +247,7 @@ void loadGameFromSave(char* fichier, game g)
 	char s[128] = "";
 	fgets(s, 128, fichier_tmp);
 
-	game g_tmp = getGameFromId(s);
+	game g_tmp = NULL; //getGameFromId(s);
 	copy_game(g_tmp, g);
 
 	fgets(s, 128, fichier_tmp);
@@ -204,7 +259,7 @@ void loadGameFromSave(char* fichier, game g)
 }
 
 //Permet de charger une partie a partir d'un fichier et d'un numero de level
-char* loadGameFromNum(char* fichier, char* num)
+char* loadGameFromNum(FILE* fichier, char* num)
 {
 	if(str_equal(num, "save\n"))
 	{

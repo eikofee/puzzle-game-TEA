@@ -6,15 +6,18 @@ void toLower(char* s);
 void setColorPiece(char c, int id, bool fill);
 bool str_equal(char* a, char* b);
 bool isNumber(char s, int max_number);
+bool isInt(char* s, int* pos);
+bool isDirection(char s);
 bool isOperatorSimple(char s);
 int getNumber(char s);
-dir getDirection(piece p, char sign);
+//dir getDirection(piece p, char sign);
 void confirm();
 void freeTableau2D(int** tab);
 char getHexa(int n);
 void ignoreOverflow(char* input, int taille);
 void saveGameFromId(game g, char* id);
-void loadGameFromSave(char* fichier, game g);
-char* loadGameFromNum(char* fichier, char* num);
+void loadGameFromSave(FILE* fichier, game g);
+char* loadGameFromNum(FILE* fichier, char* num);
+dir getDirection(char* s, int* pos);
 
 #endif
