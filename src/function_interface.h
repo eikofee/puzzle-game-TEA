@@ -19,5 +19,6 @@ void saveGameFromId(game g, char* id);
 void loadGameFromSave(FILE* fichier, game g);
 char* loadGameFromNum(FILE* fichier, char* num);
 dir getDirection(char* s, int* pos);
+void revertDirection(dir* d);
 
 #endif

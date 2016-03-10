@@ -17,6 +17,13 @@
 int readUntilChar(char* s, int* pos)
 {
 	int n = 0;
+	int multiplier = 1;
+	while (s[*pos] == '+' || s[*pos] == '-')
+	{
+		if (s[*pos] == '-')
+			multiplier *= -1;
+		*pos += 1;
+	}
 	while (s[*(pos)] >= '0' && s[*(pos)] <= '9')
 	{
 		n *= 10;
@@ -24,7 +31,7 @@ int readUntilChar(char* s, int* pos)
 		*(pos) += 1;
 	}
 
-	return n;
+	return n * multiplier;
 }
 
 void getCharFromInt(char* s, int* pos, int data)
@@ -501,8 +508,11 @@ void input_player(game g, char* id)
 			dir direction = getDirection(input, &pos);
 			pos += 2;
 			int dist = readUntilChar(input, &pos);
-			play_move(g, n_piece, direction, dist);
-		}	
+			if (dist != abs(dist))
+				revertDirection(&direction);
+			play_move(g, n_piece, direction, abs(dist));
+		}
+		ignoreOverflow(input, 4);		//OVERFLOW
 
 	}
 	else

@@ -93,7 +93,7 @@ bool isInt(char* s, int* pos)
 	if (isOperatorSimple(s[*pos]))
 	{
 		*(pos) += 1;
-		if (!isInt(s, &pos))
+		if (!isInt(s, pos))
 			return false;
 	}
 	return isNumber(s[*pos], 9);
@@ -318,4 +318,26 @@ void freeTableau2D(int** tab)
 {
 	free(tab[0]);
 	free(tab);
+}
+
+/*
+	Inverse la direction voulue
+*/
+void revertDirection(dir* d)
+{
+	switch (*d)
+	{
+		case UP:
+			*d = DOWN;
+			break;
+		case DOWN:
+			*d = UP;
+			break;
+		case LEFT:
+			*d = RIGHT;
+			break;
+		case RIGHT:
+			*d = LEFT;
+			break;
+	}
 }
