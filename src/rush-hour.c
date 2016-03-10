@@ -45,7 +45,9 @@ int main(int argc, char* argv[])
 	//loadTheGame(Game2);
 	//loadTheGame(Game3);
 	game g = getGameFromIdAR("3n10x10p3w4h2x2y2p3w2h2x6y6p3w10h2x0y8");
-	draw_interface(g, "VERSION TEST");
+	char* s = (char*) malloc(sizeof(char) * 256);
+	getIdFromGameAR(g, s);
+	draw_interface(g, s);
 
 	return 0;
 }

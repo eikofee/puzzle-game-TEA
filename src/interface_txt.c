@@ -17,14 +17,75 @@ int readUntilChar(char* s, int* pos)
 	int n = 0;
 	while (s[*(pos)] >= '0' && s[*(pos)] <= '9')
 	{
-		printf("%c\n", s[*(pos)]);
 		n *= 10;
 		n += s[*(pos)] - '0';
 		*(pos) += 1;
 	}
 
-	printf("end RUC\n");
 	return n;
+}
+
+void getCharFromInt(char* s, int* pos, int data)
+{
+	if (!data)
+	{
+		s[*(pos)] = '0';
+		*(pos) += 1;
+		return;
+	}
+	int taille = 1;
+	int data_calc = data / 10;
+	while (data_calc > 0)
+	{
+		data_calc /= 10;
+		taille *= 10;
+	}
+	while (taille > 0)
+	{
+		s[*pos] = data / taille + '0';
+		*(pos) += 1;
+		data -= data / taille * taille;
+		taille /= 10;
+	}
+}
+
+/*Syntaxe version 2:
+		(nb_pieces)n(taille_x)x(taille_y)p(1,2 ou 3)w(width)h(height)x(pos_x)y(pos_y)p(next)
+		can_move_x = +1
+		can_move_y = +2
+	*/
+void getIdFromGameAR(game g, char* id)
+{
+	int pos = 0;
+	int n_piece = 0;
+	getCharFromInt(id, &pos, game_nb_pieces(g));
+	id[pos] = 'n';
+	pos++;
+	getCharFromInt(id, &pos, g -> width);
+	id[pos] = 'x';
+	pos++;
+	getCharFromInt(id, &pos, g -> height);
+	while (n_piece < game_nb_pieces(g))
+	{
+		id[pos] = 'p';
+		pos++;
+		id[pos] = '0' + (can_move_x(game_piece(g, n_piece))?1:0) + (can_move_y(game_piece(g, n_piece))?2:0);
+		pos++;
+		id[pos] = 'w';
+		pos++;
+		getCharFromInt(id, &pos, get_width(game_piece(g, n_piece)));
+		id[pos] = 'h';
+		pos++;
+		getCharFromInt(id, &pos, get_height(game_piece(g, n_piece)));
+		id[pos] = 'x';
+		pos++;
+		getCharFromInt(id, &pos, get_x(game_piece(g, n_piece)));
+		id[pos] = 'y';
+		pos++;
+		getCharFromInt(id, &pos, get_y(game_piece(g, n_piece)));
+		n_piece++;
+	}
+	id[pos] = '\0';
 }
 
 piece getPieceFromIdAR(char* id, int* pos)
@@ -66,7 +127,7 @@ piece getPieceFromIdAR(char* id, int* pos)
 }
 
 /*Syntaxe version 2:
-		(nb_pieces)n(taille_x)x(taille_y)p(1,2 ou 3)(width)w(height)h(pos_x)x(pos_y)yp(next)
+		(nb_pieces)n(taille_x)x(taille_y)p(1,2 ou 3)w(width)h(height)x(pos_x)y(pos_y)p(next)
 	*/
 game getGameFromIdAR(char* id)
 {
@@ -79,22 +140,18 @@ game getGameFromIdAR(char* id)
 	int taille_y = 0;
 	game g = (game) malloc(sizeof(struct game_s));
 	int state = 1; // 1 = taille_x, 2 = taille_y, 3 = piece
-	printf("Start switch\n");
 	while (id[i] != '\0')
 	{
 		switch(state)
 		{
 			case 1:
 				taille_x = readUntilChar(id, &i);
-				printf("State = %d\n", state);
 				break;
 			case 2:
 				taille_y = readUntilChar(id, &i);
-				printf("State = %d\n", state);
 				break;
 			case 3:
 				p[n_piece] = getPieceFromIdAR(id, &i);
-				printf("State = %d\n", state);
 				n_piece++;
 				state--;
 				break;
