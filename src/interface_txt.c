@@ -4,13 +4,13 @@
 #include "utility.h"
 #include "interface_txt.h"
 
-// TODO : 	Gerer differement le déplacement d'une piece.
+// TODO : 	[Done] Gerer differement le dÃ©placement d'une piece.
 //			[Done] Revoir la construction d'une id
-// 			Fonctions utiles exclusivement à RUsh hour : getDirection()
+// 			[Done] Fonctions utiles exclusivement Ã  RUsh hour : getDirection()
 
 
 
-//Ce fichier permet de gérer l'affichage en mode texte du jeu
+//Ce fichier permet de gÃ©rer l'affichage en mode texte du jeu
 
 
 
@@ -173,7 +173,7 @@ game getGameFromIdAR(char* id)
 	return g;
 }
 /*
-	Permet de générer un niveau à partir d'un id (non seed)
+	Permet de gÃ©nÃ©rer un niveau Ã  partir d'un id (non seed)
 */
 game getGameFromIdRH(char* id)
 {
@@ -207,7 +207,7 @@ game getGameFromIdRH(char* id)
 }
 
 /*
-	Permet de convertir un game en id (pas une sauvegarde complète)
+	Permet de convertir un game en id (pas une sauvegarde complÃ¨te)
 */
 /*void getIdFromGame(game g, char* id)
 {
@@ -238,7 +238,7 @@ void draw_interface(game g, char* id)
 
 	printf("\x1b[47;90m##");
 	for (int i = 0; i < game_width(g); i++)
-		printf("##");			//Affiche le bord supérieur
+		printf("##");			//Affiche le bord supÃ©rieur
 	printf("##\x1b[0m Rush Hour or Red Anne VERSION 2\n");
 	for (int i = game_height(g) - 1; i > -1; i--)
 	{
@@ -275,7 +275,7 @@ void draw_interface(game g, char* id)
 	}
 	printf("\x1b[47;90m");
 	for (int i = 0; i < game_width(g) + 2; i++)
-		printf("##");		//Affiche le bord inférieur
+		printf("##");		//Affiche le bord infÃ©rieur
 	printf("\x1b[0m\n");
 	freeTableau2D(t);
 	free(toWrite);
@@ -291,12 +291,12 @@ void getHelp(int input, bool* done)
 	switch(input)
 	{
 		case 1:
-			printf("\tRules are simple. You're the car nÂ°0 and you need to go to the exit (\">\"). To do that, you need\n");
+			printf("\tRules are simple. You're the car nÃ‚Â°0 and you need to go to the exit (\">\"). To do that, you need\n");
 			printf("to move the other cars to free yourself a passage. Cars can't cross others or go outside the game area.\n");
 			confirm();
 			break;
 		case 2:
-			printf("\tSyntaxe is as it follows : a b where a is the car number you want to move and b the distance to\n");
+			printf("\tSyntax is as it follows : \"a b\" where a is the car number you want to move and b the distance to\n");
 			printf("translate it. Positive numbers go to up and right and negative ones go to down and left.\n");
 			printf("e.g. 2 -3 with the car number 2 being a horizontal car will go 3 cases to the left. You can also input\n");
 			printf("the car number first and then input the distance.\n");
@@ -326,7 +326,7 @@ void getSecondInput(char* input)
 {
 												//Current input is "[N][\n][ ][ ][ ][ ]"
 	char input2[5];
-	printf("Enter the distance for car n°%c :\n", input[0]);
+	printf("Enter the distance for car nÂ°%c :\n", input[0]);
 	fgets(input2, 4, stdin);
 	input[1] = ' ';								//Current input is "[N][_][ ][ ][ ][ ]"					
 	if (isOperatorSimple(input2[0]))
@@ -460,8 +460,8 @@ void input_player(game g, char* id)
 			free(level);
 			return;
 		}
-		//On met dans new_id le nouvel id du niveau chargé
-		//On recopie le new_id dans id et on libère level et new_id
+		//On met dans new_id le nouvel id du niveau chargÃ©
+		//On recopie le new_id dans id et on libÃ¨re level et new_id
 		
 		char* new_id;
 		new_id = loadGameFromNum("games.txt", level);
@@ -480,7 +480,7 @@ void input_player(game g, char* id)
 		/*SYNTAXE :
 			0 2 : Avance la voiture rouge de 2 cases vers la droite
 			1 -1 : Recule la voiture 1 vers le bas si verticale ou la gauche si horizontale
-			2 : Demande un dÃ©placement de la voiture 2 (nouveau scanf)
+			2 : Demande un dÃƒÂ©placement de la voiture 2 (nouveau scanf)
 		*/
 
 		//OLD 
@@ -502,7 +502,7 @@ void input_player(game g, char* id)
 		//NEW
 		if (checkFormat(input, "%i %d %i"))
 		{
-			int pos = 0;	//Va être modifié pendant l'appel de getDirection
+			int pos = 0;	//Va Ãªtre modifiÃ© pendant l'appel de getDirection
 			int n_piece = readUntilChar(input, &pos);
 			pos++;
 			dir direction = getDirection(input, &pos);
@@ -511,8 +511,8 @@ void input_player(game g, char* id)
 			if (dist != abs(dist))
 				revertDirection(&direction);
 			play_move(g, n_piece, direction, abs(dist));
+			ignoreOverflow(input, pos);
 		}
-		ignoreOverflow(input, 4);		//OVERFLOW
 
 	}
 	else

@@ -82,7 +82,7 @@ bool str_equal(char* a, char* b)
 */
 bool isNumber(char s, int max_number)
 {
-	return ((s >= 48 && s <= 48 + max_number) || (s >= 97 && s <= 92 + max_number));
+	return ((s >= '0' && s <= '0' + max_number) || (s >= 'a' && s <= '\\' + max_number));
 }
 
 /*
@@ -92,7 +92,7 @@ bool isInt(char* s, int* pos)
 {
 	if (isOperatorSimple(s[*pos]))
 	{
-		*(pos) += 1;
+		*pos += 1;
 		if (!isInt(s, pos))
 			return false;
 	}
@@ -120,10 +120,11 @@ bool isOperatorSimple(char s)
 */
 int getNumber(char s)
 {
-	if (s >= 48 && s <= 58)
-		return s - 48;
-	if (s >= 97 && s <= 102)
-		return s - 87;
+	if (s >= '0' && s <= '9')
+		return s - '0';
+	if (s >= 'a' && s <= 'f')
+		return s - 'W';
+	return '0';
 }
 
 /*
@@ -132,9 +133,10 @@ int getNumber(char s)
 char getHexa(int n)
 {
 	if (n >= 0 && n < 10)
-		return n + 48;
+		return n + '0';
 	if (n > 9 && n < 16)
-		return n + 87;
+		return n + 'W';
+	return '0';
 }
 
 /*
@@ -142,9 +144,9 @@ char getHexa(int n)
 */
 dir getDirection(char* s, int* pos)
 {
-	while (s[*(pos)] != '\n')
+	while (s[*pos] != '\n')
 	{
-		switch(s[*(pos)])
+		switch(s[*pos])
 		{
 			case 'u':
 				return UP;
@@ -163,7 +165,7 @@ dir getDirection(char* s, int* pos)
 			break;
 
 			default:
-				*(pos)++;
+				*pos += 1;
 			break;
 		}
 	}
@@ -198,7 +200,7 @@ dir getDirection(char* s, int* pos)
 void confirm()
 {
 	printf("\n\tPress 'Enter' to go back to the help menu");
-	int c = NULL;
+	int c = 0;
 	while (c != '\r' && c != '\n')
 		c = getchar();	
 }
