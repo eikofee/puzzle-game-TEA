@@ -119,6 +119,6 @@ int main(int argc, char* argv[])
 		printf("Good.");
 		return EXIT_SUCCESS;
 	}
-	return EXIT_SUCCESS;
+	return EXIT_FAILURE;
 }
 
