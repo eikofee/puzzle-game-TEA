@@ -402,7 +402,7 @@ bool checkFormat(char* s, char* format)
 */
 void input_player(game g, char* id)
 {
-	char input[7] = {0, 0, 0, 0, 0, 0, 0};
+	char input[64];
 	fgets(input, sizeof(input), stdin);
 	toLower(input);
 	bool correct = false;
@@ -511,7 +511,7 @@ void input_player(game g, char* id)
 			if (dist != abs(dist))
 				revertDirection(&direction);
 			play_move(g, n_piece, direction, abs(dist));
-			ignoreOverflow(input, pos);
+			//ignoreOverflow(input, pos + 1);
 		}
 
 	}
