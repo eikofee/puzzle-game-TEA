@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 project(Rush-Hour)
 
 #Définitions des flags de gcc
-set(CMAKE_C_FLAGS "-std=c99 -g -w")
+set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
 
 
 #Définition de la localisation des librairies après la création de leurs archives (*.a)

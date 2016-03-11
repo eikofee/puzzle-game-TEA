@@ -115,7 +115,10 @@ int main(int argc, char* argv[])
 	delete_piece(p[3]);
 	delete_piece(q[0]);
 
-	if(result)
+	if(result){
 		printf("Good.");
+		return EXIT_SUCCESS;
+	}
+	return EXIT_SUCCESS;
 }
 
