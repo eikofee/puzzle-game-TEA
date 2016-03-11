@@ -104,7 +104,6 @@ piece getPieceFromIdAR(char* id, int* pos)
 	int x = 0;
 	int y = 0;
 	int type = 0;
-	piece p = (piece) malloc(sizeof(struct piece_s));
 	int state = 0; // 0 = type, 1 = w, 2 = h, 3 = x, 4 = y
 	while (id[*(pos)] != 'p' && id[*(pos)] != '\0')
 	{
@@ -131,8 +130,9 @@ piece getPieceFromIdAR(char* id, int* pos)
 		if (id[*(pos)])
 			*(pos) += 1;
 	}
-	p = new_piece(x, y, w, h, ((type >= 2)?true:false), ((type == 1 || type == 3)?true:false));
+	piece p = new_piece(x, y, w, h, ((type >= 2)?true:false), ((type == 1 || type == 3)?true:false));
 	return p;
+	
 }
 
 /*Syntaxe version 2:
@@ -147,8 +147,10 @@ game getGameFromIdAR(char* id)
 	int n_piece = 0;	//index de p
 	int taille_x = 0;
 	int taille_y = 0;
-	game g = (game) malloc(sizeof(struct game_s));
 	int state = 1; // 1 = taille_x, 2 = taille_y, 3 = piece
+	piece p_tmp;
+	
+
 	while (id[i] != '\0')
 	{
 		switch(state)
@@ -160,16 +162,20 @@ game getGameFromIdAR(char* id)
 				taille_y = readUntilChar(id, &i);
 				break;
 			case 3:
-				p[n_piece] = getPieceFromIdAR(id, &i);
+
+				p_tmp = getPieceFromIdAR(id, &i);
+				p[n_piece] = new_piece(0, 0, 0, 0, true, true);
+				copy_piece(p_tmp, p[n_piece]);
 				n_piece++;
 				state--;
+				delete_piece(p_tmp);
 				break;
 		}
 		if (id[i])
 			i++;
 		state++;
 	}
-	g = new_game(taille_x, taille_y, nb_pieces, p);
+	game g = new_game(taille_x, taille_y, nb_pieces, p);
 	return g;
 }
 /*
@@ -239,7 +245,7 @@ void draw_interface(game g, char* id)
 	printf("\x1b[47;90m##");
 	for (int i = 0; i < game_width(g); i++)
 		printf("##");			//Affiche le bord supérieur
-	printf("##\x1b[0m Rush Hour or Red Anne VERSION 2\n");
+	printf("##\x1b[0m Rush Hour or Red Klotski VERSION 2\n");
 	for (int i = game_height(g) - 1; i > -1; i--)
 	{
 		printf("\x1b[47;90m##\x1b[0m");
