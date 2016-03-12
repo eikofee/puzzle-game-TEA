@@ -104,11 +104,15 @@ void copy_game(cgame src, game dst)
 bool game_over_hr(cgame g)
 {
 	//On regarde si les coordonnées de la voiture 0 sont bien (4;3)
-	if (get_x(g -> pieces[0]) == 4 && get_y(g -> pieces[0]) == 3)
-		return true;
-
-	return false;
+	return (get_x(g -> pieces[0]) == 4 && get_y(g -> pieces[0]) == 3);
 }
+
+bool game_over_ar(cgame g)
+{
+	return (get_x(game_piece(g, 0)) == 1 && get_y(game_piece(g, 0)) == 0);
+}
+
+
 
 bool play_move(game g, int piece_num, dir d, int distance)
 {

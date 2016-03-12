@@ -74,7 +74,7 @@ bool str_equal(char* a, char* b)
 			return false;
 		i++;
 	}
-	return true;
+	return a[i] == '\0' && b[i] == '\0';
 }
 
 /*
