@@ -12,7 +12,7 @@ file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8123024012040042145250301\n")
 # On definit les elements necessaires a libgame.a puis on la cree
 add_library(game ${CMAKE_BINARY_DIR}/src/game/game.c ${CMAKE_BINARY_DIR}/src/piece/piece.c)
 add_library(rh ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c ${CMAKE_BINARY_DIR}/src/game/game_rh.c ${CMAKE_BINARY_DIR}/src/piece/piece_rh.c )
-add_library(ar ${CMAKE_BINARY_DIR}/src/game/game_ar.c ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c ${CMAKE_BINARY_DIR}/src/piece/piece_ar.c)
+add_library(ar ${CMAKE_BINARY_DIR}/src/game/game_ar.c ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c)
 #On explicite que les headers se trouvent dans /lib/
 #file(GLOB rh_HEADERS ${CMAKE_BINARY_DIR}/lib/function_interface.h ${CMAKE_BINARY_DIR}/lib/interface_txt.h ${CMAKE_BINARY_DIR}/lib/utility.h)
 
