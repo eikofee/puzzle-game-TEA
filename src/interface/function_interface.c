@@ -238,7 +238,7 @@ void saveGameFromId(game g, char* id)
 
 //Permet de charger une partir a partir de la save.
 //Cette fonction est exclusif a la save.
-void loadGameFromSave(FILE* fichier, game g)
+void loadGameFromSave(char* fichier, game g)
 {
 	FILE* fichier_tmp = NULL;
 	fichier_tmp = fopen(fichier, "r");
@@ -261,7 +261,7 @@ void loadGameFromSave(FILE* fichier, game g)
 }
 
 //Permet de charger une partie a partir d'un fichier et d'un numero de level
-char* loadGameFromNum(FILE* fichier, char* num)
+char* loadGameFromNum(char* fichier, char* num)
 {
 	if(str_equal(num, "save\n"))
 	{

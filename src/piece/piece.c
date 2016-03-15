@@ -6,28 +6,6 @@
 //variable globale pour la taille du plateau
 int TAILLE_PLATEAU = 6;
 
-piece new_piece_rh (int x, int y, bool small, bool horizontal){
-
-	int width;
-	int height;
-
-	if(horizontal)
-	{
-		height = 1;
-		width = small ? 2 : 3;
-	}
-	else
-	{
-		height = small ? 2 : 3;
-		width = 1;
-	}
-
-	piece newPiece = new_piece(x, y, width, height, horizontal, !horizontal);
-	
-	return newPiece;
-}
-
-
 piece new_piece (int x, int y, int width, int height, bool move_x, bool move_y){
 	piece newPiece = (piece)malloc(sizeof(struct piece_s));
 	
@@ -242,10 +220,6 @@ int get_height(cpiece p){
 
 int get_width(cpiece p){
 	return p -> width;
-}
-
-bool is_horizontal(cpiece p){
-	return can_move_x(p);
 }
 
 bool can_move_x(cpiece p){

@@ -16,8 +16,8 @@ void freeTableau2D(int** tab);
 char getHexa(int n);
 void ignoreOverflow(char* input, int taille);
 void saveGameFromId(game g, char* id);
-void loadGameFromSave(FILE* fichier, game g);
-char* loadGameFromNum(FILE* fichier, char* num);
+void loadGameFromSave(char* fichier, game g);
+char* loadGameFromNum(char* fichier, char* num);
 dir getDirection(char* s, int* pos);
 void revertDirection(dir* d);
 
