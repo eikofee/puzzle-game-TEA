@@ -10,10 +10,17 @@ file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8123024012040042145250301\n")
 
 
 # On definit les elements necessaires a libgame.a puis on la cree
-add_library(game game.c piece.c interface_txt function_interface)
+add_library(game game.c piece.c)
+add_library(rh function_interface.c interface_txt.c game_rh.c )
+add_library(ar game_ar.c function_interface.c interface_txt.c)
+#On explicite que les headers se trouvent dans /lib/
+#file(GLOB rh_HEADERS ${CMAKE_BINARY_DIR}/lib/function_interface.h ${CMAKE_BINARY_DIR}/lib/interface_txt.h ${CMAKE_BINARY_DIR}/lib/utility.h)
+
 # On cree l'executable rush-hour a partir du fichier rush-hour.c 
 add_executable(rush-hour rush-hour)
+add_executable(klotski klotski)
 
 
 # On lie les librairies dont rush-hour.c a besoin (game)
-target_link_libraries(rush-hour game)
+target_link_libraries(rush-hour game rh)
+target_link_libraries(klotski game ar)

@@ -11,11 +11,18 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
 #Dossier des headers
-include_directories (src/)
+include_directories (lib/)
 
 
 #Dossier des fichiers sources à compiler
 add_subdirectory(./src/)
+
+#Cibles pour les exécutables rh (rush hour) et ar (ane rouge)
+ADD_CUSTOM_TARGET(rh)
+ADD_DEPENDENCIES(rh rush-hour)
+
+ADD_CUSTOM_TARGET(ar)
+ADD_DEPENDENCIES(ar klotski)
 
 #préparation des fichiers de test
 add_executable(test_piece1 src/test_piece1)
