@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "piece.h"
-#include "utility.h"
+#include <piece.h>
+#include <utility.h>
 
 //variable globale pour la taille du plateau
 int TAILLE_PLATEAU = 6;

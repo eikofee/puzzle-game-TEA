@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
-#include "utility.h"
-#include "interface_txt.h"
+#include <game.h>
+#include <utility.h>
+#include <interface_txt.h>
 
 // TODO : 	[Done] Gerer differement le déplacement d'une piece.
 //			[Done] Revoir la construction d'une id
@@ -13,7 +13,7 @@
 //Ce fichier permet de gérer l'affichage en mode texte du jeu
 
 
-
+bool checkFormat(char* s, char* format);
 int readUntilChar(char* s, int* pos)
 {
 	int n = 0;
@@ -346,7 +346,31 @@ void getSecondInput(char* input)
 	}
 	ignoreOverflow(input2, 4);
 }
-
+/*
+	Permet de fucionner plusieurs inputs
+*/
+void fuseNewInput(char* input, char* expectedFormat, int* pos, char* information)
+{
+	char newInput[] = "...............";
+	while (!checkFormat(newInput, expectedFormat))
+	{
+		
+		printf("%s\n", information);
+		fgets(newInput, 15, stdin);
+	}
+	while (input[*pos] != ' ' && input[*pos] != '\n')
+	{
+		*pos += 1;
+	}
+	int i = 0;
+	while(newInput[i] != '\n')
+	{
+		input[*pos] = newInput[i];
+		*pos += 1;
+		i++;
+	}
+	input[*pos] = '\n';
+}
 /*
 	Verifie si s suit un format correct (un peu a la facon de printf)
 */
@@ -480,9 +504,13 @@ void input_player(game g, char* id)
 		return;
 	}
 	
-	if (isNumber(input[0], g -> nb_pieces - 1))
+	//if (isNumber(input[0], g -> nb_pieces - 1))
+	if (checkFormat(input, "%i"))
 	{
-		correct = true;
+		int n_piece = 0;
+		dir direction = UP;
+		int distance = 0;
+		int pos = 0;
 		/*SYNTAXE :
 			0 2 : Avance la voiture rouge de 2 cases vers la droite
 			1 -1 : Recule la voiture 1 vers le bas si verticale ou la gauche si horizontale
@@ -506,29 +534,39 @@ void input_player(game g, char* id)
 		}*/
 
 		//NEW
-		if (checkFormat(input, "%i %d %i"))
+		if (checkFormat(input, "%i\n"))
 		{
-			int pos = 0;	//Va être modifié pendant l'appel de getDirection
-			int n_piece = readUntilChar(input, &pos);
-			pos++;
-			dir direction = getDirection(input, &pos);
-			pos += 2;
-			int dist = readUntilChar(input, &pos);
-			if (dist != abs(dist))
-				revertDirection(&direction);
-			play_move(g, n_piece, direction, abs(dist));
-			//ignoreOverflow(input, pos + 1);
+			//input multiple
+			fuseNewInput(input, "%d", &pos, "Enter a direction:");
+			fuseNewInput(input, "%i", &pos, "Enter a distance:");
+			correct = true;
 		}
+		if (checkFormat(input, "%i %d %i") || checkFormat(input, "%i%d%i"))
+		{
+			pos = 0;
+			n_piece = readUntilChar(input, &pos);
+			if (checkFormat(input, "%i %d %i"))
+				pos++;
+			direction = getDirection(input, &pos);
+			pos++;
+			if (checkFormat(input, "%i %d %i"))
+				pos++;
+			distance = readUntilChar(input, &pos);
 
+			//ignoreOverflow(input, pos + 1);
+			correct = true;
+		}
+		if (distance != abs(distance))
+			revertDirection(&direction);
+		play_move(g, n_piece, direction, abs(distance));
 	}
 	else
 	{
 		if (!correct)
 		{
 			printf("Incorrect input. Type 'help' for more informations.\n");
-			ignoreOverflow(input, 6);
+			//ignoreOverflow(input, 6);
 		}
 	}
 	//getIdFromGame(g, id);
 }
-

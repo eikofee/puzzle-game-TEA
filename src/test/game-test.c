@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
-#include "utility.h"
+#include <game.h>
+#include <utility.h>
 
 void display_pieces(piece *p, int taille)
 {

@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
-#include "utility.h"
-#include "function_interface.h"
+#include <game.h>
+#include <utility.h>
+#include <function_interface.h>
 
 //Ce fichier sert a alleger le fichier interface_txt en y mettant les fonctions annexes à celle
 //présentes dans interface_txt

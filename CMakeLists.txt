@@ -11,22 +11,22 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
 #Dossier des headers
-include_directories (lib/)
+include_directories (${CMAKE_BINARY_DIR}/lib/)
 
 
 #Dossier des fichiers sources à compiler
 add_subdirectory(./src/)
 
 #Cibles pour les exécutables rh (rush hour) et ar (ane rouge)
-ADD_CUSTOM_TARGET(rh)
-ADD_DEPENDENCIES(rh rush-hour)
+ADD_CUSTOM_TARGET(rush)
+ADD_DEPENDENCIES(rush rush-hour)
 
-ADD_CUSTOM_TARGET(ar)
-ADD_DEPENDENCIES(ar klotski)
+ADD_CUSTOM_TARGET(anerouge)
+ADD_DEPENDENCIES(anerouge klotski)
 
 #préparation des fichiers de test
-add_executable(test_piece1 src/test_piece1)
-add_executable(game_test src/game-test)
+add_executable(test_piece1 src/test/test_piece1)
+add_executable(game_test src/test/game-test)
 target_link_libraries(game_test game)
 target_link_libraries(test_piece1 game)
 #tests

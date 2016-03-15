@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "game.h"
-#include "utility.h"
-#include "interface_txt.h"
+#include <game.h>
+#include <utility.h>
+#include <interface_txt.h>
 
 //Fonction qui permet le chargement et l'affichage d'une partie a partir d'un id
 void loadTheGame(char* id_src)

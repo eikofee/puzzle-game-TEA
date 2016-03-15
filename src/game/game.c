@@ -1,18 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
-#include "utility.h"
+#include <game.h>
+#include <utility.h>
+
 #define TAILLE_PLATEAU_RH 6
 
 bool estPositionValide(game g, piece p);
-
-game new_game_hr( int nb_pieces, piece *pieces)
-{
-	game newGame_rh = new_game(TAILLE_PLATEAU_RH, TAILLE_PLATEAU_RH, nb_pieces, pieces);
-	if(newGame_rh == NULL)
-		error("new_game_hr(), porbleme d allocation memoire");
-	return newGame_rh;
-}
 
 game new_game (int width, int height, int nb_pieces, piece *pieces){
 	//les allocations mémoires du game et de son tableau de piece...
@@ -99,20 +92,6 @@ void copy_game(cgame src, game dst)
 		copy_piece(src -> pieces[i], dst -> pieces[i]);
 	}
 }
-
-
-bool game_over_hr(cgame g)
-{
-	//On regarde si les coordonnées de la voiture 0 sont bien (4;3)
-	return (get_x(g -> pieces[0]) == 4 && get_y(g -> pieces[0]) == 3);
-}
-
-bool game_over_ar(cgame g)
-{
-	return (get_x(game_piece(g, 0)) == 1 && get_y(game_piece(g, 0)) == 0);
-}
-
-
 
 bool play_move(game g, int piece_num, dir d, int distance)
 {
