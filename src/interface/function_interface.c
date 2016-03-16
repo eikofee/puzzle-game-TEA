@@ -200,7 +200,7 @@ dir getDirection(char* s, int* pos)
 */
 void confirm()
 {
-	printf("\n\tPress 'Enter' to go back to the help menu");
+	printf("\n\tPress 'Enter' to go back to the help menu...\n");
 	int c = 0;
 	while (c != '\r' && c != '\n')
 		c = getchar();	

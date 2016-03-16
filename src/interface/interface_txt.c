@@ -99,15 +99,19 @@ void getHelp(int input, bool* done)
 	switch(input)
 	{
 		case 1:
-			printf("\tRules are simple. You're the car nÂ°0 and you need to go to the exit (\">\"). To do that, you need\n");
-			printf("to move the other cars to free yourself a passage. Cars can't cross others or go outside the game area.\n");
+			printf("\tRules are simple. You're the piece #0 and you need to go\n");
+			printf("\tto the exit (\">>\"). To do that, you need to move the other\n");
+			printf("\tpieces to free yourself a passage. Pieces can't cross\n");
+			printf("\tothers or go outside the game area.\n");
 			confirm();
 			break;
 		case 2:
-			printf("\tSyntax is as it follows : \"a b\" where a is the car number you want to move and b the distance to\n");
-			printf("translate it. Positive numbers go to up and right and negative ones go to down and left.\n");
-			printf("e.g. 2 -3 with the car number 2 being a horizontal car will go 3 cases to the left. You can also input\n");
-			printf("the car number first and then input the distance.\n");
+			printf("\tSyntax is as it follows : \"[piece #] [direction] [distance]\"\n\n");
+			printf("\t [piece #] : The number of the piece you want to move.\n");
+			printf("\t [direction] : The direction you want to move the piece to.\n");
+			printf("\t\tPossible directions:\n\t\t-u, U : UP\n\t\t-d, D : DOWN\n\t\t-l, L : LEFT\n\t\t-r, R : RIGHT\n");
+			printf("\t [distance] : The number of cases you want to cross.\n\t               Negative numbers are allowed.\n\n");
+			printf("\te.g.: '2 d 3' > move the piece #2 from 3 cases to the bottom.\n");
 			confirm();
 			break;
 		case 3:
