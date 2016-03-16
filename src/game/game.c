@@ -5,6 +5,14 @@
 
 #define TAILLE_PLATEAU_RH 6
 
+struct game_s{
+	int width;
+	int height;
+	piece *pieces;	//malloc nécessaire
+	int	nb_moves;
+	int nb_pieces;
+};
+
 bool estPositionValide(game g, piece p);
 
 game new_game (int width, int height, int nb_pieces, piece *pieces){
@@ -14,7 +22,7 @@ game new_game (int width, int height, int nb_pieces, piece *pieces){
 	if(new_game == NULL)
 		error("new_game(), probleme d allocation memoire");
 
-	new_game -> pieces = (piece*) malloc(sizeof(struct piece_s) * nb_pieces);
+	new_game -> pieces = (piece*) malloc(sizeof(piece) * nb_pieces);
 	
 	if(!new_game -> pieces)
 		error("Allocation new_game -> pieces");
@@ -77,14 +85,14 @@ void copy_game(cgame src, game dst)
 
 	//...Ensuite le tableau des pièces
 	//On réalloue du tableau des pieces
-	dst -> pieces = (piece*) malloc(sizeof(struct piece_s) * dst -> nb_pieces);
+	dst -> pieces = (piece*) malloc(sizeof(piece) * dst -> nb_pieces);
 
 	if (!dst -> pieces)
 		error("Echec du deuxième malloc");
 
 	for (int i = 0; i < src -> nb_pieces; i++)
 	{
-		dst -> pieces[i] = (piece) malloc(sizeof(struct piece_s));
+		dst -> pieces[i] = new_piece(0, 0, 0, 0, false, false);
 
 		if (!dst -> pieces[i])
 			error("Allocation dst -> pieces[i]");
@@ -152,6 +160,7 @@ bool estPositionValide(game g, piece p){
 
 // --------- Fonctions Simples ----------------
 int game_square_piece (game g, int x, int y){
+	
 	int** tab = mapPieces(g->pieces, game_nb_pieces(g), game_width(g), game_height(g));
 	return tab[x][y];
 }

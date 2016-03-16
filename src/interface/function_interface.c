@@ -253,8 +253,9 @@ void loadGameFromSave(char* fichier, game g)
 	game g_tmp = NULL; //getGameFromId(s);
 	copy_game(g_tmp, g);
 
-	fgets(s, 128, fichier_tmp);
-	g->nb_moves = atoi(s);
+	// *****----- A conserver pour la V3 --------*****
+	// fgets(s, 128, fichier_tmp);
+	// g->nb_moves = atoi(s);
 
 	fclose(fichier_tmp);
 	delete_game(g_tmp);
@@ -343,4 +344,39 @@ void revertDirection(dir* d)
 			*d = LEFT;
 			break;
 	}
+}
+
+piece* copieTableauPieces(game g){
+
+	int nb_pieces = game_nb_pieces(g);
+	piece* pieces = (piece*) malloc(sizeof(piece) * nb_pieces);
+	
+	if(!pieces)
+		error("Allocation new_game -> pieces");
+
+	//... Affectation des valeurs par copie
+
+	for (int i = 0; i < nb_pieces; i++)
+	{
+		pieces[i] = new_piece( 0, 0, 0, 0, false,  false);
+
+		if (!pieces[i])
+			error("Allocation new_game -> pieces[i]");
+
+		copy_piece(game_piece(g, i), pieces[i]);
+
+		if (!pieces[i])
+		{
+			printf("i=%d\n", i);
+			error("Copie de pièce");
+		}
+	}
+	return pieces;
+}
+
+void freeTableauDePiece(piece* pieces, int nb_pieces){
+	for(int i = 0; i < nb_pieces; i++)
+		delete_piece(pieces[i]);
+	free(pieces);
+
 }

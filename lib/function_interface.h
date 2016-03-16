@@ -21,4 +21,7 @@ char* loadGameFromNum(char* fichier, char* num);
 dir getDirection(char* s, int* pos);
 void revertDirection(dir* d);
 
+piece* copieTableauPieces(game g);
+void freeTableauDePiece(piece* pieces, int nb_pieces);
+
 #endif
