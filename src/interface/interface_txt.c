@@ -233,11 +233,11 @@ game getGameFromIdRH(char* id)
 /*
 	Affiche la zone de jeu
 */
-	// ************************* Changement de la forme TableauDePieces(tableau de piece, taille axe x, taille axe y)
+	// ************************* Changement de la forme mapPieces(tableau de piece, taille axe x, taille axe y)
 void draw_interface(game g, char* id)
 {
 	int moves = game_nb_moves(g);
-	int** t = TableauDePieces(g -> pieces, game_nb_pieces(g), game_width(g), game_height(g));
+	int** t = mapPieces(g -> pieces, game_nb_pieces(g), game_width(g), game_height(g));
 	bool* toWrite = (bool*) malloc(sizeof(bool) * game_nb_pieces(g));
 	for (int i = 0; i < game_nb_pieces(g); i++)
 		toWrite[i] = true;
