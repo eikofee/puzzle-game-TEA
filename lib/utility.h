@@ -20,8 +20,8 @@ struct game_s{
 };
 
 void switchsMovePiece(piece p, dir d, int distance);
-int** TableauDePieces(piece* tab_pieces,int taille, int taille_x, int taille_y);
-int** pieceEnTableau(piece p, int taille);
+int** mapPieces(piece* tab_pieces,int taille, int taille_x, int taille_y);
+int** pieceArray(piece p, int taille);
 void error(char* s);
 
 #endif

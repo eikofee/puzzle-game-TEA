@@ -105,7 +105,7 @@ void switchsMovePiece(piece p, dir d, int distance){
 }
 
 //Retourne true si les deux pièces se chevauchent, false sinon.
-//On emploi 2 tableau2D crées par la fonction pieceEnTableau afin de vérifier plus facilement
+//On emploi 2 tableau2D crées par la fonction pieceArray afin de vérifier plus facilement
 //les problèmes de collisions.
 bool intersect(cpiece p1, cpiece p2){
 	int taille_p1;
@@ -114,8 +114,8 @@ bool intersect(cpiece p1, cpiece p2){
 	taille_p1 = get_height(p1) * get_width(p1);
 	taille_p2 = get_height(p2) * get_width(p2);
 
-	int** tab_p1 = pieceEnTableau((piece)p1, taille_p1);
-	int** tab_p2 = pieceEnTableau((piece)p2, taille_p2);
+	int** tab_p1 = pieceArray((piece)p1, taille_p1);
+	int** tab_p2 = pieceArray((piece)p2, taille_p2);
 
 	for(int x = 0; x < taille_p1; x++)
 	{
@@ -137,7 +137,7 @@ bool intersect(cpiece p1, cpiece p2){
 //Crée et retourne un tableau 2D des coordonnées de chaque case prise par la piece
 //Cela nous permet de mieux gérer les conflits entre 2 pieces dans intersect.
 //Prend en paramètre une piece et sa taille.
-int** pieceEnTableau(piece p, int taille){
+int** pieceArray(piece p, int taille){
 	// int taille = get_height(p) * get_width(p);
 	int **tab = (int **)malloc(taille * sizeof(int*));
 	int *tab2 =(int *)malloc(taille * 2 * sizeof(int));
@@ -163,16 +163,16 @@ int** pieceEnTableau(piece p, int taille){
 //Génere un tableau 2D correspondant au plateau du jeu
 //Il est rempli par la valeur -1 par défaut. Les vehicules sont mis grace
 // au tableau de piece.
-int** TableauDePieces(piece* tab_pieces, int taille, int taille_x, int taille_y){
+int** mapPieces(piece* tab_pieces, int taille, int taille_x, int taille_y){
 
 	// ---	Début de l'allocation ---
 	int **tab2Dpieces = (int **) malloc(taille_x * sizeof(int*));
 	int *tab2Dpieces2 = (int *) malloc(taille_x * taille_y * sizeof(int));
 
 	if(tab2Dpieces == NULL)
-		error("TableauDePieces, Problème d'allocation sur tab2Dpieces");
+		error("mapPieces(), Problème d'allocation sur tab2Dpieces");
 	if(tab2Dpieces2 == NULL)
-		error("TableauDePieces, Problème d'allocation sur tab2Dpieces2");
+		error("mapPieces(), Problème d'allocation sur tab2Dpieces2");
 
 	for(int i = 0; i < taille_x; i++)
 			tab2Dpieces[i] = &tab2Dpieces2[i*taille_y];
@@ -190,7 +190,7 @@ int** TableauDePieces(piece* tab_pieces, int taille, int taille_x, int taille_y)
 	{
 		taille_tab_tmp_piece = get_width(tab_pieces[i]) * get_height(tab_pieces[i]);
 
-		tab_tmp_piece = pieceEnTableau(tab_pieces[i], taille_tab_tmp_piece);
+		tab_tmp_piece = pieceArray(tab_pieces[i], taille_tab_tmp_piece);
 		
 		for(int j = 0; j < taille_tab_tmp_piece; j++)
 			tab2Dpieces[ tab_tmp_piece[j][0] ][ tab_tmp_piece[j][1] ] = i;
@@ -206,12 +206,14 @@ int get_x(cpiece p){
 	if(p != NULL)
 		return p->position[0];
 	error("get_x(), p n'est pas alloué");
+	return -1;
 }
 
 int get_y(cpiece p){
 	if(p != NULL)
 		return p->position[1];
 	error("get_y(), p n'est pas alloué");
+	return -1;
 }
 
 int get_height(cpiece p){
@@ -226,10 +228,12 @@ bool can_move_x(cpiece p){
 	if(p != NULL)
 		return p -> move_x;
 	error("can_move_x(), la piece p n'est pas alloue");
+	return false;
 }
 
 bool can_move_y(cpiece p){
 	if(p != NULL)
 		return p -> move_y;
 	error("can_move_y(), la piece p n'est pas alloue");
+	return false;
 }

@@ -37,9 +37,9 @@ void loadTheGame(char* id_src)
 
 int main(int argc, char* argv[])
 {
-	char* Game1 = "4103300222052";
-	char* Game2 = "8103022024034144301040250";
-	char* Game3 = "8123024012040042145250301";
+	// char* Game1 = "4103300222052";
+	// char* Game2 = "8103022024034144301040250";
+	// char* Game3 = "8123024012040042145250301";
 	
 	//loadTheGame(Game1);
 	//loadTheGame(Game2);
