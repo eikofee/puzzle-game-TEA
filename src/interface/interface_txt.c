@@ -136,82 +136,8 @@ piece getPieceFromIdAR(char* id, int* pos)
 	
 }
 
-/*Syntaxe version 2:
-		(nb_pieces)n(taille_x)x(taille_y)p(1,2 ou 3)w(width)h(height)x(pos_x)y(pos_y)p(next)
-	*/
-game getGameFromIdAR(char* id)
-{
-	int i = 0;
-	int nb_pieces = readUntilChar(id, &i);
-	i++;
-	piece p[nb_pieces];
-	int n_piece = 0;	//index de p
-	int taille_x = 0;
-	int taille_y = 0;
-	int state = 1; // 1 = taille_x, 2 = taille_y, 3 = piece
-	piece p_tmp;
-	
 
-	while (id[i] != '\0')
-	{
-		switch(state)
-		{
-			case 1:
-				taille_x = readUntilChar(id, &i);
-				break;
-			case 2:
-				taille_y = readUntilChar(id, &i);
-				break;
-			case 3:
 
-				p_tmp = getPieceFromIdAR(id, &i);
-				p[n_piece] = new_piece(0, 0, 0, 0, true, true);
-				copy_piece(p_tmp, p[n_piece]);
-				n_piece++;
-				state--;
-				delete_piece(p_tmp);
-				break;
-		}
-		if (id[i])
-			i++;
-		state++;
-	}
-	game g = new_game(taille_x, taille_y, nb_pieces, p);
-	return g;
-}
-/*
-	Permet de générer un niveau à partir d'un id (non seed)
-*/
-game getGameFromIdRH(char* id)
-{
-	//Syntaxe : Nabca2b2c2a3b3c3
-	//N = nombre de voitures
-	//a = car type: +1 st horizontale, +2 si grand
-	//b = case axe x
-	//c = case axe y
-
-	int nb_pieces = getNumber(id[0]) ;
-	piece p[nb_pieces];
-	int i = 1;
-	int indexP = 0;
-
-	while (id[i] != '\0')
-	{
-		bool isHorizontal = (id[i] == '1' || id[i] == '3');
-		bool isSmall = (id[i] == '0' || id[i] == '1');
-		int x = getNumber(id[i + 1]);
-		int y = getNumber(id[i + 2]);
-		p[indexP] = new_piece_rh(x, y, isSmall, isHorizontal); //isSmall
-		i += 3;
-		indexP++;
-	}
-	game g = new_game_hr(nb_pieces, p);
-
-	for(int j = 0; j < indexP; j++)
-		free(p[j]);
-
-	return g;
-}
 
 /*
 	Permet de convertir un game en id (pas une sauvegarde complète)

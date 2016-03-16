@@ -23,7 +23,7 @@ game new_game (int width, int height, int nb_pieces, piece *pieces){
 	new_game -> nb_pieces = nb_pieces;
 	for (int i = 0; i < nb_pieces; i++)
 	{
-		new_game -> pieces[i] = new_piece_rh(0,0,true,true);
+		new_game -> pieces[i] = new_piece( 0, 0, 0, 0, false,  false);
 
 		if (!new_game -> pieces[i])
 			error("Allocation new_game -> pieces[i]");

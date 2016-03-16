@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <game.h>
+#include <game_rh.h>
 #include <utility.h>
 #include <interface_txt.h>
 
@@ -44,14 +44,6 @@ int main(int argc, char* argv[])
 	//loadTheGame(Game1);
 	//loadTheGame(Game2);
 	//loadTheGame(Game3);
-	game g = getGameFromIdAR("3n10x10p3w4h2x2y2p3w2h2x6y6p3w10h2x0y8");
-	char* s = (char*) malloc(sizeof(char) * 256);
-	while (true)
-	{
-		getIdFromGameAR(g, s);
-		draw_interface(g, s);
-		input_player(g, s);
-	}
-
+	printf("WIP\n");
 	return 0;
 }

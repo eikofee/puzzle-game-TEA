@@ -16,10 +16,10 @@ void display_pieces(piece *p, int taille)
 	{
 		printf("Piece [%d] : x = %d, y = %d, ",i ,get_x(p[i]), get_y(p[i]));
 		printf("Width = %d | Height = %d, ", get_width(p[i]), get_height(p[i]));
-		if (is_horizontal(p[i]))
-			printf("isHorizontal");
-		else
-			printf("isVertical");
+		// if (is_horizontal(p[i]))
+		// 	printf("isHorizontal");
+		// else
+		// 	printf("isVertical");
 		printf("]\n");
 	}
 }

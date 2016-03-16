@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "piece.h"
+#include <piece_rh.h>
 
 piece new_piece_rh (int x, int y, bool small, bool horizontal){
 
