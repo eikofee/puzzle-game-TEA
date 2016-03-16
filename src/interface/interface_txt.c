@@ -12,133 +12,6 @@
 
 //Ce fichier permet de gérer l'affichage en mode texte du jeu
 
-
-bool checkFormat(char* s, char* format);
-
-int readUntilChar(char* s, int* pos)
-{
-	int n = 0;
-	int multiplier = 1;
-	while (s[*pos] == '+' || s[*pos] == '-')
-	{
-		if (s[*pos] == '-')
-			multiplier *= -1;
-		*pos += 1;
-	}
-	while (s[*(pos)] >= '0' && s[*(pos)] <= '9')
-	{
-		n *= 10;
-		n += s[*(pos)] - '0';
-		*(pos) += 1;
-	}
-
-	return n * multiplier;
-}
-
-void getCharFromInt(char* s, int* pos, int data)
-{
-	if (!data)
-	{
-		s[*(pos)] = '0';
-		*(pos) += 1;
-		return;
-	}
-	int taille = 1;
-	int data_calc = data / 10;
-	while (data_calc > 0)
-	{
-		data_calc /= 10;
-		taille *= 10;
-	}
-	while (taille > 0)
-	{
-		s[*pos] = data / taille + '0';
-		*(pos) += 1;
-		data -= data / taille * taille;
-		taille /= 10;
-	}
-}
-
-/*Syntaxe version 2:
-		(nb_pieces)n(taille_x)x(taille_y)p(1,2 ou 3)w(width)h(height)x(pos_x)y(pos_y)p(next)
-		can_move_x = +1
-		can_move_y = +2
-	*/
-void getIdFromGameAR(game g, char* id)
-{
-	int pos = 0;
-	int n_piece = 0;
-	getCharFromInt(id, &pos, game_nb_pieces(g));
-	id[pos] = 'n';
-	pos++;
-	getCharFromInt(id, &pos, g -> width);
-	id[pos] = 'x';
-	pos++;
-	getCharFromInt(id, &pos, g -> height);
-	while (n_piece < game_nb_pieces(g))
-	{
-		id[pos] = 'p';
-		pos++;
-		id[pos] = '0' + (can_move_x(game_piece(g, n_piece))?1:0) + (can_move_y(game_piece(g, n_piece))?2:0);
-		pos++;
-		id[pos] = 'w';
-		pos++;
-		getCharFromInt(id, &pos, get_width(game_piece(g, n_piece)));
-		id[pos] = 'h';
-		pos++;
-		getCharFromInt(id, &pos, get_height(game_piece(g, n_piece)));
-		id[pos] = 'x';
-		pos++;
-		getCharFromInt(id, &pos, get_x(game_piece(g, n_piece)));
-		id[pos] = 'y';
-		pos++;
-		getCharFromInt(id, &pos, get_y(game_piece(g, n_piece)));
-		n_piece++;
-	}
-	id[pos] = '\0';
-}
-
-piece getPieceFromIdAR(char* id, int* pos)
-{
-	int w = 0;
-	int h = 0;
-	int x = 0;
-	int y = 0;
-	int type = 0;
-	int state = 0; // 0 = type, 1 = w, 2 = h, 3 = x, 4 = y
-	while (id[*(pos)] != 'p' && id[*(pos)] != '\0')
-	{
-		switch(state)
-		{
-			case 0:
-				type = readUntilChar(id, pos);
-				break;
-			case 1:
-				w = readUntilChar(id, pos);
-				break;
-			case 2:
-				h = readUntilChar(id, pos);
-				break;
-			case 3:
-				x = readUntilChar(id, pos);
-				break;
-			case 4:
-				y = readUntilChar(id, pos);
-				*(pos) -= 1;
-				break;
-		}
-		state++;
-		if (id[*(pos)])
-			*(pos) += 1;
-	}
-	piece p = new_piece(x, y, w, h, ((type >= 2)?true:false), ((type == 1 || type == 3)?true:false));
-	return p;
-	
-}
-
-
-
-
 /*
 	Permet de convertir un game en id (pas une sauvegarde complète)
 */
@@ -164,7 +37,9 @@ piece getPieceFromIdAR(char* id, int* pos)
 void draw_interface(game g, char* id)
 {
 	int moves = game_nb_moves(g);
-	int** t = mapPieces(g -> pieces, game_nb_pieces(g), game_width(g), game_height(g));
+	piece* p = copieTableauPieces(g);
+	int** t = mapPieces(p , game_nb_pieces(g), game_width(g), game_height(g));
+	freeTableauDePieces(p, game_nb_pieces(g));
 	bool* toWrite = (bool*) malloc(sizeof(bool) * game_nb_pieces(g));
 	for (int i = 0; i < game_nb_pieces(g); i++)
 		toWrite[i] = true;

@@ -5,6 +5,5 @@
 #include <function_interface.h>
 game new_game_ar( int nb_pieces, piece *pieces);
 bool game_over_ar(cgame g);
-game getGameFromIdAR(char* id);
 
 #endif

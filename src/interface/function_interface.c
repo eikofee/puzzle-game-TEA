@@ -374,9 +374,174 @@ piece* copieTableauPieces(game g){
 	return pieces;
 }
 
-void freeTableauDePiece(piece* pieces, int nb_pieces){
+void freeTableauDePieces(piece* pieces, int nb_pieces){
 	for(int i = 0; i < nb_pieces; i++)
 		delete_piece(pieces[i]);
 	free(pieces);
+}
 
+/*Syntaxe version 2:
+		(nb_pieces)n(taille_x)x(taille_y)p(1,2 ou 3)w(width)h(height)x(pos_x)y(pos_y)p(next)
+	*/
+game getGameFromId(char* id)
+{
+	int i = 0;
+	int nb_pieces = readUntilChar(id, &i);
+	i++;
+	piece p[nb_pieces];
+	int n_piece = 0;	//index de p
+	int taille_x = 0;
+	int taille_y = 0;
+	int state = 1; // 1 = taille_x, 2 = taille_y, 3 = piece
+	piece p_tmp;
+	
+
+	while (id[i] != '\0')
+	{
+		switch(state)
+		{
+			case 1:
+				taille_x = readUntilChar(id, &i);
+				break;
+			case 2:
+				taille_y = readUntilChar(id, &i);
+				break;
+			case 3:
+
+				p_tmp = getPieceFromId(id, &i);
+				p[n_piece] = new_piece(0, 0, 0, 0, true, true);
+				copy_piece(p_tmp, p[n_piece]);
+				n_piece++;
+				state--;
+				delete_piece(p_tmp);
+				break;
+		}
+		if (id[i])
+			i++;
+		state++;
+	}
+	game g = new_game(taille_x, taille_y, nb_pieces, p);
+	return g;
+}
+
+
+/*Syntaxe version 2:
+		[nb_pieces]n[taille_x]x[taille_y]p[1,2 ou 3]w[width]h[height]x[pos_x]y[pos_y]p[next]
+		can_move_x = +1
+		can_move_y = +2
+	*/
+void getIdFromGame(game g, char* id)
+{
+	int pos = 0;
+	int n_piece = 0;
+	getCharFromInt(id, &pos, game_nb_pieces(g));
+	id[pos] = 'n';
+	pos++;
+	getCharFromInt(id, &pos, game_width(g));
+	id[pos] = 'x';
+	pos++;
+	getCharFromInt(id, &pos, game_height(g));
+	while (n_piece < game_nb_pieces(g))
+	{
+		id[pos] = 'p';
+		pos++;
+		id[pos] = '0' + (can_move_x(game_piece(g, n_piece))?1:0) + (can_move_y(game_piece(g, n_piece))?2:0);
+		pos++;
+		id[pos] = 'w';
+		pos++;
+		getCharFromInt(id, &pos, get_width(game_piece(g, n_piece)));
+		id[pos] = 'h';
+		pos++;
+		getCharFromInt(id, &pos, get_height(game_piece(g, n_piece)));
+		id[pos] = 'x';
+		pos++;
+		getCharFromInt(id, &pos, get_x(game_piece(g, n_piece)));
+		id[pos] = 'y';
+		pos++;
+		getCharFromInt(id, &pos, get_y(game_piece(g, n_piece)));
+		n_piece++;
+	}
+	id[pos] = '\0';
+}
+
+
+piece getPieceFromId(char* id, int* pos)
+{
+	int w = 0;
+	int h = 0;
+	int x = 0;
+	int y = 0;
+	int type = 0;
+	int state = 0; // 0 = type, 1 = w, 2 = h, 3 = x, 4 = y
+	while (id[*(pos)] != 'p' && id[*(pos)] != '\0')
+	{
+		switch(state)
+		{
+			case 0:
+				type = readUntilChar(id, pos);
+				break;
+			case 1:
+				w = readUntilChar(id, pos);
+				break;
+			case 2:
+				h = readUntilChar(id, pos);
+				break;
+			case 3:
+				x = readUntilChar(id, pos);
+				break;
+			case 4:
+				y = readUntilChar(id, pos);
+				*(pos) -= 1;
+				break;
+		}
+		state++;
+		if (id[*(pos)])
+			*(pos) += 1;
+	}
+	piece p = new_piece(x, y, w, h, ((type >= 2)?true:false), ((type == 1 || type == 3)?true:false));
+	return p;
+}
+
+int readUntilChar(char* s, int* pos)
+{
+	int n = 0;
+	int multiplier = 1;
+	while (s[*pos] == '+' || s[*pos] == '-')
+	{
+		if (s[*pos] == '-')
+			multiplier *= -1;
+		*pos += 1;
+	}
+	while (s[*(pos)] >= '0' && s[*(pos)] <= '9')
+	{
+		n *= 10;
+		n += s[*(pos)] - '0';
+		*(pos) += 1;
+	}
+
+	return n * multiplier;
+}
+
+void getCharFromInt(char* s, int* pos, int data)
+{
+	if (!data)
+	{
+		s[*(pos)] = '0';
+		*(pos) += 1;
+		return;
+	}
+	int taille = 1;
+	int data_calc = data / 10;
+	while (data_calc > 0)
+	{
+		data_calc /= 10;
+		taille *= 10;
+	}
+	while (taille > 0)
+	{
+		s[*pos] = data / taille + '0';
+		*(pos) += 1;
+		data -= data / taille * taille;
+		taille /= 10;
+	}
 }

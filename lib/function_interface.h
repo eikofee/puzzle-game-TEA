@@ -22,6 +22,10 @@ dir getDirection(char* s, int* pos);
 void revertDirection(dir* d);
 
 piece* copieTableauPieces(game g);
-void freeTableauDePiece(piece* pieces, int nb_pieces);
-
+void freeTableauDePieces(piece* pieces, int nb_pieces);
+game getGameFromId(char*  id);
+void getIdFromGame(game g, char* id);
+piece getPieceFromId(char* id, int* pos);
+int readUntilChar(char* s, int* pos);
+void getCharFromInt(char* s, int* pos, int data);
 #endif
