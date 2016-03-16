@@ -67,9 +67,9 @@ void draw_interface(game g, char* id)
 			case 0: 
 				printf("\x1b[47;90m##\x1b[0m Type 'help' for more informations\n");
 				break;
-			case 1: //ID/Seed du jeu
-				printf("\x1b[47;90m##\x1b[0m ID: %s\n", id);
-				break;
+			//case 1: //ID/Seed du jeu
+			//	printf("\x1b[47;90m##\x1b[0m ID: %s\n", id);
+			//	break;
 			case 3: //Sortie du parking
 				printf(">>\n");
 				break;
@@ -114,7 +114,8 @@ void getHelp(int input, bool* done)
 			printf("\tList of available commands:\n\n");
 			printf("\thelp: Display this menu\n");
 			printf("\t[WIP]hint: Get closer to the end by cheating\n");
-			printf("\t[WIP]skip: skip the current game for another\n");
+			printf("\t[WIP]skip: Skip the current game for another\n");
+			printf("\tid: Display the current game's ID\n");
 			printf("\tsave: Save the current run for later\n");
 			printf("\tload: Load a run\n");
 			printf("\texit: Close the game\n");
@@ -275,6 +276,11 @@ void input_player(game g, char* id)
 		correct = true;
 		//sauvegarde
 		saveGameFromId(g, id);
+	}
+	if (str_equal(input, "id\n"))
+	{
+		correct = true;
+		printf("Game ID : %s\n", id);
 	}
 	if (str_equal(input, "load\n"))
 	{
