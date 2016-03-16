@@ -7,15 +7,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 file(WRITE ${CMAKE_BINARY_DIR}/bin/games.txt "4103300222052\n")
 file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8103022024034144301040250\n")
 file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8123024012040042145250301\n")
+file(WRITE ${CMAKE_BINARY_DIR}/config.ini "#Contiendra le nom du jeu exécuté")
 
 
 # On definit les elements necessaires aux librairies (*.a) puis on les cree
 #Librairie racine: game
 add_library(game ${CMAKE_BINARY_DIR}/src/game/game.c ${CMAKE_BINARY_DIR}/src/piece/piece.c)
 #Librairie spécifique à rush hour
-add_library(rh ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c ${CMAKE_BINARY_DIR}/src/game/game_rh.c ${CMAKE_BINARY_DIR}/src/piece/piece_rh.c )
+add_library(rh ${CMAKE_BINARY_DIR}/src/game/game_rh.c ${CMAKE_BINARY_DIR}/src/piece/piece_rh.c)
+add_library(interface ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c)
 #Librairie spécifique à Ane Rouge
-add_library(ar ${CMAKE_BINARY_DIR}/src/game/game_ar.c ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c)
+add_library(ar ${CMAKE_BINARY_DIR}/src/game/game_ar.c)
 
 # On cree l'executable x a partir du fichier correspondant... 
 add_executable(rush-hour main/rush-hour)
@@ -23,5 +25,5 @@ add_executable(klotski main/klotski)
 
 
 # On lie les librairies dont les exécutables ont besoin (game, rh/ar)
-target_link_libraries(rush-hour game rh)
-target_link_libraries(klotski game ar)
+target_link_libraries(rush-hour game rh interface)
+target_link_libraries(klotski game ar interface)

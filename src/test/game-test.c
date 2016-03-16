@@ -53,12 +53,12 @@ int main(int argc, char* argv[])
 	printf("> création d'un jeu vide...\n");
 	piece q[nb_pieces];
 
-	if (!q)
+	if (q == NULL)
 		fprintf(stderr, "Allocation de q");
 
 	q[0] = new_piece_rh(0, 3, true, true);
 
-	if (!q[0])
+	if (q[0] == NULL)
 		fprintf(stderr, "Creation de q[0]");
 
 	game g2 = new_game_hr(1, q);
