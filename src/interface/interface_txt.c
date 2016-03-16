@@ -14,6 +14,7 @@
 
 
 bool checkFormat(char* s, char* format);
+
 int readUntilChar(char* s, int* pos)
 {
 	int n = 0;
@@ -200,7 +201,7 @@ game getGameFromIdRH(char* id)
 		bool isSmall = (id[i] == '0' || id[i] == '1');
 		int x = getNumber(id[i + 1]);
 		int y = getNumber(id[i + 2]);
-		p[indexP] = new_piece_rh(x, y, true, isHorizontal); //isSmall
+		p[indexP] = new_piece_rh(x, y, isSmall, isHorizontal); //isSmall
 		i += 3;
 		indexP++;
 	}

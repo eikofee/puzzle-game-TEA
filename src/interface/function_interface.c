@@ -150,27 +150,28 @@ dir getDirection(char* s, int* pos)
 		{
 			case 'u':
 				return UP;
-			break;
+				break;
 
 			case 'd':
 				return DOWN;
-			break;
+				break;
 
 			case 'l':
 				return LEFT;
-			break;
+				break;
 
 			case 'r':
 				return RIGHT;
-			break;
+				break;
 
 			default:
 				*pos += 1;
-			break;
+				break;
 		}
+
 	}
 
-	//ERREUR
+	return UP;
 }
 /*
 	Recupere la direction que doit prendre une piece en fonction du signe entre
