@@ -37,7 +37,7 @@ void loadTheGame(char* id_src)
 
 int main(int argc, char* argv[])
 {
-
+	initFileConfig("rush-hour");
 	// char* Game1 = "410300222052";
 	char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
 	// char* Game2 = "8103022024034144301040250";

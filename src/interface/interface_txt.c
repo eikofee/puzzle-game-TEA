@@ -71,7 +71,7 @@ void draw_interface(game g, char* id)
 			//	printf("\x1b[47;90m##\x1b[0m ID: %s\n", id);
 			//	break;
 			case 3: //Sortie du parking (RH only)
-				if (whatGame("rush-hour"))
+				if (whatGame("rush-hour\n"))
 					printf(">>\n");
 				else
 					printf("\x1b[47;90m##\x1b[0m\n");
