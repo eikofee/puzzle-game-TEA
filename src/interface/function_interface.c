@@ -223,7 +223,7 @@ void ignoreOverflow(char* input, int taille)
 
 //Permet de sauvegarder dans le fichier save.txt la partie.
 //On ecrase l'ancienne partie à chaque fois qu'on fait appelle a cette fonction.
-void saveGameFromId(game g, char* id)
+/*void saveGameFromId(game g, char* id)
 {
 	FILE *fichier = NULL;
 	fichier = fopen("save.txt", "w");
@@ -236,10 +236,10 @@ void saveGameFromId(game g, char* id)
 		fprintf(fichier, "%d\n", game_nb_moves(g));
 	fclose(fichier);
 }
-
+*/
 //Permet de charger une partir a partir de la save.
 //Cette fonction est exclusif a la save.
-void loadGameFromSave(char* fichier, game g)
+/*void loadGameFromSave(char* fichier, game g)
 {
 	FILE* fichier_tmp = NULL;
 	fichier_tmp = fopen(fichier, "r");
@@ -261,7 +261,7 @@ void loadGameFromSave(char* fichier, game g)
 	delete_game(g_tmp);
 
 }
-
+*/
 //Permet de charger une partie a partir d'un fichier et d'un numero de level
 char* loadGameFromNum(char* fichier, char* num)
 {
@@ -291,19 +291,19 @@ char* loadGameFromNum(char* fichier, char* num)
 		error("loadGameFromId(), probleme d'ouverture du fichier");
 
 	//On recupere l'id du niveau
-	char* s = (char*)malloc(sizeof(char) * 128);
+	char* s = (char*)malloc(sizeof(char) * 256);
 
 	int i = 0;
 	while(i != numId)
 	{
-		fgets(s, 128, fichier_tmp);
+		fgets(s, 256, fichier_tmp);
 		i++;
 	}
 	fclose(fichier_tmp);
 	//On ferme le fichier apres avoir recurerer l'information ( l'id du niveau )
 	//Et on recopie la chaine de caratere `s` dans `s2` et on retourne s2
 
-	char* s2 = (char*)malloc(sizeof(char) * 128);
+	char* s2 = (char*)malloc(sizeof(char) * 256);
 
 	i = 0;
 	while(s[i] != '\n')

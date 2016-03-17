@@ -11,7 +11,6 @@ HALNAUT Adrien (Echoffee) - ORDONEZ Romain (Apodeus) - MARTY Yoan (tlanvaldear)
 ##Compiler et executer le programme rush-hour
 
 - Se placer dans le repertoire rush-hour (repertoire parent de src, bin et lib)
-
 - Entrer la commande suivante : `cmake .`
 
 - Après la fin de l'execution de la commande precedente, entrer la commande suivante : `make`

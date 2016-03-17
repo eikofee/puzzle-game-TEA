@@ -118,7 +118,7 @@ void getHelp(int input, bool* done)
 			printf("\tSyntax is as it follows : \"[piece #] [direction] [distance]\"\n\n");
 			printf("\t [piece #] : The number of the piece you want to move.\n");
 			printf("\t [direction] : The direction you want to move the piece to.\n");
-			printf("\t\tPossible directions:\n\t\t-u, U : UP\n\t\t-d, D : DOWN\n\t\t-l, L : LEFT\n\t\t-r, R : RIGHT\n");
+			printf("\t\tPossible directions:\n\t\t- u, U : UP\n\t\t- d, D : DOWN\n\t\t- l, L : LEFT\n\t\t- r, R : RIGHT\n");
 			printf("\t [distance] : The number of cases you want to cross.\n\t               Negative numbers are allowed.\n\n");
 			printf("\te.g.: '2 d 3' > move the piece #2 from 3 cases to the bottom.\n");
 			confirm();
@@ -126,11 +126,11 @@ void getHelp(int input, bool* done)
 		case 3:
 			printf("\tList of available commands:\n\n");
 			printf("\thelp: Display this menu\n");
-			printf("\t[WIP]hint: Get closer to the end by cheating\n");
-			printf("\t[WIP]skip: Skip the current game for another\n");
+			printf("\t[WIP] hint: Get closer to the end by cheating\n");
+			printf("\t[WIP] skip: Skip the current game for another\n");
 			printf("\tid: Display the current game's ID\n");
-			printf("\tsave: Save the current run for later\n");
-			printf("\tload: Load a run\n");
+			printf("\t[WIP] save: Save the current level for later\n");
+			printf("\tload: Load a level\n");
 			printf("\texit: Close the game\n");
 			confirm();
 			break;
@@ -296,7 +296,8 @@ void input_player(game g, char* id)
 	{
 		correct = true;
 		//sauvegarde
-		saveGameFromId(g, id);
+		//saveGameFromId(g, id);
+		printf("[WIP]");
 	}
 	if (str_equal(input, "id\n"))
 	{
@@ -309,27 +310,34 @@ void input_player(game g, char* id)
 		//On charge la partie que l'on veut, save 1 2 ou 3
 		//On alloue le char* level qui va prendre l'input du fgets
 		
-		printf("level number :\n(1, 2 or 3 | Type save to load your last save)\n");
-		char* level = (char*)malloc(sizeof(char)*128);
-		fgets(level, 128, stdin);
-
+		printf("level number :\n(1..3 or type 'c' to cancel)\n");
+		char* level = (char*)malloc(sizeof(char)*256);
+		while(!checkFormat(level, "%i") || !checkFormat(level, "c"))
+			fgets(level, 256, stdin);
+		if (checkFormat(level, "c"))
+			correct = false;
 		if(str_equal(level, "save\n"))
 		{
-			loadGameFromSave("save.txt", g);
-			free(level);
-			return;
+			printf("[WIP]\n");
+			//loadGameFromSave("save.txt", g);
+			//free(level);
+			//return;
 		}
-		//On met dans new_id le nouvel id du niveau chargé
-		//On recopie le new_id dans id et on libère level et new_id
-		
-		char* new_id;
-		new_id = loadGameFromNum("games.txt", level);
-		sprintf(id,"%s",new_id);
+		if (correct)
+		{
+			//On met dans new_id le nouvel id du niveau chargé
+			//On recopie le new_id dans id et on libère level et new_id
+			
+			char* new_id;
+			new_id = loadGameFromNum("games.txt", level);
+			sprintf(id,"%s",new_id);
+			free(new_id);
+			game g2 = NULL; //getGameFromId(id);
+			copy_game(g2, g);
+			delete_game(g2);
+		}
 		free(level);
-		free(new_id);
-		game g2 = NULL; //getGameFromId(id);
-		copy_game(g2, g);
-		delete_game(g2);
+		correct = true;
 		return;
 	}
 	
