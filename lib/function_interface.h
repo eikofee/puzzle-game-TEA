@@ -28,4 +28,5 @@ void getIdFromGame(game g, char* id);
 piece getPieceFromId(char* id, int* pos);
 int readUntilChar(char* s, int* pos);
 void getCharFromInt(char* s, int* pos, int data);
+void initFileConfig(char* level_name);
 #endif

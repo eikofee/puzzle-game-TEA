@@ -36,6 +36,8 @@ void loadTheGame(char* id_src)
 
 int main(void)
 {
+	initFileConfig("klotski");
+
 	char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 	//game g = getGameFromIdAR("3n10x10p3w4h2x2y2p3w2h2x6y6p3w10h2x0y8");
 	game g = getGameFromId(Game1);

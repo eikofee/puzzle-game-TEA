@@ -545,3 +545,26 @@ void getCharFromInt(char* s, int* pos, int data)
 		taille /= 10;
 	}
 }
+
+
+void initFileConfig(char* level_name){
+
+	FILE *fichier = NULL;
+	fichier = fopen("../config.ini", "w");
+
+	if(fichier == NULL)
+		error("initFileConfig(), probleme de création du fichier");
+
+	if(str_equal(level_name, "rush-hour"))
+	{
+		fprintf(fichier, "%s\n", "rush-hour");
+	}
+	else if(str_equal(level_name, "klotski"))
+	{
+		fprintf(fichier, "%s\n", "klotski");
+	}
+	else
+		fprintf(fichier, "%s\n", level_name);
+
+	fclose(fichier);
+}
