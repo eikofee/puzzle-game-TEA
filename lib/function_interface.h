@@ -30,4 +30,5 @@ int readUntilChar(char* s, int* pos);
 void getCharFromInt(char* s, int* pos, int data);
 void initFileConfig(char* level_name);
 bool whatGame(char* name);
+void removeSpaces(char* input);
 #endif

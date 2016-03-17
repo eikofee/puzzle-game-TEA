@@ -584,3 +584,19 @@ bool whatGame(char* name)
     fclose(file);
     return false;
 }
+
+void removeSpaces(char* input)
+{
+	int i = 0;
+	int j = 0;
+	while (input[i] != '\0')
+	{
+		if (input[i] != ' ')
+		{
+			input[j] = input[i];
+			j++;
+		}
+		i++;
+	}
+	input[j] = '\0';
+}

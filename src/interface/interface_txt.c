@@ -234,6 +234,7 @@ bool checkFormat(char* s, char* format)
 				case 'e':
 					while(s[j] == ' ')
 						j++;
+					j--;
 					break;
 
 				default:
@@ -257,6 +258,7 @@ void input_player(game g, char* id)
 	char input[64];
 	fgets(input, sizeof(input), stdin);
 	toLower(input);
+	removeSpaces(input);
 	bool correct = false;
 	if (str_equal(input, "help\n"))
 	{
