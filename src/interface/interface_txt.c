@@ -70,8 +70,11 @@ void draw_interface(game g, char* id)
 			//case 1: //ID/Seed du jeu
 			//	printf("\x1b[47;90m##\x1b[0m ID: %s\n", id);
 			//	break;
-			case 3: //Sortie du parking
-				printf(">>\n");
+			case 3: //Sortie du parking (RH only)
+				if (whatGame("rush-hour"))
+					printf(">>\n");
+				else
+					printf("\x1b[47;90m##\x1b[0m\n");
 				break;
 			case 4:	//Move num display
 				printf("\x1b[47;90m##\x1b[0m Move %d\n", moves);
@@ -83,7 +86,13 @@ void draw_interface(game g, char* id)
 	}
 	printf("\x1b[47;90m");
 	for (int i = 0; i < game_width(g) + 2; i++)
-		printf("##");		//Affiche le bord inférieur
+		if (i == game_width(g) / 2 - 1 && whatGame("klotski\n"))
+			{
+				printf("#|\x1b[0m vv \x1b[47;90m|#");
+				i+=3;
+			}else{
+			printf("##");		//Affiche le bord inférieur
+			}
 	printf("\x1b[0m\n");
 	freeTableau2D(t);
 	free(toWrite);

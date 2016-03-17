@@ -568,3 +568,19 @@ void initFileConfig(char* level_name){
 
 	fclose(fichier);
 }
+
+/*
+    Teste l'existence d'un fichier
+*/
+bool whatGame(char* name)
+{
+    FILE *file;
+    if (file = fopen("../config.ini", "r"))
+    {
+        char* s = (char*)malloc(sizeof(char) * 128);
+        fgets(s, 128, file);
+        return str_equal(s, name);
+    }
+    fclose(file);
+    return false;
+}
