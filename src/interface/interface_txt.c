@@ -197,6 +197,7 @@ bool checkFormat(char* s, char* format)
 		%o : le char est un operateur simple
 		%i : int
 		%d : direction (u, d, l, r)
+		%e : un nombre indéfini d'espaces
 	*/
 	int i = 0;
 	int j = 0;
@@ -228,6 +229,11 @@ bool checkFormat(char* s, char* format)
 				case 'd':
 					if (!isDirection(s[j]))
 						return false;
+					break;
+
+				case 'e':
+					while(s[j] == ' ')
+						j++;
 					break;
 
 				default:
@@ -362,7 +368,7 @@ void input_player(game g, char* id)
 			fuseNewInput(input, "%i", &pos, "Enter a distance:");
 			correct = true;
 		}
-		if (checkFormat(input, "%i %d %i") || checkFormat(input, "%i%d%i"))
+		if (checkFormat(input, "%i%e%d%e%i"))
 		{
 			pos = 0;
 			n_piece = readUntilChar(input, &pos);
