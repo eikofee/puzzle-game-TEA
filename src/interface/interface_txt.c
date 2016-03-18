@@ -312,19 +312,21 @@ void input_player(game g, char* id)
 		//On charge la partie que l'on veut, save 1 2 ou 3
 		//On alloue le char* level qui va prendre l'input du fgets
 		
-		printf("level number :\n(1..3 or type 'c' to cancel)\n");
+		printf("level number :\n(1, 2 or 3 or type 'c' to cancel)\n");
 		char* level = (char*)malloc(sizeof(char)*256);
-		while(!checkFormat(level, "%i") || !checkFormat(level, "c"))
-			fgets(level, 256, stdin);
-		if (checkFormat(level, "c"))
+		fgets(level, 256, stdin);
+
+		if (str_equal(level, "c"))
 			correct = false;
-		if(str_equal(level, "save\n"))
-		{
-			printf("[WIP]\n");
-			//loadGameFromSave("save.txt", g);
-			//free(level);
-			//return;
-		}
+
+		// if(str_equal(level, "save\n"))
+		// {
+		// 	printf("[WIP]\n");
+		// 	//loadGameFromSave("save.txt", g);
+		// 	//free(level);
+		// 	//return;
+		// }
+
 		if (correct)
 		{
 			//On met dans new_id le nouvel id du niveau chargé

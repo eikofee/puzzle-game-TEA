@@ -4,9 +4,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Cree un fichier games.txt qui se trouve dans /bin/games.txt. Le programme sera donc a executer depuis /bin
 # On lui ajoute les seed des niveaux du jeu
-file(WRITE ${CMAKE_BINARY_DIR}/bin/games.txt "4103300222052\n")
-file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8103022024034144301040250\n")
-file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8123024012040042145250301\n")
+file(WRITE ${CMAKE_BINARY_DIR}/bin/games.txt "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2\n")
+file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0\n")
+file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8n6x6p2w2h1x2y3p1w1h2x2y4p1w1h2x1y2p1w1h2x4y0p1w1h2x4y2p2w2h1x4y5p1w1h3x5y0p2w3h1x0y1\n")
 file(WRITE ${CMAKE_BINARY_DIR}/config.ini "#Contiendra le nom du jeu exécuté")
 
 
