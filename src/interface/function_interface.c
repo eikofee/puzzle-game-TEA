@@ -591,7 +591,7 @@ bool whatGame(char* name)
     	return true;
     }
     free(s);
-    return true;
+    return false;
     
     
 }

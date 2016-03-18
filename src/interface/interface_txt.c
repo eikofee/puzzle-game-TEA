@@ -86,6 +86,7 @@ void draw_interface(game g, char* id)
 	}
 	printf("\x1b[47;90m");
 	for (int i = 0; i < game_width(g) + 2; i++)
+	{
 		if (i == game_width(g) / 2 - 1 && whatGame("klotski\n"))
 			{
 				printf("#|\x1b[0m vv \x1b[47;90m|#");
@@ -93,6 +94,7 @@ void draw_interface(game g, char* id)
 			}else{
 			printf("##");		//Affiche le bord inférieur
 			}
+	}
 	printf("\x1b[0m\n");
 	freeTableau2D(t);
 	free(toWrite);
