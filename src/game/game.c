@@ -56,8 +56,9 @@ void delete_game (game g)
 {
 	if(g != NULL)
 	{
+		int nb_pieces = game_nb_pieces(g);
 		//On libère d'abord le tableau des pieces
-		for (int i = 0; i < g -> nb_pieces; i++)
+		for (int i = 0; i < nb_pieces; i++)
 		{
 			delete_piece(g -> pieces[i]);
 		}

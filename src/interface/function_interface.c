@@ -393,7 +393,7 @@ game getGameFromId(char* id)
 	int taille_x = 0;
 	int taille_y = 0;
 	int state = 1; // 1 = taille_x, 2 = taille_y, 3 = piece
-	piece p_tmp;
+	piece p_tmp = NULL;
 	
 
 	while (id[i] != '\0')
@@ -409,7 +409,7 @@ game getGameFromId(char* id)
 			case 3:
 
 				p_tmp = getPieceFromId(id, &i);
-				p[n_piece] = new_piece(0, 0, 0, 0, true, true);
+				p[n_piece] = new_piece(0, 0, 0, 0, false, false);
 				copy_piece(p_tmp, p[n_piece]);
 				n_piece++;
 				state--;
@@ -421,6 +421,8 @@ game getGameFromId(char* id)
 		state++;
 	}
 	game g = new_game(taille_x, taille_y, nb_pieces, p);
+	for(int i = 0; i < nb_pieces; i++)
+		delete_piece(p[i]);
 	return g;
 }
 
@@ -574,15 +576,24 @@ void initFileConfig(char* level_name){
 */
 bool whatGame(char* name)
 {
-    FILE *file;
-    if (file = fopen("../config.ini", "r"))
-    {
-        char* s = (char*)malloc(sizeof(char) * 128);
-        fgets(s, 128, file);
-        return str_equal(s, name);
-    }
+    FILE *file = NULL;
+    file = fopen("../config.ini", "r");
+    if(file == NULL)
+    	error("whatGame(), probleme d'ouverture du fichier config.ini");
+    
+    char* s = (char*)malloc(sizeof(char) * 128);
+    fgets(s, 128, file);
     fclose(file);
-    return false;
+
+    if(str_equal(s, name))
+    {
+    	free(s);
+    	return true;
+    }
+    free(s);
+    return true;
+    
+    
 }
 
 void removeSpaces(char* input)

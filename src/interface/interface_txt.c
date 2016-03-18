@@ -332,7 +332,7 @@ void input_player(game g, char* id)
 			new_id = loadGameFromNum("games.txt", level);
 			sprintf(id,"%s",new_id);
 			free(new_id);
-			game g2 = NULL; //getGameFromId(id);
+			game g2 = getGameFromId(id);
 			copy_game(g2, g);
 			delete_game(g2);
 		}
@@ -405,5 +405,5 @@ void input_player(game g, char* id)
 			//ignoreOverflow(input, 6);
 		}
 	}
-	//getIdFromGame(g, id);
+	getIdFromGame(g, id);
 }

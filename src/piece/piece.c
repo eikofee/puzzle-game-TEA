@@ -17,6 +17,7 @@ struct piece_s{
 int TAILLE_PLATEAU = 6;
 
 piece new_piece (int x, int y, int width, int height, bool move_x, bool move_y){
+
 	piece newPiece = (piece)malloc(sizeof(struct piece_s));
 	
 	if(newPiece == NULL)
@@ -34,8 +35,7 @@ piece new_piece (int x, int y, int width, int height, bool move_x, bool move_y){
 
 
 void delete_piece (piece p){
-	if(p != NULL)
-		free(p);
+	free(p);
 }
 
 void freeTable(int **tableau){
