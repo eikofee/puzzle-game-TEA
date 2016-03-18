@@ -581,8 +581,8 @@ bool whatGame(char* name)
     if(file == NULL)
     	error("whatGame(), probleme d'ouverture du fichier config.ini");
     
-    char* s = (char*)malloc(sizeof(char) * 128);
-    fgets(s, 128, file);
+    char* s = (char*)malloc(sizeof(char) * 256);
+    fgets(s, 256, file);
     fclose(file);
 
     if(str_equal(s, name))

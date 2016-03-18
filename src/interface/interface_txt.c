@@ -333,7 +333,10 @@ void input_player(game g, char* id)
 			//On recopie le new_id dans id et on libère level et new_id
 			
 			char* new_id;
-			new_id = loadGameFromNum("games.txt", level);
+			if(whatGame("rush-hour\n"))
+				new_id = loadGameFromNum("games_rh.txt", level);
+			else if(whatGame("klotski\n"))
+				new_id = loadGameFromNum("games_ar.txt", level);
 			sprintf(id,"%s",new_id);
 			free(new_id);
 			game g2 = getGameFromId(id);

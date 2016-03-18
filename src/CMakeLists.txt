@@ -2,11 +2,22 @@
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 
-# Cree un fichier games.txt qui se trouve dans /bin/games.txt. Le programme sera donc a executer depuis /bin
+# Cree un fichier games_rh.txt qui se trouve dans /bin/games_rh.txt. Le programme sera donc a executer depuis /bin
 # On lui ajoute les seed des niveaux du jeu
-file(WRITE ${CMAKE_BINARY_DIR}/bin/games.txt "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2\n")
-file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0\n")
-file(APPEND ${CMAKE_BINARY_DIR}/bin/games.txt "8n6x6p2w2h1x2y3p1w1h2x2y4p1w1h2x1y2p1w1h2x4y0p1w1h2x4y2p2w2h1x4y5p1w1h3x5y0p2w3h1x0y1\n")
+file(WRITE ${CMAKE_BINARY_DIR}/bin/games_rh.txt "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2\n")
+file(APPEND ${CMAKE_BINARY_DIR}/bin/games_rh.txt "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0\n")
+file(APPEND ${CMAKE_BINARY_DIR}/bin/games_rh.txt "8n6x6p2w2h1x2y3p1w1h2x2y4p1w1h2x1y2p1w1h2x4y0p1w1h2x4y2p2w2h1x4y5p1w1h3x5y0p2w3h1x0y1\n")
+
+# Cree un fichier games_ar.txt qui se trouve dans /bin/games_ar.txt. Le programme sera donc executer depuis 
+# /bin. On lui ajout les seed des niveaux du jeu
+
+file(WRITE ${CMAKE_BINARY_DIR}/bin/games_ar.txt "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4\n")
+
+file(APPEND ${CMAKE_BINARY_DIR}/bin/games_ar.txt "10n4x5p3w2h2x2y0p3w1h1x1y0p3w1h1x0y0p3w1h1x0y1p3w1h1x1y1p3w2h1x0y2p3w2h1x2y2p3w2h1x0y3p3w2h1x0y4p3w2h1x2y4\n")
+
+file(APPEND ${CMAKE_BINARY_DIR}/bin/games_ar.txt "15n4x5p3w2h2x2y1p3w1h1x0y0p3w1h1x1y0p3w1h1x2y0p3w1h1x3y0p3w1h1x0y1p3w1h1x1y1p3w1h1x0y2p3w1h1x1y2p3w1h1x0y3p3w1h1x0y4p3w1h1x2y3p3w1h1x3y3p3w1h1x2y4p3w1h1x3y4\n")
+
+
 file(WRITE ${CMAKE_BINARY_DIR}/config.ini "#Contiendra le nom du jeu exécuté")
 
 

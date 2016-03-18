@@ -13,7 +13,7 @@ void loadTheGame(char* id_src)
 	printf("Done\n\n");
 
 	//On malloc un id qu'on utilisera pour etre modifié pendant la partie
-	char* id = (char*) malloc(sizeof(char) * 128);
+	char* id = (char*) malloc(sizeof(char) * 256);
 	if(id == NULL)
 		error("getIdFromGame(), probleme d'allocation memoire");
 
