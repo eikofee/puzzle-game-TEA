@@ -7,26 +7,16 @@
 //Ce fichier sert a alleger le fichier interface_txt en y mettant les fonctions annexes à celle
 //présentes dans interface_txt
 
-/*	fonction de DEBUG
-	Affiche la liste des pieces de facon lisible
-*/
 void display_pieces(piece *tab_pieces, int taille)
 {
 	for (int i = 0; i < taille; i++)
 	{
 		printf("Piece [%d] : x = %d, y = %d, ",i ,get_x(tab_pieces[i]), get_y(tab_pieces[i]));
 		printf("Width = %d | Height = %d, ", get_width(tab_pieces[i]), get_height(tab_pieces[i]));
-		// if (is_horizontal(p[i]))
-		// 	printf("isHorizontal");
-		// else
-		// 	printf("isVertical");
 		printf("]\n");
 	}
 }
 
-/*
-	Change les majuscules en minuscule
-*/
 void toLower(char* s)
 {
 	int i = 0;
@@ -38,9 +28,6 @@ void toLower(char* s)
 	}
 }
 
-/*
-	Change la couleur d'une pièce
-*/
 void setColorPiece(char c, int id, bool fill)
 {
 	if (id)
@@ -62,9 +49,6 @@ void setColorPiece(char c, int id, bool fill)
 	printf("%c \x1b[0m", (fill?c:' '));
 }
 
-/*
-	Comparaison de deux chaines de caractères (true/false)
-*/
 bool str_equal(char* a, char* b)
 {
 	int i = 0;
@@ -74,20 +58,15 @@ bool str_equal(char* a, char* b)
 			return false;
 		i++;
 	}
+	//On regarde pour quelle raison on est sorti de la boucle.
 	return a[i] == '\0' && b[i] == '\0';
 }
 
-/*
-	Verifie si le char passé en paramètre est un chiffre et ne dépasse pas max_number
-*/
 bool isNumber(char c, int max_number)
 {
 	return ((c >= '0' && c <= '0' + max_number) || (c >= 'a' && c <= '\\' + max_number));
 }
 
-/*
-	Vérifie que le char* commence bien par un nombre (positif/négatif)
-*/
 bool isInt(char* s, int* pos)
 {
 	if (isOperatorSimple(s[*pos]))
@@ -99,25 +78,16 @@ bool isInt(char* s, int* pos)
 	return isNumber(s[*pos], 9);
 }
 
-/*
-	Vérifie si le char est une direction (u, d, l, r)
-*/
 bool isDirection(char c)
 {
 	return (c == 'u' || c == 'd' || c =='l' || c == 'r');
 }
 
-/*
-	Verifie si c est un + ou un -
-*/
 bool isOperatorSimple(char c)
 {
 	return (c == '+' || c == '-');
 }
 
-/*
-	Conversion d'un caractere en int (hexa minuscule permis)
-*/
 int getNumber(char c)
 {
 	if (c >= '0' && c <= '9')
@@ -127,9 +97,6 @@ int getNumber(char c)
 	return '0';
 }
 
-/*
-	Conversion d'un int en char (hexa minuscule)
-*/
 char getHexa(int n)
 {
 	if (n >= 0 && n < 10)
@@ -139,9 +106,6 @@ char getHexa(int n)
 	return '0';
 }
 
-/*
-	Convertie la direction en input en dir
-*/
 dir getDirection(char* s, int* pos)
 {
 	while (s[*pos] != '\n')
@@ -168,36 +132,10 @@ dir getDirection(char* s, int* pos)
 				*pos += 1;
 				break;
 		}
-
 	}
-
 	return UP;
 }
-/*
-	Recupere la direction que doit prendre une piece en fonction du signe entre
-*/
-// ********************** Fonctions inutiles V2 *******************************
-// dir getDirection(piece p, char sign)
-// {
-// 	if (sign == '+')
-// 	{
-// 		if (p -> isHorizontal)
-// 			return RIGHT;
-// 		else{
-// 			return UP;
-// 		}
-// 	}else{
-// 		if (p -> isHorizontal)
-// 			return LEFT;
-// 		else{
-// 			return DOWN;
-// 		}
-// 	}
-// }
 
-/*
-	Bloque l'affichage tant que la touche Entree n'est pas utilisee
-*/
 void confirm()
 {
 	printf("\n\tPress 'Enter' to go back to the help menu...\n");
@@ -206,8 +144,11 @@ void confirm()
 		c = getchar();	
 }
 
+/* On met en commentaire ce bloc uniquement pour la V2 . . . . . . . . */
+
 //Permet de sauvegarder dans le fichier save.txt la partie.
 //On ecrase l'ancienne partie à chaque fois qu'on fait appelle a cette fonction.
+
 /*void saveGameFromId(game g, char* id)
 {
 	FILE *fichier = NULL;
@@ -222,8 +163,10 @@ void confirm()
 	fclose(fichier);
 }
 */
+
 //Permet de charger une partir a partir de la save.
 //Cette fonction est exclusif a la save.
+
 /*void loadGameFromSave(char* fichier, game g)
 {
 	FILE* fichier_tmp = NULL;
@@ -247,13 +190,9 @@ void confirm()
 
 }
 */
-//Permet de charger une partie a partir d'un fichier et d'un numero de level
+
 char* loadGameFromNum(char* fichier, char* num)
 {
-	if(str_equal(num, "save\n"))
-	{
-
-	}
 	//num représente le numero du level
 	//on commence par obtenir la taille de num
 	int taille_num = 0;
@@ -302,16 +241,12 @@ char* loadGameFromNum(char* fichier, char* num)
 	return s2;
 }
 
-//Libere l'allocation d'un tableau 2D
 void freeTableau2D(int** tab)
 {
 	free(tab[0]);
 	free(tab);
 }
 
-/*
-	Inverse la direction voulue
-*/
 void revertDirection(dir* d)
 {
 	switch (*d)
@@ -365,7 +300,7 @@ void freeTableauDePieces(piece* pieces, int nb_pieces){
 	free(pieces);
 }
 
-/*Syntaxe version 2:
+/*Syntaxe des ID pour la Version 2:
 		(nb_pieces)n(taille_x)x(taille_y)p(1,2 ou 3)w(width)h(height)x(pos_x)y(pos_y)p(next)
 	*/
 game getGameFromId(char* id)
@@ -374,7 +309,7 @@ game getGameFromId(char* id)
 	int nb_pieces = readUntilChar(id, &i);
 	i++;
 	piece p[nb_pieces];
-	int n_piece = 0;	//index de p
+	int index_pieces = 0;	//index de p
 	int taille_x = 0;
 	int taille_y = 0;
 	int state = 1; // 1 = taille_x, 2 = taille_y, 3 = piece
@@ -394,9 +329,9 @@ game getGameFromId(char* id)
 			case 3:
 
 				p_tmp = getPieceFromId(id, &i);
-				p[n_piece] = new_piece(0, 0, 0, 0, false, false);
-				copy_piece(p_tmp, p[n_piece]);
-				n_piece++;
+				p[index_pieces] = new_piece(0, 0, 0, 0, false, false);
+				copy_piece(p_tmp, p[index_pieces]);
+				index_pieces++;
 				state--;
 				delete_piece(p_tmp);
 				break;
@@ -420,7 +355,7 @@ game getGameFromId(char* id)
 void getIdFromGame(game g, char* id)
 {
 	int pos = 0;
-	int n_piece = 0;
+	int index_pieces = 0;
 	getCharFromInt(id, &pos, game_nb_pieces(g));
 	id[pos] = 'n';
 	pos++;
@@ -428,25 +363,25 @@ void getIdFromGame(game g, char* id)
 	id[pos] = 'x';
 	pos++;
 	getCharFromInt(id, &pos, game_height(g));
-	while (n_piece < game_nb_pieces(g))
+	while (index_pieces < game_nb_pieces(g))
 	{
 		id[pos] = 'p';
 		pos++;
-		id[pos] = '0' + (can_move_x(game_piece(g, n_piece))?1:0) + (can_move_y(game_piece(g, n_piece))?2:0);
+		id[pos] = '0' + (can_move_x(game_piece(g, index_pieces))?1:0) + (can_move_y(game_piece(g, index_pieces))?2:0);
 		pos++;
 		id[pos] = 'w';
 		pos++;
-		getCharFromInt(id, &pos, get_width(game_piece(g, n_piece)));
+		getCharFromInt(id, &pos, get_width(game_piece(g, index_pieces)));
 		id[pos] = 'h';
 		pos++;
-		getCharFromInt(id, &pos, get_height(game_piece(g, n_piece)));
+		getCharFromInt(id, &pos, get_height(game_piece(g, index_pieces)));
 		id[pos] = 'x';
 		pos++;
-		getCharFromInt(id, &pos, get_x(game_piece(g, n_piece)));
+		getCharFromInt(id, &pos, get_x(game_piece(g, index_pieces)));
 		id[pos] = 'y';
 		pos++;
-		getCharFromInt(id, &pos, get_y(game_piece(g, n_piece)));
-		n_piece++;
+		getCharFromInt(id, &pos, get_y(game_piece(g, index_pieces)));
+		index_pieces++;
 	}
 	id[pos] = '\0';
 }
@@ -533,7 +468,6 @@ void getCharFromInt(char* s, int* pos, int data)
 	}
 }
 
-
 void initFileConfig(char* level_name){
 
 	FILE *fichier = NULL;
@@ -556,9 +490,6 @@ void initFileConfig(char* level_name){
 	fclose(fichier);
 }
 
-/*
-    Teste l'existence d'un fichier
-*/
 bool whatGame(char* name)
 {
     FILE *file = NULL;
@@ -576,9 +507,7 @@ bool whatGame(char* name)
     	return true;
     }
     free(s);
-    return false;
-    
-    
+    return false;   
 }
 
 void removeSpaces(char* input)

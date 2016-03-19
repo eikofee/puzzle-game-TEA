@@ -4,6 +4,7 @@
 #include <utility.h>
 #include <interface_txt.h>
 
+// Cette fonction sert a charger une partie et d'y jouer.
 void loadTheGame(char* id_src)
 {
 	//On crée le game g à partir d'un id source
@@ -36,19 +37,15 @@ void loadTheGame(char* id_src)
 
 int main(void)
 {
+	//On ecrit le nom de l'exucutable dans le fichier config.ini puis on lance le jeu
 	initFileConfig("klotski");
 
 	char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
-	//game g = getGameFromIdAR("3n10x10p3w4h2x2y2p3w2h2x6y6p3w10h2x0y8");
+	char* Game2 = "10n4x5p3w2h2x2y0p3w1h1x1y0p3w1h1x0y0p3w1h1x0y1p3w1h1x1y1p3w2h1x0y2p3w2h1x2y2p3w2h1x0y3p3w2h1x0y4p3w2h1x2y4";
+	char* Game3 = "15n4x5p3w2h2x2y1p3w1h1x0y0p3w1h1x1y0p3w1h1x2y0p3w1h1x3y0p3w1h1x0y1p3w1h1x1y1p3w1h1x0y2p3w1h1x1y2p3w1h1x0y3p3w1h1x0y4p3w1h1x2y3p3w1h1x3y3p3w1h1x2y4p3w1h1x3y4";
 	loadTheGame(Game1);
-	// game g = getGameFromId(Game1);
-	// char* s = (char*) malloc(sizeof(char) * 256);
-	// while (true)
-	// {
-	// 	getIdFromGame(g, s);
-	// 	draw_interface(g, s);
-	// 	input_player(g, s);
-	// }
+	loadTheGame(Game2);
+	loadTheGame(Game3);
 
 	return 0;
 }

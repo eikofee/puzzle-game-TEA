@@ -4,17 +4,12 @@
 #include <utility.h>
 
 struct piece_s{
-	// bool isHorizontal; // true si la piece est horizontal, false sinon.
-	// bool isSmall; // true si la taille de la piece est 2, et false si 3.
 	bool move_x;
 	bool move_y;
 	int width;
 	int height;
 	int position[2]; // position de la case inférieur gauche. (x;y)
 };
-
-//variable globale pour la taille du plateau
-int TAILLE_PLATEAU = 6;
 
 piece new_piece (int x, int y, int width, int height, bool move_x, bool move_y){
 
@@ -33,7 +28,6 @@ piece new_piece (int x, int y, int width, int height, bool move_x, bool move_y){
 	return newPiece;
 }
 
-
 void delete_piece (piece p){
 	free(p);
 }
@@ -47,8 +41,6 @@ void copy_piece (cpiece src, piece dst){
 	if(src == NULL || dst == NULL)
 		error("copy_piece, src ou dst n'est pas alloué");
 
-	// dst -> isHorizontal = is_horizontal(src);
-	// dst -> isSmall = src -> isSmall;
 	dst -> position[0] = get_x(src);
 	dst -> position[1] = get_y(src);
 	dst -> width = get_width(src);
@@ -65,17 +57,9 @@ void move_piece (piece p, dir d, int distance){
 	if(p == NULL)
 		error("move_piece, p n'est pas alloué");
 
-	//Simple vérification pour savoir si la direction est cohérente avec l'orientation de la pièce.
-	// if( (is_horizontal(p) && ((d == UP) || (d == DOWN))) || ( (!(is_horizontal(p))) && ((d == RIGHT) || (d == LEFT))))
-	// {
-	// 	return;
-	// }
-
 	//A ce stade, tout est ok pour réaliser le mouvement.
 	if( ((d == UP || d == DOWN) && can_move_y(p)) || ((d == LEFT || d == RIGHT) && can_move_x(p)) )
 		switchsMovePiece(p, d, distance);
-	
-
 }
 
 
@@ -148,7 +132,6 @@ bool intersect(cpiece p1, cpiece p2){
 //Cela nous permet de mieux gérer les conflits entre 2 pieces dans intersect.
 //Prend en paramètre une piece et sa taille.
 int** pieceArray(piece p, int taille){
-	// int taille = get_height(p) * get_width(p);
 	int **tab = (int **)malloc(taille * sizeof(int*));
 	int *tab2 =(int *)malloc(taille * 2 * sizeof(int));
 
@@ -165,7 +148,6 @@ int** pieceArray(piece p, int taille){
 			i++;
 		}
 	}
-	// }
 
 	return tab;
 }

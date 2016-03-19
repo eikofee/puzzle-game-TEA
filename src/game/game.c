@@ -8,7 +8,7 @@
 struct game_s{
 	int width;
 	int height;
-	piece *pieces;	//malloc nécessaire
+	piece *pieces;
 	int	nb_moves;
 	int nb_pieces;
 };

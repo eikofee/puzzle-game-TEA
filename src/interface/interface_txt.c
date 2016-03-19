@@ -4,36 +4,6 @@
 #include <utility.h>
 #include <interface_txt.h>
 
-// TODO : 	[Done] Gerer differement le déplacement d'une piece.
-//			[Done] Revoir la construction d'une id
-// 			[Done] Fonctions utiles exclusivement à RUsh hour : getDirection()
-
-
-
-//Ce fichier permet de gérer l'affichage en mode texte du jeu
-
-/*
-	Permet de convertir un game en id (pas une sauvegarde complète)
-*/
-/*void getIdFromGame(game g, char* id)
-{
-	id[0] = getHexa(game_nb_pieces(g));
-	int indexChar = 1;
-	for (int i = 0; i < game_nb_pieces(g); i++)
-	{
-		id[indexChar] = getHexa((is_horizontal(g -> pieces[i])?1:0) + ((g -> pieces[i] -> isSmall)?0:2));
-		id[indexChar + 1] = getHexa(get_x(g -> pieces[i]));
-		id[indexChar + 2] = getHexa(get_y(g -> pieces[i]));
-		indexChar += 3;
-	}
-	id[indexChar] = '\0';
-}
-*/
-
-/*
-	Affiche la zone de jeu
-*/
-	// ************************* Changement de la forme mapPieces(tableau de piece, taille axe x, taille axe y)
 void draw_interface(game g, char* id)
 {
 	int moves = game_nb_moves(g);
@@ -67,18 +37,18 @@ void draw_interface(game g, char* id)
 			case 0: 
 				printf("\x1b[47;90m##\x1b[0m Type 'help' for more informations\n");
 				break;
-			//case 1: //ID/Seed du jeu
-			//	printf("\x1b[47;90m##\x1b[0m ID: %s\n", id);
-			//	break;
+
 			case 3: //Sortie du parking (RH only)
 				if (whatGame("rush-hour\n"))
 					printf(">>\n");
 				else
 					printf("\x1b[47;90m##\x1b[0m\n");
 				break;
+
 			case 4:	//Move num display
 				printf("\x1b[47;90m##\x1b[0m Move %d\n", moves);
 				break;
+
 			default:
 				printf("\x1b[47;90m##\x1b[0m\n");
 				break;
@@ -101,10 +71,6 @@ void draw_interface(game g, char* id)
 }
 
 
-
-/*
-	Affiche l'interface d'aide du jeu
-*/
 void getHelp(int input, bool* done)
 {
 	switch(input)
@@ -143,29 +109,7 @@ void getHelp(int input, bool* done)
 }
 
 /*
-	Permet d'obtenir le mouvement de la piece entree dans un premier temps
-	(Ameliore la lisibilite)
-*/
-void getSecondInput(char* input)
-{
-												//Current input is "[N][\n][ ][ ][ ][ ]"
-	char input2[5];
-	printf("Enter the distance for car n°%c :\n", input[0]);
-	fgets(input2, 4, stdin);
-	input[1] = ' ';								//Current input is "[N][_][ ][ ][ ][ ]"					
-	if (isOperatorSimple(input2[0]))
-	{
-		input[2] = input2[0];					//Current input is "[N][_][+-][ ][ ][ ]"
-		input[3] = input2[1];					//Current input is "[N][_][+-][n][ ][ ]"
-		input[4] = '\n';
-	}else{
-		input[2] = input2[0];
-		input[3] = '\n';					//Current input is "[N][_][n][ ][ ][ ]"
-	}
-	ignoreOverflow(input2, 4);
-}
-/*
-	Permet de fucionner plusieurs inputs
+	Permet de fusionner plusieurs inputs
 */
 void fuseNewInput(char* input, char* expectedFormat, int* pos, char* information)
 {
@@ -190,9 +134,6 @@ void fuseNewInput(char* input, char* expectedFormat, int* pos, char* information
 	input[*pos] = '\n';
 }
 
-/*
-	Verifie si s suit un format correct (un peu a la facon de printf)
-*/
 bool checkFormat(char* s, char* format)
 {
 	/*Syntaxe:
@@ -298,9 +239,8 @@ void input_player(game g, char* id)
 	if (str_equal(input, "save\n"))
 	{
 		correct = true;
-		//sauvegarde
 		//saveGameFromId(g, id);
-		printf("[WIP]");
+		printf("save [WIP]");
 	}
 	if (str_equal(input, "id\n"))
 	{
@@ -320,6 +260,7 @@ void input_player(game g, char* id)
 		if (str_equal(level, "c"))
 			correct = false;
 
+		// Ce bloc est mis en commentaire uniquement pour la V2 . . . 
 		// if(str_equal(level, "save\n"))
 		// {
 		// 	printf("[WIP]\n");
@@ -349,7 +290,6 @@ void input_player(game g, char* id)
 		return;
 	}
 	
-	//if (isNumber(input[0], g -> nb_pieces - 1))
 	if (checkFormat(input, "%i"))
 	{
 		int n_piece = 0;
@@ -362,23 +302,6 @@ void input_player(game g, char* id)
 			2 : Demande un dÃ©placement de la voiture 2 (nouveau scanf)
 		*/
 
-		//OLD 
-		/*if (input[1] == '\n')
-			getSecondInput(input);
-		if (checkFormat(input, "%n %n")) // ********** FAIRE LES MODIFICATIONS SUR getDirection ICI ********
-		{
-			play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[2]));
-		}
-		if (checkFormat(input, "%n %o%n"))
-		{
-			if (input[2] == '+')
-				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '+'), getNumber(input[3]));
-			else{
-				play_move(g, getNumber(input[0]), getDirection(g -> pieces[getNumber(input[0])], '-'), -1 * getNumber(input[3]));
-			}
-		}*/
-
-		//NEW
 		if (checkFormat(input, "%i\n"))
 		{
 			//input multiple
@@ -398,7 +321,6 @@ void input_player(game g, char* id)
 				pos++;
 			distance = readUntilChar(input, &pos);
 
-			//ignoreOverflow(input, pos + 1);
 			correct = true;
 		}
 		if (distance != abs(distance))
@@ -410,7 +332,6 @@ void input_player(game g, char* id)
 		if (!correct)
 		{
 			printf("Incorrect input. Type 'help' for more informations.\n");
-			//ignoreOverflow(input, 6);
 		}
 	}
 	getIdFromGame(g, id);

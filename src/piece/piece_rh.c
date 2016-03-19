@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <piece_rh.h>
 
+//Ce fichier permet d'eviter de trop modifier le code de game-test.c
+
+
 piece new_piece_rh (int x, int y, bool small, bool horizontal){
 
 	int width;
