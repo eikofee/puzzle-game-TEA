@@ -189,6 +189,7 @@ void fuseNewInput(char* input, char* expectedFormat, int* pos, char* information
 	}
 	input[*pos] = '\n';
 }
+
 /*
 	Verifie si s suit un format correct (un peu a la facon de printf)
 */

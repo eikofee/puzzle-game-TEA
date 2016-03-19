@@ -79,14 +79,13 @@ void move_piece (piece p, dir d, int distance){
 }
 
 
-//Fonction qui effectue le mouvement en passant par une copie (p_copy)
-//Ainsi, on vérifie seulement a la fin si la position est valide de la copie
-//Et on recopie dans p
 void switchsMovePiece(piece p, dir d, int distance){
 
+	//On crée une copie de la pièce p.
 	piece p_copy = new_piece(0, 0, 0, 0, true, true);
 	copy_piece((cpiece)p, p_copy);
 	
+	//On effectue les modifications de la piece sur la copie.
 	switch (d){
 		case UP:
 			(p_copy -> position[1]) += distance;
@@ -109,6 +108,7 @@ void switchsMovePiece(piece p, dir d, int distance){
 			break;
 	}
 	
+	//On recopie la copie dans la piece d'origine.
 	copy_piece((cpiece)p_copy, p);
 
 	delete_piece(p_copy);

@@ -10,12 +10,12 @@
 /*	fonction de DEBUG
 	Affiche la liste des pieces de facon lisible
 */
-void display_pieces(piece *p, int taille)
+void display_pieces(piece *tab_pieces, int taille)
 {
 	for (int i = 0; i < taille; i++)
 	{
-		printf("Piece [%d] : x = %d, y = %d, ",i ,get_x(p[i]), get_y(p[i]));
-		printf("Width = %d | Height = %d, ", get_width(p[i]), get_height(p[i]));
+		printf("Piece [%d] : x = %d, y = %d, ",i ,get_x(tab_pieces[i]), get_y(tab_pieces[i]));
+		printf("Width = %d | Height = %d, ", get_width(tab_pieces[i]), get_height(tab_pieces[i]));
 		// if (is_horizontal(p[i]))
 		// 	printf("isHorizontal");
 		// else
@@ -80,9 +80,9 @@ bool str_equal(char* a, char* b)
 /*
 	Verifie si le char passé en paramètre est un chiffre et ne dépasse pas max_number
 */
-bool isNumber(char s, int max_number)
+bool isNumber(char c, int max_number)
 {
-	return ((s >= '0' && s <= '0' + max_number) || (s >= 'a' && s <= '\\' + max_number));
+	return ((c >= '0' && c <= '0' + max_number) || (c >= 'a' && c <= '\\' + max_number));
 }
 
 /*
@@ -102,28 +102,28 @@ bool isInt(char* s, int* pos)
 /*
 	Vérifie si le char est une direction (u, d, l, r)
 */
-bool isDirection(char s)
+bool isDirection(char c)
 {
-	return (s == 'u' || s == 'd' || s =='l' || s == 'r');
+	return (c == 'u' || c == 'd' || c =='l' || c == 'r');
 }
 
 /*
-	Verifie si s est un + ou un -
+	Verifie si c est un + ou un -
 */
-bool isOperatorSimple(char s)
+bool isOperatorSimple(char c)
 {
-	return (s == '+' || s == '-');
+	return (c == '+' || c == '-');
 }
 
 /*
 	Conversion d'un caractere en int (hexa minuscule permis)
 */
-int getNumber(char s)
+int getNumber(char c)
 {
-	if (s >= '0' && s <= '9')
-		return s - '0';
-	if (s >= 'a' && s <= 'f')
-		return s - 'W';
+	if (c >= '0' && c <= '9')
+		return c - '0';
+	if (c >= 'a' && c <= 'f')
+		return c - 'W';
 	return '0';
 }
 
