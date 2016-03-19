@@ -206,21 +206,6 @@ void confirm()
 		c = getchar();	
 }
 
-/*
-	Ignore l'overflow de stdin
-*/
-void ignoreOverflow(char* input, int taille)
-{
-	int i = 0;
-	while (input[i] != 0 && i < taille)
-		i++;
-	if(i == taille)
-	{
-		int overflow;
-		while ((overflow = getchar()) != '\n');	//On ignore les caractÃ¨res en overflow
-	}
-}
-
 //Permet de sauvegarder dans le fichier save.txt la partie.
 //On ecrase l'ancienne partie à chaque fois qu'on fait appelle a cette fonction.
 /*void saveGameFromId(game g, char* id)

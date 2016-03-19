@@ -17,10 +17,10 @@ void display_pieces(piece *tab_pieces, int taille);
 void toLower(char* s);
 
 /**
- * Change la couleur d'une pièce
- * @param c  A COMPLETER /!\ ****************
- * @param id A COMPLETER /!\ ****************
- * @param fill A COMPLETER /!\ *****************
+ * Change la couleur d'une pièce en fonction de son numéro
+ * @param c  Le caractère à afficher
+ * @param id Le numéro de la pièce à afficher
+ * @param fill Est-ce que le caractère doit être imprimé ?
  */
 void setColorPiece(char c, int id, bool fill);
 
@@ -43,7 +43,7 @@ bool isNumber(char c, int max_number);
 /**
  * Verifie que la chaine de caractère s commence bien par un nombre
  * @param s La chaine de caractère
- * @param pos A COMPLETER /!\ **********************
+ * @param pos Le curseur parcourant la chaine (permet d'enchainer les vérifications)
  * @return Un booleen, True si la chaine s commence par un nombre, False sinon.
  */
 bool isInt(char* s, int* pos);
@@ -88,12 +88,6 @@ void freeTableau2D(int** tab);
  */
 char getHexa(int n);
 
-/**
- * Permet d'ignorerl'OverFlow de stdin
- * @param input Une chaine de caractère correspondant à l'Input
- * @param taille A COMPLETER /!\ **********
- */
-void ignoreOverflow(char* input, int taille);
 // void saveGameFromId(game g, char* id);
 // void loadGameFromSave(char* fichier, game g);
 
@@ -108,7 +102,7 @@ char* loadGameFromNum(char* fichier, char* num);
 /**
  * Convertir la direction de l'input en enumeration `dir`
  * @param s Une chaine de caractere
- * @param pos A COMPLETER /!\ **********************
+ * @param pos Le curseur parcourant la chaine (permet d'enchainer les vérifications)
  * @return La direction correspondante à l'input.
  */
 dir getDirection(char* s, int* pos);

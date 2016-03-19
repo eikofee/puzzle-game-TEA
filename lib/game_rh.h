@@ -21,7 +21,4 @@ game new_game_hr( int nb_pieces, piece *pieces);
  */
 bool game_over_hr(cgame g);
 
-//Fonction inutile à mon avis.
-game getGameFromIdRH(char* id);
-
 #endif
