@@ -30,7 +30,7 @@ typedef const struct game_s* cgame;
 
 
 /**
- * @brief Creates a new game given a starting position defined by a set of pieces.
+ * @brief Create a new game given a starting position defined by a set of pieces.
  * The pieces of the created game are copies of the ones given as argument.
  * The number of moves of the game is set to 0.
  * @param nb_pieces number of pieces g
@@ -40,13 +40,13 @@ typedef const struct game_s* cgame;
 game new_game_hr (int nb_pieces, piece *pieces);
 
 /**
- * @brief Destroys the game and free allocated memory
+ * @brief Destroy the game and free allocated memory
  * @param g the game to destroy
  */
 void delete_game (game g);
 
 /**
- * @brief Clone the game dst into the game dst.
+ * @brief Clone the game src into the game dst.
  * @param src the game to copy
  * @param dst the copied game.
  */
@@ -88,9 +88,32 @@ bool game_over_hr(cgame g);
 bool play_move(game g, int piece_num, dir d, int distance);
 
 /**
- * @brief Return the number of moves this the beginning of the game g.
+ * @brief Return the number of moves from the beginning of the game g.
  * Remind that move of a single piece of k cells in a single direction counts for k.
  */
 int game_nb_moves(cgame g);
 
+
+
+///////////// version 2 /////////////////
+game new_game (int width, int height, int nb_pieces, piece *pieces);
+
+
+/**
+ *@brief return the width of the grid
+ */
+int game_width(cgame g);
+
+/**
+ *@brief return the height of the grid
+ */
+int game_height(cgame g);
+
+/**
+ * @brief return the number of then piece located on this square (-1 if no piece is present)
+ * @param game
+ * @param x-coor of the square
+ * @param y-coor of the square
+ */
+int game_square_piece (game g, int x, int y);
 #endif

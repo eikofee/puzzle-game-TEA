@@ -1,26 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
-#include "utility.h"
+#include <game.h>
+#include <utility.h>
 
+#define TAILLE_PLATEAU_RH 6
 
-game new_game_hr( int nb_pieces, piece *pieces)
-{
-	game new_game = (game) malloc(sizeof(struct game_s));
+struct game_s{
+	int width;
+	int height;
+	piece *pieces;
+	int	nb_moves;
+	int nb_pieces;
+};
 
-	if(!new_game)
-		error("Allocation new_game");
+bool estPositionValide(game g, piece p);
 
-	new_game -> pieces = (piece*) malloc(sizeof(struct piece_s) * nb_pieces);
+game new_game (int width, int height, int nb_pieces, piece *pieces){
+	//les allocations mémoires du game et de son tableau de piece...
+	game new_game = (game)malloc(sizeof(struct game_s));
+
+	if(new_game == NULL)
+		error("new_game(), probleme d allocation memoire");
+
+	new_game -> pieces = (piece*) malloc(sizeof(piece) * nb_pieces);
 	
 	if(!new_game -> pieces)
 		error("Allocation new_game -> pieces");
 
-	//Affectation des valeurs par copie
+	//... Affectation des valeurs par copie
 	new_game -> nb_pieces = nb_pieces;
 	for (int i = 0; i < nb_pieces; i++)
 	{
-		new_game -> pieces[i] = new_piece_rh(0,0,true,true);
+		new_game -> pieces[i] = new_piece( 0, 0, 0, 0, false,  false);
 
 		if (!new_game -> pieces[i])
 			error("Allocation new_game -> pieces[i]");
@@ -34,8 +45,10 @@ game new_game_hr( int nb_pieces, piece *pieces)
 		}
 	}
 
-	//Initialisation des valeurs de jeu
+	new_game -> width = abs(width);
+	new_game -> height = abs(height);
 	new_game -> nb_moves = 0;
+
 	return new_game;
 }
 
@@ -43,8 +56,9 @@ void delete_game (game g)
 {
 	if(g != NULL)
 	{
+		int nb_pieces = game_nb_pieces(g);
 		//On libère d'abord le tableau des pieces
-		for (int i = 0; i < g -> nb_pieces; i++)
+		for (int i = 0; i < nb_pieces; i++)
 		{
 			delete_piece(g -> pieces[i]);
 		}
@@ -65,19 +79,21 @@ void copy_game(cgame src, game dst)
 	free(dst -> pieces);
 
 	//D'abord les propriétés directes
-	dst -> nb_pieces = src -> nb_pieces;
-	dst -> nb_moves = src -> nb_moves;
+	dst -> nb_pieces = game_nb_pieces(src);
+	dst -> nb_moves = game_nb_moves(src);
+	dst -> width = game_width(src);
+	dst -> height = game_height(src);
 
 	//...Ensuite le tableau des pièces
 	//On réalloue du tableau des pieces
-	dst -> pieces = (piece*) malloc(sizeof(struct piece_s) * dst -> nb_pieces);
+	dst -> pieces = (piece*) malloc(sizeof(piece) * dst -> nb_pieces);
 
 	if (!dst -> pieces)
 		error("Echec du deuxième malloc");
 
 	for (int i = 0; i < src -> nb_pieces; i++)
 	{
-		dst -> pieces[i] = (piece) malloc(sizeof(struct piece_s));
+		dst -> pieces[i] = new_piece(0, 0, 0, 0, false, false);
 
 		if (!dst -> pieces[i])
 			error("Allocation dst -> pieces[i]");
@@ -86,37 +102,13 @@ void copy_game(cgame src, game dst)
 	}
 }
 
-int game_nb_pieces(cgame g)
-{
-	if (!g)
-		error("Allocation cgame game_nb_pieces");
-
-	return g -> nb_pieces;
-}
-
-cpiece game_piece(cgame g, int piece_num)
-{
-	//Vérifie que l'indice piece_num pièce est bien dans le jeu
-    if (piece_num < 0 || piece_num > game_nb_pieces(g) - 1)
-		error("L'index de la pièce recherchée est impossible (trop grand ou négatif)");
-
-	//Si elle existe, on la renvoie
-	return g -> pieces[piece_num];
-}
-
-bool game_over_hr(cgame g)
-{
-	//On regarde si les coordonnées de la voiture 0 sont bien (4;3)
-	if (get_x(g -> pieces[0]) == 4 && get_y(g -> pieces[0]) == 3)
-		return true;
-
-	return false;
-}
-
 bool play_move(game g, int piece_num, dir d, int distance)
 {
+	//Variable pour la vérification du parcours (distance à parcourir sur les axes)
+	int dist_dir = (d == DOWN ||d == LEFT) ? -1 * distance : distance ;
     //On vérifie qu'il n'entre au contact d'aucune pièce et qu'il reste sur le plateau en utilisant un clone-cobaye (ptest)
-	piece ptest = new_piece_rh(0, 0, true, true);
+	//piece ptest = new_piece_rh(0, 0, true, true);
+	piece ptest = new_piece(0, 0, 0, 0, true, true);
 	copy_piece(g -> pieces[piece_num], ptest);
 
 	int ptestx = get_x(ptest);
@@ -126,7 +118,7 @@ bool play_move(game g, int piece_num, dir d, int distance)
 	for (int step = 0; step < abs(distance); step++)
 	{
 		move_piece(ptest,d,1);
-		if(!estPositionValide(ptest))
+		if(!estPositionValide(g, ptest))
 		{
 			delete_piece(ptest);
 			return false;
@@ -144,16 +136,34 @@ bool play_move(game g, int piece_num, dir d, int distance)
 		}	
 	}
 	// Si ptest n'a pas bougé, c'est que move_piece a trouvé que le mouvement sur distance n'était pas bon.
-	if (distance != 0 && ((!is_horizontal(ptest) && get_y(ptest) != ptesty + distance) || (is_horizontal(ptest) && get_x(ptest) != ptestx + distance))) {
+	if (distance != 0 && ((can_move_y(ptest) && (d == UP || d == DOWN) && get_y(ptest) != ptesty + dist_dir) || (can_move_x(ptest) && (d == LEFT || d == RIGHT) && get_x(ptest) != ptestx + dist_dir))) {
 		delete_piece(ptest);
 		return false;
 	}
 
 	delete_piece(ptest);
     //Si tout est bon, alors on lance l'algorithme de déplacement de la pièce, puis on ajoute les moves correspondant.
-	move_piece(g -> pieces[piece_num], d, abs(distance));
+	move_piece(g -> pieces[piece_num], d, abs(distance));	
 	g -> nb_moves += abs(distance);
 	return true;
+}
+
+//Vérifie si la position de la piece est bien dans le plateau
+bool estPositionValide(game g, piece p){
+ 	if((get_x(p) < 0) || (get_y(p) < 0))
+ 		return false;
+
+	if(get_x(p) + get_width(p) > game_width(g) || get_y(p) + get_height(p) > game_height(g) )
+		return false;
+ 
+ 	return true;
+ }
+
+// --------- Fonctions Simples ----------------
+int game_square_piece (game g, int x, int y){
+	
+	int** tab = mapPieces(g->pieces, game_nb_pieces(g), game_width(g), game_height(g));
+	return tab[x][y];
 }
 
 //retourne le nombre de move fait
@@ -163,6 +173,35 @@ int game_nb_moves(cgame g)
     	return g -> nb_moves;
     
     return -1;
+}
+
+int game_nb_pieces(cgame g)
+{
+	if (!g)
+		error("Allocation cgame game_nb_pieces");
+
+	return g -> nb_pieces;
+}
+int game_width(cgame g){
+	if(g == NULL)
+		error("game_width(), g n'est pas alloue");
+	return g -> width;
+}
+
+int game_height(cgame g){
+	if(g == NULL)
+		error("game_height(), g n'est pas alloue");
+	return g -> height;
+}
+
+cpiece game_piece(cgame g, int piece_num)
+{
+	//Vérifie que l'indice piece_num pièce est bien dans le jeu
+    if (piece_num < 0 || piece_num > game_nb_pieces(g) - 1)
+		error("L'index de la pièce recherchée est impossible (trop grand ou négatif)");
+
+	//Si elle existe, on la renvoie
+	return g -> pieces[piece_num];
 }
 
 //error est une fonction qui permet d'envoyer un message sur stderr et de faire un exit(EXIT_FAILURE). 
