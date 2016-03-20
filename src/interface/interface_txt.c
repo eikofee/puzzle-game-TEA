@@ -17,7 +17,12 @@ void drawInterface(game g, char* id)
 	printf("\x1b[47;90m##");
 	for (int i = 0; i < game_width(g); i++)
 		printf("##");			//Affiche le bord supérieur
-	printf("##\x1b[0m Rush Hour or Red Klotski VERSION 2\n");
+
+	if (whatGame("rush-hour\n"))
+		printf("##\x1b[0m Rush Hour VERSION 2\n");		//Extensible pour d'autres jeux
+	if (whatGame("klotski\n"))
+		printf("##\x1b[0m Red Klotski VERSION 2\n");
+
 	for (int i = game_height(g) - 1; i > -1; i--)
 	{
 		printf("\x1b[47;90m##\x1b[0m");
@@ -57,7 +62,7 @@ void drawInterface(game g, char* id)
 	printf("\x1b[47;90m");
 	for (int i = 0; i < game_width(g) + 2; i++)
 	{
-		if (i == game_width(g) / 2 - 1 && whatGame("klotski\n"))
+		if (i == game_width(g) / 2 - 1 && whatGame("klotski\n"))	//(AR only)
 			{
 				printf("#|\x1b[0m vv \x1b[47;90m|#");
 				i+=3;
