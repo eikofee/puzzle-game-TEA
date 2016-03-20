@@ -131,66 +131,66 @@ bool intersect(cpiece p1, cpiece p2){
 //Crée et retourne un tableau 2D des coordonnées de chaque case prise par la piece
 //Cela nous permet de mieux gérer les conflits entre 2 pieces dans intersect.
 //Prend en paramètre une piece et sa taille.
-int** pieceArray(piece p, int taille){
-	int **tab = (int **)malloc(taille * sizeof(int*));
-	int *tab2 =(int *)malloc(taille * 2 * sizeof(int));
+int** pieceArray(piece p, int size){
+	int **arr = (int **)malloc(size * sizeof(int*));
+	int *arr2 =(int *)malloc(size * 2 * sizeof(int));
 
-	for(int i = 0; i < taille; i++)
-		tab[i] = &tab2[i*2];
+	for(int i = 0; i < size; i++)
+		arr[i] = &arr2[i*2];
 
 	int i = 0;
 	for(int x = get_x(p); x < get_x(p) + get_width(p); x++)
 	{
 		for(int y = get_y(p); y < get_y(p) + get_height(p); y++)
 		{
-			tab[i][0] = x;
-			tab[i][1] = y;
+			arr[i][0] = x;
+			arr[i][1] = y;
 			i++;
 		}
 	}
 
-	return tab;
+	return arr;
 }
 
 //Génere un tableau 2D correspondant au plateau du jeu
 //Il est rempli par la valeur -1 par défaut. Les vehicules sont mis grace
 // au tableau de piece.
-int** mapPieces(piece* tab_pieces, int taille, int taille_x, int taille_y){
+int** mapPieces(piece* array_p, int size, int size_x, int size_y){
 
 	// ---	Début de l'allocation ---
-	int **tab2Dpieces = (int **) malloc(taille_x * sizeof(int*));
-	int *tab2Dpieces2 = (int *) malloc(taille_x * taille_y * sizeof(int));
+	int **arr2Dpieces = (int **) malloc(size_x * sizeof(int*));
+	int *arr2Dpieces2 = (int *) malloc(size_x * size_y * sizeof(int));
 
-	if(tab2Dpieces == NULL)
-		error("mapPieces(), Problème d'allocation sur tab2Dpieces");
-	if(tab2Dpieces2 == NULL)
-		error("mapPieces(), Problème d'allocation sur tab2Dpieces2");
+	if(arr2Dpieces == NULL)
+		error("mapPieces(), Problème d'allocation sur arr2Dpieces");
+	if(arr2Dpieces2 == NULL)
+		error("mapPieces(), Problème d'allocation sur arr2Dpieces2");
 
-	for(int i = 0; i < taille_x; i++)
-			tab2Dpieces[i] = &tab2Dpieces2[i*taille_y];
+	for(int i = 0; i < size_x; i++)
+			arr2Dpieces[i] = &arr2Dpieces2[i*size_y];
 	// --- Fin de l'allocation ---
 	// On rempli le tableau de -1
-	for(int x = 0; x < taille_x; x++)
-		for(int y = 0; y < taille_y; y++)
-			tab2Dpieces[x][y] = -1;
+	for(int x = 0; x < size_x; x++)
+		for(int y = 0; y < size_y; y++)
+			arr2Dpieces[x][y] = -1;
 
 	// Tableau temporaire
-	int **tab_tmp_piece;
-	int taille_tab_tmp_piece;
+	int **arr_tmp_piece;
+	int size_arr_tmp_piece;
 
-	for(int i = 0; i < taille; i++)
+	for(int i = 0; i < size; i++)
 	{
-		taille_tab_tmp_piece = get_width(tab_pieces[i]) * get_height(tab_pieces[i]);
+		size_arr_tmp_piece = get_width(array_p[i]) * get_height(array_p[i]);
 
-		tab_tmp_piece = pieceArray(tab_pieces[i], taille_tab_tmp_piece);
+		arr_tmp_piece = pieceArray(array_p[i], size_arr_tmp_piece);
 		
-		for(int j = 0; j < taille_tab_tmp_piece; j++)
-			tab2Dpieces[ tab_tmp_piece[j][0] ][ tab_tmp_piece[j][1] ] = i;
-		free(tab_tmp_piece[0]);
-		free(tab_tmp_piece);
+		for(int j = 0; j < size_arr_tmp_piece; j++)
+			arr2Dpieces[ arr_tmp_piece[j][0] ][ arr_tmp_piece[j][1] ] = i;
+		free(arr_tmp_piece[0]);
+		free(arr_tmp_piece);
 	}
 
-	return tab2Dpieces;
+	return arr2Dpieces;
 }
 
 // ---- Fonctions Simples ----

@@ -5,10 +5,10 @@
  * Permet d'afficher les informations des pieces du tableau
  * Cette fonction est utilisé pour du DEBUG dans les fonctions de test sur
  * game.c et piece.c
- * @param tab_pieces Tableau de pieces
- * @param taille Le nombre de piece à afficher
+ * @param array_pieces Tableau de pieces
+ * @param size Le nombre de piece à afficher
 */
-void displayPieces(piece *tab_pieces, int taille);
+void displayPieces(piece *array_pieces, int size);
 
 /**
  * Change les majuscules en minuscule d'une chaine de caractère
@@ -93,11 +93,11 @@ char getHexa(int n);
 
 /**
  * Permet de charger un Niveau
- * @param fichier Une chaine de caractere correspondant au Fichier que l'on souhaite ouvrir
+ * @param file Une chaine de caractere correspondant au Fichier que l'on souhaite ouvrir
  * @param num Le numéro du level que l'on souhaite ouvrir
  * @return L'ID du niveau en question.
  */
-char* loadGameFromNum(char* fichier, char* num);
+char* loadGameFromNum(char* file, char* num);
 
 /**
  * Convertir la direction de l'input en enumeration `dir`

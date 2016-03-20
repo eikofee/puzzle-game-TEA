@@ -84,7 +84,7 @@ void getHelp(int input, bool* done)
 			break;
 		case 2:
 			printf("\tSyntax is as it follows : \"[piece #] [direction] [distance]\"\n\n");
-			printf("\t [piece #] : The number of the piece you want to move.\n");
+			printf("\t [piece #] : The piece's number you want to move.\n");
 			printf("\t [direction] : The direction you want to move the piece to.\n");
 			printf("\t\tPossible directions:\n\t\t- u, U : UP\n\t\t- d, D : DOWN\n\t\t- l, L : LEFT\n\t\t- r, R : RIGHT\n");
 			printf("\t [distance] : The number of cases you want to cross.\n\t               Negative numbers are allowed.\n\n");

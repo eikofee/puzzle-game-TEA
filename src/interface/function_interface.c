@@ -7,12 +7,12 @@
 //Ce fichier sert a alleger le fichier interface_txt en y mettant les fonctions annexes à celle
 //présentes dans interface_txt
 
-void displayPieces(piece *tab_pieces, int taille)
+void displayPieces(piece *array_pieces, int size)
 {
-	for (int i = 0; i < taille; i++)
+	for (int i = 0; i < size; i++)
 	{
-		printf("Piece [%d] : x = %d, y = %d, ",i ,get_x(tab_pieces[i]), get_y(tab_pieces[i]));
-		printf("Width = %d | Height = %d, ", get_width(tab_pieces[i]), get_height(tab_pieces[i]));
+		printf("Piece [%d] : x = %d, y = %d, ",i ,get_x(array_pieces[i]), get_y(array_pieces[i]));
+		printf("Width = %d | Height = %d, ", get_width(array_pieces[i]), get_height(array_pieces[i]));
 		printf("]\n");
 	}
 }
@@ -41,7 +41,7 @@ void setColorPiece(char c, int id, bool fill)
 		case 102:
 		case 103:
 		case 105:
-			printf("\x1b[30m");
+			printf("\x1b[30m");			//Change la police en noire (meilleure visibilité)
 			break;
 		default:
 			printf("\x1b[97m");
@@ -191,27 +191,27 @@ void confirm()
 }
 */
 
-char* loadGameFromNum(char* fichier, char* num)
+char* loadGameFromNum(char* file, char* num)
 {
 	//num représente le numero du level
 	//on commence par obtenir la taille de num
-	int taille_num = 0;
-	while(num[taille_num] != '\n')
-		taille_num++;
+	int size_num = 0;
+	while(num[size_num] != '\n')
+		size_num++;
 
 	//On convertit le char* num en int (numId)
 	int numId = 0;
-	for(int j = taille_num - 1; j >= 0; j--)
+	for(int j = size_num - 1; j >= 0; j--)
 	{
 		numId = numId * 10;
 		numId = numId + getNumber(num[j]);
 	}
 
 	//On ouvre le fichier (save.txt ou games.txt)
-	FILE* fichier_tmp = NULL;
-	fichier_tmp = fopen(fichier, "r");
+	FILE* file_tmp = NULL;
+	file_tmp = fopen(file, "r");
 
-	if(fichier_tmp == NULL)
+	if(file_tmp == NULL)
 		error("loadGameFromId(), probleme d'ouverture du fichier");
 
 	//On recupere l'id du niveau
@@ -220,10 +220,10 @@ char* loadGameFromNum(char* fichier, char* num)
 	int i = 0;
 	while(i != numId)
 	{
-		fgets(s, 256, fichier_tmp);
+		fgets(s, 256, file_tmp);
 		i++;
 	}
-	fclose(fichier_tmp);
+	fclose(file_tmp);
 	//On ferme le fichier apres avoir recurerer l'information ( l'id du niveau )
 	//Et on recopie la chaine de caratere `s` dans `s2` et on retourne s2
 
