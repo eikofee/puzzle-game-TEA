@@ -15,7 +15,7 @@ HALNAUT Adrien (Echoffee) - ORDONEZ Romain (Apodeus) - MARTY Yoan (tlanvaldear)
 cmake .
 ```
 
-- Taper ensuite suivant le jeu souhaiter
+- Suivant le jeu souhaité, taper:
     - Pour Rush Hour : 
     ```
     make rush-hour
