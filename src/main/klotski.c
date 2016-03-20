@@ -18,13 +18,13 @@ void loadTheGame(char* id_src)
 		error("getIdFromGame(), probleme d'allocation memoire");
 
 	getIdFromGame(g, id);
-	draw_interface(g, id);
+	drawInterface(g, id);
 
 	while (!game_over_ar(g))
 	{
 		printf("Enter the car's number you want to move :\n");
-		input_player(g, id);
-		draw_interface(g, id);
+		inputPlayer(g, id);
+		drawInterface(g, id);
 	}
 
 	getIdFromGame(g, id);

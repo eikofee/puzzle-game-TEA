@@ -8,7 +8,7 @@
  * @param tab_pieces Tableau de pieces
  * @param taille Le nombre de piece à afficher
 */
-void display_pieces(piece *tab_pieces, int taille);
+void displayPieces(piece *tab_pieces, int taille);
 
 /**
  * Change les majuscules en minuscule d'une chaine de caractère
@@ -30,7 +30,7 @@ void setColorPiece(char c, int id, bool fill);
  * @param b Une autre chaine de Caractere
  * @return Un booleen, True si elles sont identiques, False sinon.
  */
-bool str_equal(char* a, char* b);
+bool strEqual(char* a, char* b);
 
 /**
  * Verifie si le char passé en paramètre est un chiffre et ne dépasse pas max_number
@@ -119,7 +119,7 @@ void revertDirection(dir* d);
  * @param g Un jeu game.
  * @return Une copie du tableau de piece de `g`
  */
-piece* copieTableauPieces(game g);
+piece* copyTableauPieces(game g);
 
 /**
  * Permet de liberer un tableau de pièce (free)

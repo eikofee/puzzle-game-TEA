@@ -7,7 +7,7 @@
 //Ce fichier sert a alleger le fichier interface_txt en y mettant les fonctions annexes à celle
 //présentes dans interface_txt
 
-void display_pieces(piece *tab_pieces, int taille)
+void displayPieces(piece *tab_pieces, int taille)
 {
 	for (int i = 0; i < taille; i++)
 	{
@@ -49,7 +49,7 @@ void setColorPiece(char c, int id, bool fill)
 	printf("%c \x1b[0m", (fill?c:' '));
 }
 
-bool str_equal(char* a, char* b)
+bool strEqual(char* a, char* b)
 {
 	int i = 0;
 	while (a[i] != '\0' && b[i] != '\0')
@@ -266,7 +266,7 @@ void revertDirection(dir* d)
 	}
 }
 
-piece* copieTableauPieces(game g){
+piece* copyTableauPieces(game g){
 
 	int nb_pieces = game_nb_pieces(g);
 	piece* pieces = (piece*) malloc(sizeof(piece) * nb_pieces);
@@ -476,11 +476,11 @@ void initFileConfig(char* level_name){
 	if(fichier == NULL)
 		error("initFileConfig(), probleme de création du fichier");
 
-	if(str_equal(level_name, "rush-hour"))
+	if(strEqual(level_name, "rush-hour"))
 	{
 		fprintf(fichier, "%s\n", "rush-hour");
 	}
-	else if(str_equal(level_name, "klotski"))
+	else if(strEqual(level_name, "klotski"))
 	{
 		fprintf(fichier, "%s\n", "klotski");
 	}
@@ -501,7 +501,7 @@ bool whatGame(char* name)
     fgets(s, 256, file);
     fclose(file);
 
-    if(str_equal(s, name))
+    if(strEqual(s, name))
     {
     	free(s);
     	return true;

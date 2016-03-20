@@ -8,7 +8,7 @@
  * @param g Le jeu qui va être affiché.
  * @param id L ID correspondant au jeu qui va être affiché.
  */
-void draw_interface(game g, char* id);
+void drawInterface(game g, char* id);
 
 /**
  * Permet l'affichage du menu d'Aide.
@@ -22,7 +22,7 @@ void getHelp(int input, bool* done);
  * @param g Le jeu en cours qui va être modifié selon les inputs.
  * @param id L'ID correspondant au jeu en cours.
  */
-void input_player(game g, char* id);
+void inputPlayer(game g, char* id);
 
 /**
  * Permet de vérifier si la 1ere Chaine de Caractere passée en paramètre suit un format cohérent

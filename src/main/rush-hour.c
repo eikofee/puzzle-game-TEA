@@ -19,13 +19,13 @@ void loadTheGame(char* id_src)
 
 	//On recupère l'id de la game, et on affiche une première fois l'interface
 	getIdFromGame(g, id);
-	draw_interface(g, id);
+	drawInterface(g, id);
 
 	while (!game_over_hr(g))
 	{
 		printf("Enter the car's number you want to move :\n");
-		input_player(g, id);
-		draw_interface(g, id);
+		inputPlayer(g, id);
+		drawInterface(g, id);
 	}
 
 	getIdFromGame(g, id);

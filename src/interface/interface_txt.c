@@ -4,10 +4,10 @@
 #include <utility.h>
 #include <interface_txt.h>
 
-void draw_interface(game g, char* id)
+void drawInterface(game g, char* id)
 {
 	int moves = game_nb_moves(g);
-	piece* p = copieTableauPieces(g);
+	piece* p = copyTableauPieces(g);
 	int** t = mapPieces(p , game_nb_pieces(g), game_width(g), game_height(g));
 	freeTableauDePieces(p, game_nb_pieces(g));
 	bool* toWrite = (bool*) malloc(sizeof(bool) * game_nb_pieces(g));
@@ -197,14 +197,14 @@ bool checkFormat(char* s, char* format)
 	Recupere les commandes du joueur (imparfait)
 	Permet de gerer les inputs pour deplacer les vehicules, ainsi que de gerer les menus
 */
-void input_player(game g, char* id)
+void inputPlayer(game g, char* id)
 {
 	char input[64];
 	fgets(input, sizeof(input), stdin);
 	toLower(input);
 	removeSpaces(input);
 	bool correct = false;
-	if (str_equal(input, "help\n"))
+	if (strEqual(input, "help\n"))
 	{
 		correct = true;
 		bool done = false;
@@ -217,18 +217,18 @@ void input_player(game g, char* id)
 		}
 	}
 
-	if (str_equal(input, "hint\n"))
+	if (strEqual(input, "hint\n"))
 	{
 		correct = true;
 		printf("hint [WIP]\n");
 		//Do a move 
 	}
-	if(str_equal(input, "skip\n"))
+	if(strEqual(input, "skip\n"))
 	{
 		correct = true;
 		printf("skip [WIP]\n");
 	}
-	if (str_equal(input, "exit\n"))
+	if (strEqual(input, "exit\n"))
 	{
 		correct = true;
 		//exit the game
@@ -236,18 +236,18 @@ void input_player(game g, char* id)
 		delete_game(g);
 		exit(EXIT_SUCCESS);
 	}
-	if (str_equal(input, "save\n"))
+	if (strEqual(input, "save\n"))
 	{
 		correct = true;
 		//saveGameFromId(g, id);
 		printf("save [WIP]");
 	}
-	if (str_equal(input, "id\n"))
+	if (strEqual(input, "id\n"))
 	{
 		correct = true;
 		printf("Game ID : %s\n", id);
 	}
-	if (str_equal(input, "load\n"))
+	if (strEqual(input, "load\n"))
 	{
 		correct = true;
 		//On charge la partie que l'on veut, save 1 2 ou 3
@@ -257,11 +257,11 @@ void input_player(game g, char* id)
 		char* level = (char*)malloc(sizeof(char)*256);
 		fgets(level, 256, stdin);
 
-		if (str_equal(level, "c"))
+		if (strEqual(level, "c"))
 			correct = false;
 
 		// Ce bloc est mis en commentaire uniquement pour la V2 . . . 
-		// if(str_equal(level, "save\n"))
+		// if(strEqual(level, "save\n"))
 		// {
 		// 	printf("[WIP]\n");
 		// 	//loadGameFromSave("save.txt", g);
