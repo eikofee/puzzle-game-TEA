@@ -310,7 +310,7 @@ void inputPlayer(game g, char* id)
 		if (checkFormat(input, "%i\n"))
 		{
 			//input multiple
-			fuseNewInput(input, "%d", &pos, "Enter a direction:");
+			fuseNewInput(input, "%d", &pos, "Enter a direction (Type the first letter of the following directions: right | left | up | down):");
 			fuseNewInput(input, "%i", &pos, "Enter a distance:");
 			correct = true;
 		}
@@ -318,12 +318,22 @@ void inputPlayer(game g, char* id)
 		{
 			pos = 0;
 			n_piece = readUntilChar(input, &pos);
+
+			if(n_piece < 0 || n_piece >= game_nb_pieces(g))
+			{
+				printf("Mauvais numero de piece -- Try Again\n");
+				return;
+			}
+
 			if (checkFormat(input, "%i %d %i"))
 				pos++;
+
 			direction = getDirection(input, &pos);
 			pos++;
+
 			if (checkFormat(input, "%i %d %i"))
 				pos++;
+
 			distance = readUntilChar(input, &pos);
 
 			correct = true;
