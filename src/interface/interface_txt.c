@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <game.h>
 #include <utility.h>
+#include <solver.h>
 #include <interface_txt.h>
 
 void drawInterface(game g, char* id)
@@ -209,6 +210,12 @@ void inputPlayer(game g, char* id)
 	toLower(input);
 	removeSpaces(input);
 	bool correct = false;
+	if (strEqual(input, "solve\n"))
+	{
+		solve(g);
+		drawInterface(g,id);
+		correct = true;
+	}
 	if (strEqual(input, "help\n"))
 	{
 		correct = true;
