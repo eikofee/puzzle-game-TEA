@@ -27,8 +27,8 @@ ADD_DEPENDENCIES(anerouge klotski)
 #préparation des fichiers de test
 add_executable(test_piece1 src/test/test_piece1)
 add_executable(game_test src/test/game-test)
-target_link_libraries(game_test game rh ar)
-target_link_libraries(test_piece1 game rh ar)
+target_link_libraries(game_test game )
+target_link_libraries(test_piece1 game )
 #tests
 enable_testing()
 add_test(piece ${CMAKE_BINARY_DIR}/test_piece1)
