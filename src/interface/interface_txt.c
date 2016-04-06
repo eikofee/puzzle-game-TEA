@@ -212,7 +212,7 @@ void inputPlayer(game g, char* id)
 	bool correct = false;
 	if (strEqual(input, "solve\n"))
 	{
-		solve(g);
+		solve(g, id);
 		drawInterface(g,id);
 		correct = true;
 	}
