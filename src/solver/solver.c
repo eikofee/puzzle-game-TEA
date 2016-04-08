@@ -36,8 +36,13 @@ void randmove(game g){
 }
 
 bool solve(game g, char* id){
-	if (whatGame("klotski\n")){
-		while(!game_over_ar(g)){
+	//mouvement aléatoire, utilisation de time.h
+	time_t t;
+	//initialisation du générateur aléatoire
+	srand((unsigned) time(&t));
+
+	if (whatGame("rush-hour\n")){
+		while(!game_over_hr(g)){
 			// randmove(g);
 			// if (!play_move(g, rand()%4, rand()%4, 1))
 			play_move(g, rand()%game_nb_pieces(g), rand()%4, 1);
