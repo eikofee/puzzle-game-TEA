@@ -134,24 +134,24 @@ bool assignChilds(game g, solverNode n)
 	//get deeper
 	return !j;
 }
-bool checkIfUseless(game g, solverNode* clearNode)
+bool checkIfUseless(game g, solverNode clearNode)
 {
 	if (!clearNode)
 		return true;
-	return (game_nb_moves((*clearNode)->g) > game_nb_moves(g));
+	return (game_nb_moves(clearNode->g) > game_nb_moves(g));
 }
 bool createTree(game g, solverNode root, solverNode* clearNode)
 {
 	play_move(root->g, root->m->numPiece, root->m->d, root->m->distance);
 	//drawInterface(root->g, "test");
-	if (game_over_hr(root->g) && (!clearNode || checkIfUseless(root->g, clearNode)))
+	if (game_over_hr(root->g) && (!clearNode || checkIfUseless(root->g, *clearNode)))
 	{
-	  if (clearNode)
+	  if (*clearNode)
 	    {
 	    printf("Found new best path : %d vs %d\n", game_nb_moves(root->g), game_nb_moves((*clearNode)->g));
 	    root->clear = true;
 	    }
-	  if (!clearNode)
+	  if (!*clearNode)
 	    {
 	      printf("Solution trouvée\n");
 	      root->clear = true;
@@ -159,7 +159,7 @@ bool createTree(game g, solverNode root, solverNode* clearNode)
 	}
 	if (root->clear)
 	{
-	  *(clearNode) = root;
+		*clearNode = root;
 		return true;
 	}
 	char* id = (char*)malloc(512*sizeof(char));
@@ -167,7 +167,7 @@ bool createTree(game g, solverNode root, solverNode* clearNode)
 	getIdFromGame(root->g, id);
 	strcpy(root->value, id);
 	
-	if (checkIfUseless(root->g, clearNode) && !game_over_hr(root->g) && compareID(root, root->value))
+	if (checkIfUseless(root->g, *clearNode) && !game_over_hr(root->g) && compareID(root, root->value))
 	{
 		assignChilds(root->g, root);
 	}
@@ -199,9 +199,8 @@ bool createTree(game g, solverNode root, solverNode* clearNode)
 	}
 	return minInd;
 }*/
-void displayShorterPath(solverNode* node) //AFFICHE EN SENS INVERSE
+void displayShorterPath(solverNode n) //AFFICHE EN SENS INVERSE
 {
-	solverNode n = *node;
 	while (n != NULL)
 	{
 		move m = n->m;
@@ -220,7 +219,7 @@ void displayShorterPath(solverNode* node) //AFFICHE EN SENS INVERSE
 }
 bool solve(game g, char* id)
 {
-  solverNode masterPath;
+	solverNode masterPath;
 	//masterTable = (solverNode*)malloc(2048*sizeof(solverNode));
 
 	masterPath = NULL;
@@ -228,7 +227,7 @@ bool solve(game g, char* id)
 	move m = newMove(0, 0, 0);
 	solverNode root = newNode(NULL, id, m, g);
 	//strcpy(root->value, id);
-	createTree(g, root, masterPath);
+	createTree(g, root, &masterPath);
 	//Fin graph
 	printf("Fin de la recherche\n");
 	//int bestInd = getShorterPath(masterTable, caInd);
