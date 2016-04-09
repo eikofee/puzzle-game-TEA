@@ -213,7 +213,7 @@ void displayShorterPath(solverNode n) //AFFICHE EN SENS INVERSE
 			case RIGHT:c = 'r';break;
 			default: c='?';break;
 		}
-		printf("%d%c%d\n", m->numPiece, c, m->d);
+		printf("%d%c%d\n", m->numPiece, c, m->distance);
 		n = n->parent;
 	}
 }
