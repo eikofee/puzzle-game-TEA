@@ -134,6 +134,15 @@ bool assignChilds(game g, solverNode n)
 	//get deeper
 	return !j;
 }
+bool checkIfUseless(game g, solverNode* clearArray, int* caInd)
+{
+	for (int i = 0; i < *caInd; i++)
+	{
+		if (game_nb_moves(clearArray[i]->g) < game_nb_moves(g))
+			return false;
+	}
+	return true;
+}
 bool createTree(game g, solverNode root, solverNode* clearArray, int* caInd)
 {
 	play_move(root->g, root->m->numPiece, root->m->d, root->m->distance);
@@ -152,7 +161,8 @@ bool createTree(game g, solverNode root, solverNode* clearArray, int* caInd)
 	
 	getIdFromGame(root->g, id);
 	strcpy(root->value, id);
-	if (!game_over_hr(root->g) && compareID(root, root->value))
+	
+	if (checkIfUseless(root->g, clearArray, caInd) && !game_over_hr(root->g) && compareID(root, root->value))
 	{
 		assignChilds(root->g, root);
 	}
