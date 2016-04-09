@@ -134,27 +134,23 @@ bool assignChilds(game g, solverNode n)
 	//get deeper
 	return !j;
 }
-bool checkIfUseless(game g, solverNode* clearArray, int* caInd)
+bool checkIfUseless(game g, solverNode* clearNode)
 {
-	for (int i = 0; i < *caInd; i++)
-	{
-		if (game_nb_moves(clearArray[i]->g) < game_nb_moves(g))
-			return false;
-	}
-	return true;
+	if (!clearNode)
+		return true;
+	return (game_nb_moves((*clearNode)->g) < game_nb_moves(g));
 }
-bool createTree(game g, solverNode root, solverNode* clearArray, int* caInd)
+bool createTree(game g, solverNode root, solverNode* clearNode)
 {
 	play_move(root->g, root->m->numPiece, root->m->d, root->m->distance);
-	drawInterface(root->g, "test");
+	//drawInterface(root->g, "test");
 	if (game_over_hr(root->g))
 	{
 		root->clear = true;
 	}
 	if (root->clear)
 	{
-		clearArray[*caInd] = root;
-		*caInd += 1;
+		clearNode = &root;
 		return true;
 	}
 	char* id = (char*)malloc(512*sizeof(char));
@@ -162,17 +158,17 @@ bool createTree(game g, solverNode root, solverNode* clearArray, int* caInd)
 	getIdFromGame(root->g, id);
 	strcpy(root->value, id);
 	
-	if (checkIfUseless(root->g, clearArray, caInd) && !game_over_hr(root->g) && compareID(root, root->value))
+	if (checkIfUseless(root->g, clearNode) && !game_over_hr(root->g) && compareID(root, root->value))
 	{
 		assignChilds(root->g, root);
 	}
 	for (int i = 0; i < root->childsNumber; i++)
-		createTree(root->g, root->childs[i], clearArray, caInd);
+		createTree(root->g, root->childs[i], clearNode);
 	return true;
 	
 	//set childs n stuff
 }
-int getShorterPath(solverNode* table, int size)
+/*int getShorterPath(solverNode* table, int size)
 {
 	solverNode n;
 	int minInd = 0;
@@ -193,11 +189,10 @@ int getShorterPath(solverNode* table, int size)
 		}
 	}
 	return minInd;
-}
-void displayShorterPath(solverNode* table, int ind) //AFFICHE EN SENS INVERSE
+}*/
+void displayShorterPath(solverNode* node) //AFFICHE EN SENS INVERSE
 {
-	solverNode n;
-	n = table[ind];
+	solverNode n = *node;
 	while (n != NULL)
 	{
 		move m = n->m;
@@ -210,21 +205,22 @@ void displayShorterPath(solverNode* table, int ind) //AFFICHE EN SENS INVERSE
 			case RIGHT:c = 'r';break;
 			default: c='?';break;
 		}
-		printf("%d%c%d", m->numPiece, c, m->d);
+		printf("%d%c%d\n", m->numPiece, c, m->d);
 		n = n->parent;
 	}
 }
 bool solve(game g, char* id)
 {
-	solverNode* masterTable;
-	masterTable = (solverNode*)malloc(2048*sizeof(solverNode));
+	solverNode* masterPath;
+	//masterTable = (solverNode*)malloc(2048*sizeof(solverNode));
+	masterPath = NULL;
 	int caInd = 0;
 	move m = newMove(0, 0, 0);
 	solverNode root = newNode(NULL, id, m, g);
 	//strcpy(root->value, id);
-	createTree(g, root, masterTable, &caInd);
+	createTree(g, root, masterPath);
 	//Fin graph
-	printf("Fin de la recherche, solutions trouvées : %d\n", caInd);
-	int bestInd = getShorterPath(masterTable, caInd);
-	displayShorterPath(masterTable, bestInd);
+	printf("Fin de la recherche\n");
+	//int bestInd = getShorterPath(masterTable, caInd);
+	displayShorterPath(masterPath);
 }
