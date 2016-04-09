@@ -60,13 +60,13 @@ solverNode newNode(solverNode parent, char* value, move m, game g)
 	copy_game(g, n->g);
 	return n;
 }
-bool testMove(game g, int numPiece, dir d, int distance, bool* clear)
+bool testMove(game g, int numPiece, dir d, int distance)//, bool* clear)
 {
 	game tmp;
 	tmp = new_game(1,1,0,NULL);
 	copy_game(g, tmp);
 	bool r = play_move(tmp, numPiece, d, distance);
-	*clear = game_over_hr(tmp);
+	//*clear = game_over_hr(tmp);
 	delete_game(tmp);
 	return r;
 }
@@ -77,7 +77,7 @@ move* getPossibleMoves(game g, int* len, solverNode n)
 	for (int i = 0; i < game_nb_pieces(g); i++)
 	{
 		for (int d = 0; d < 4; d++)
-			if (testMove(g, i, d, 1, &n->clear))
+			if (testMove(g, i, d, 1))//, &n->clear))
 			{
 				table[ind] = newMove(i, d, 1); 
 				ind++;
@@ -116,15 +116,17 @@ bool assignChilds(game g, solverNode n)
 	int j = 0;
 	for (int i = 0; i < childsNumber; i++)
 	{
-		if (uniqueMove(g, n, moveList[i]))
-		{
+		//if (uniqueMove(g, n, moveList[i]))
+		//{
 			solverNode s = newNode(n, "", moveList[i], n->g);
 			childs[j] = s;
 			j++;
-		}
+		//}
 	}
 	n->childs = childs;
 	n->childsNumber = j;
+	if (childsNumber == 0)
+		printf("Aucun enfant, fin d'un noeud\n");
 	//get the moves
 	//test if already known
 	//create the childs
@@ -144,11 +146,15 @@ bool createTree(game g, solverNode root, solverNode* clearArray, int* caInd)
 	play_move(root->g, root->m->numPiece, root->m->d, root->m->distance);
 	getIdFromGame(g, id);
 	strcpy(root->value, id);
-	assignChilds(root->g, root);
+	if (!game_over_hr(root->g) && compareID(root, root->value))
+		assignChilds(root->g, root);
+	else
+		printf("Similitude trouvée\n");
 	for (int i = 0; i < root->childsNumber; i++)
 		createTree(root->g, root->childs[i], clearArray, caInd);
-	return true;
 	printf("Fin d'un noeud\n");
+	return true;
+	
 	//set childs n stuff
 }
 int getShorterPath(solverNode* table, int size)
@@ -203,6 +209,7 @@ bool solve(game g, char* id)
 	//strcpy(root->value, id);
 	createTree(g, root, masterTable, &caInd);
 	//Fin graph
+	printf("Fin de la recherche, solutions trouvées : %d\n", caInd);
 	int bestInd = getShorterPath(masterTable, caInd);
 	displayShorterPath(masterTable, bestInd);
 }
