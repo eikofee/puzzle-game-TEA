@@ -144,13 +144,22 @@ bool createTree(game g, solverNode root, solverNode* clearNode)
 {
 	play_move(root->g, root->m->numPiece, root->m->d, root->m->distance);
 	//drawInterface(root->g, "test");
-	if (game_over_hr(root->g))
+	if (game_over_hr(root->g) && (!clearNode || checkIfUseless(root->g, clearNode)))
 	{
-		root->clear = true;
+	  if (clearNode)
+	    {
+	    printf("Found new best path : %d vs %d\n", game_nb_moves(root->g), game_nb_moves((*clearNode)->g));
+	    root->clear = true;
+	    }
+	  if (!clearNode)
+	    {
+	      printf("Solution trouvée\n");
+	      root->clear = true;
+	    }
 	}
 	if (root->clear)
 	{
-		clearNode = &root;
+	  *(clearNode) = root;
 		return true;
 	}
 	char* id = (char*)malloc(512*sizeof(char));
@@ -211,8 +220,9 @@ void displayShorterPath(solverNode* node) //AFFICHE EN SENS INVERSE
 }
 bool solve(game g, char* id)
 {
-	solverNode* masterPath;
+  solverNode masterPath;
 	//masterTable = (solverNode*)malloc(2048*sizeof(solverNode));
+
 	masterPath = NULL;
 	int caInd = 0;
 	move m = newMove(0, 0, 0);
