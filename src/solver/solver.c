@@ -88,10 +88,10 @@ move* getPossibleMoves(game g, int* len, solverNode n)
 }
 bool compareID(solverNode s, char* id)
 {
-
 	if (s->parent == NULL)
 		return true;
-	bool b = (!strEqual(id, s->value) && compareID(s->parent, id));
+	//bool b = (!strEqual(id, s->parent->value) && compareID(s->parent, id));
+	bool b = (strcmp(id, s->parent->value) && compareID(s->parent, id));
 	return b;
 }
 bool uniqueMove(game g, solverNode s, move m)
@@ -136,6 +136,12 @@ bool assignChilds(game g, solverNode n)
 }
 bool createTree(game g, solverNode root, solverNode* clearArray, int* caInd)
 {
+	play_move(root->g, root->m->numPiece, root->m->d, root->m->distance);
+	drawInterface(root->g, "test");
+	if (game_over_hr(root->g))
+	{
+		root->clear = true;
+	}
 	if (root->clear)
 	{
 		clearArray[*caInd] = root;
@@ -143,16 +149,15 @@ bool createTree(game g, solverNode root, solverNode* clearArray, int* caInd)
 		return true;
 	}
 	char* id = (char*)malloc(512*sizeof(char));
-	play_move(root->g, root->m->numPiece, root->m->d, root->m->distance);
-	getIdFromGame(g, id);
+	
+	getIdFromGame(root->g, id);
 	strcpy(root->value, id);
 	if (!game_over_hr(root->g) && compareID(root, root->value))
+	{
 		assignChilds(root->g, root);
-	else
-		printf("Similitude trouvée\n");
+	}
 	for (int i = 0; i < root->childsNumber; i++)
 		createTree(root->g, root->childs[i], clearArray, caInd);
-	printf("Fin d'un noeud\n");
 	return true;
 	
 	//set childs n stuff
