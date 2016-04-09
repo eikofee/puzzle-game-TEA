@@ -138,7 +138,7 @@ bool checkIfUseless(game g, solverNode* clearNode)
 {
 	if (!clearNode)
 		return true;
-	return (game_nb_moves((*clearNode)->g) < game_nb_moves(g));
+	return (game_nb_moves((*clearNode)->g) > game_nb_moves(g));
 }
 bool createTree(game g, solverNode root, solverNode* clearNode)
 {
