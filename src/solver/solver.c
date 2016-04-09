@@ -52,7 +52,7 @@ solverNode newNode(solverNode parent, char* value, move m, game g)
 	//strcpy(n->value, value);
 	n->m = (move)malloc(sizeof(move));
 	n->m = m;
-	n->clear = (bool)malloc(sizeof(bool));
+	//n->clear = (bool)malloc(sizeof(bool));
 	n->clear = game_over_hr(g);
 	n->childsNumber = 0;
 	n->g = new_game(1,1,0,NULL);
@@ -66,7 +66,7 @@ void deleteMove(move m)
 }
 void deleteNode(solverNode n)
 {
-	deleteMove(n->m);
+	//deleteMove(n->m);
 	free(n->m);
 	free(n->value);
 	delete_game(n->g);
@@ -185,7 +185,7 @@ bool createTree(game g, solverNode root, solverNode* clearNode)
 
 	bool b = false;
 	for (int i = 0; i < root->childsNumber; i++)
-		b = createTree(root->g, root->childs[i], clearNode) && b;
+		b = createTree(root->g, root->childs[i], clearNode) || b;
 	if (!b){
 		deleteNode(root);
 		return false;
@@ -248,4 +248,5 @@ bool solve(game g, char* id)
 	printf("Fin de la recherche\n");
 	//int bestInd = getShorterPath(masterTable, caInd);
 	displayShorterPath(masterPath);
+		
 }
