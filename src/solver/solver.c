@@ -55,10 +55,22 @@ solverNode newNode(solverNode parent, char* value, move m, game g)
 	n->clear = (bool)malloc(sizeof(bool));
 	n->clear = game_over_hr(g);
 	n->childsNumber = 0;
-	n->childs = (solverNode*)malloc(sizeof(solverNode)*512);
 	n->g = new_game(1,1,0,NULL);
 	copy_game(g, n->g);
+	n->childs = (solverNode*)malloc(sizeof(solverNode)*game_nb_pieces(g)*4);
 	return n;
+}
+void deleteMove(move m)
+{
+	free(m);
+}
+void deleteNode(solverNode n)
+{
+	deleteMove(n->m);
+	free(n->m);
+	free(n->value);
+	delete_game(n->g);
+	free(n->childs);
 }
 bool testMove(game g, int numPiece, dir d, int distance)//, bool* clear)
 {
@@ -143,6 +155,10 @@ bool checkIfUseless(game g, solverNode clearNode)
 bool createTree(game g, solverNode root, solverNode* clearNode)
 {
 	play_move(root->g, root->m->numPiece, root->m->d, root->m->distance);
+	char* id = (char*)malloc(512*sizeof(char));
+	getIdFromGame(root->g, id);
+	strcpy(root->value, id);
+	free(id);
 	//drawInterface(root->g, "test");
 	if (game_over_hr(root->g) && (!clearNode || checkIfUseless(root->g, *clearNode)))
 	{
@@ -159,22 +175,22 @@ bool createTree(game g, solverNode root, solverNode* clearNode)
 	}
 	if (root->clear)
 	{
+		if (*clearNode)
+			deleteNode(*clearNode);
 		*clearNode = root;
 		return true;
 	}
-	char* id = (char*)malloc(512*sizeof(char));
-	
-	getIdFromGame(root->g, id);
-	strcpy(root->value, id);
-	
-	if (checkIfUseless(root->g, *clearNode) && !game_over_hr(root->g) && compareID(root, root->value))
-	{
+	if (compareID(root, root->value) && checkIfUseless(root->g, *clearNode))
 		assignChilds(root->g, root);
-	}
+
+	bool b = false;
 	for (int i = 0; i < root->childsNumber; i++)
-		createTree(root->g, root->childs[i], clearNode);
+		b = createTree(root->g, root->childs[i], clearNode) && b;
+	if (!b){
+		deleteNode(root);
+		return false;
+	}
 	return true;
-	
 	//set childs n stuff
 }
 /*int getShorterPath(solverNode* table, int size)
