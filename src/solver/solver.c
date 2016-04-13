@@ -109,7 +109,7 @@ bool assignChilds(node root, node* childsArray, int* index, node* clearedNode)
 	getIdFromGame(root->g, id);
 	if (game_over_hr(root->g))
 	{
-		clearedNode = &root;
+		clearedNode[0] = root;
 		printf("Fini\n");
 		return true;
 	}
@@ -147,7 +147,7 @@ bool solve(game g)
 {
 	bool r = false;
 	int len = 1;
-	node* clearedNode = NULL;
+	node* clearedNode = (node*)malloc(sizeof(node));
 	node* childsArray = (node*)malloc(sizeof(node));
 	childsArray[0] = newNode("", g, NULL);
 	r = solveArray(childsArray, &len, clearedNode);
