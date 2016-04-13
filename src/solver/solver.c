@@ -4,6 +4,7 @@
 
 struct node_s {
 	char* seq;
+	char* single_seq;
 	game g;
 	struct node_s* parent;
 };
@@ -45,13 +46,16 @@ move newMove(int numPiece, dir d, int distance)
 	return m;
 }
 
-node newNode(char* seq, game g, node parent)
+node newNode(char* seq, game g, node parent, char* single_seq)
 {
 	node n = (node)malloc(sizeof(node));
 	n->seq = (char*)malloc(256*sizeof(char));
+	n->single_seq = (char*)malloc(6*sizeof(char));
 	n->g = new_game(1, 1, 0, NULL);
 	strcpy(n->seq, seq);
+	strcpy(n->single_seq, single_seq);
 	copy_game(g, n->g);
+	n->parent = (node)malloc(sizeof(node));
 	n->parent = parent;
 	return n;
 }
@@ -63,7 +67,7 @@ node newNodeFromMove(node root, move m)
 	char* seq = (char*)malloc(256*sizeof(char));
 	strcpy(seq, root->seq);
 	strcat(seq, getStringFromMove(m));
-	node n = newNode(seq, g, root);
+	node n = newNode(seq, g, root, getStringFromMove(m));
 	return n;
 }
 
@@ -81,14 +85,17 @@ bool testMove(game g, int numPiece, dir d, int distance)//, bool* clear)
 move* getPossibleMoves(game g, int* len, node n)
 {
 	int ind = 0;
-	move* table = (move*) malloc(2*game_nb_pieces(g)*sizeof(move));
+	move* table = (move*) malloc(12*game_nb_pieces(g)*sizeof(move));
 	for (int i = 0; i < game_nb_pieces(g); i++)
 	{
-		for (int d = 0; d < 4; d++)
-			if (testMove(g, i, d, 1))//, &n->clear))
+		for (int k = 1; k < 6; k++)
+			for (int d = 0; d < 4; d++)
 			{
-				table[ind] = newMove(i, d, 1); 
-				ind++;
+				if (testMove(g, i, d, k))//, &n->clear))
+				{
+					table[ind] = newMove(i, d, k); 
+					ind++;
+				}
 			}
 	}
 	*len = ind;
@@ -99,10 +106,11 @@ bool prevMet(node n, char* id)
 {
 	if (n->parent == NULL)
 		return false;
-	char* idp = (char*) malloc(126*sizeof(char));
+	char* idp = (char*) malloc(128*sizeof(char));
 	getIdFromGame(n->parent->g, idp);
-	return (strcmp(id, idp) == 0 || prevMet(n->parent, id));
+	return (strcmp(n->single_seq, n->parent->single_seq) == 0 || strcmp(id, idp) == 0 || prevMet(n->parent, id));
 }
+
 bool assignChilds(node root, node* childsArray, int* index, node* clearedNode)
 {
 	char* id = (char*)malloc(128*sizeof(char));
@@ -123,23 +131,24 @@ bool assignChilds(node root, node* childsArray, int* index, node* clearedNode)
 	for (int i = 0; i < nbMoves; i++)
 	{
 		childsArray[*index] = newNodeFromMove(root, m[i]);
-		//printf("Node : %s\n", childsArray[*index]->seq);
+		printf("Node : %s\n", childsArray[*index]->seq);
 		*(index) += 1;
 	}
-	//solveprintf("___\n");
+	printf("___\n");
 	return false;
 }
 
 bool solveArray(node* childsArray, int* len, node* clearedNode)
 {
 	int index = 0;
-	int newLen = game_nb_pieces(childsArray[0]->g)*2*(*len);
+	int newLen = game_nb_pieces(childsArray[0]->g)*12*(*len);
 	node* newChildsArray = (node*)malloc(newLen*sizeof(node));
 	for (int i = 0; i < *len; i++)
 	{
 		if (assignChilds(childsArray[i], newChildsArray, &index, clearedNode))
 			return true;
 	}
+
 	return solveArray(newChildsArray, &index, clearedNode);
 }
 
@@ -149,7 +158,7 @@ bool solve(game g)
 	int len = 1;
 	node* clearedNode = (node*)malloc(sizeof(node));
 	node* childsArray = (node*)malloc(sizeof(node));
-	childsArray[0] = newNode("", g, NULL);
+	childsArray[0] = newNode("", g, NULL, "");
 	r = solveArray(childsArray, &len, clearedNode);
 	if (r)
 		printf("Terminé : %s\n", clearedNode[0]->seq);
