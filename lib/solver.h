@@ -9,11 +9,7 @@
 #include <interface_txt.h>
 #include <utility.h>
 
+bool solve(game g);
 
-void randmove(game g);
-
-bool solve(game g, char* id);
-
-dir revertDirection2(dir d);
 
 #endif
