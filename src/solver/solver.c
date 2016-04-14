@@ -2,165 +2,190 @@
 #include <stdio.h>
 #include <string.h>
 
-struct node_s {
-	char* seq;
-	char* single_seq;
+
+
+struct map_s{
+	struct map_s* from;
 	game g;
-	struct node_s* parent;
 };
 
-
-struct move_s {
-	int numPiece;
-	dir d;
-	int distance;
+struct nodeQueue_s {
+	struct nodeQueue_s* next;
+	struct map_s* m;
 };
 
-typedef struct move_s* move;
-typedef struct node_s* node;
-char* getStringFromMove(move m)
+struct list_s{
+	struct map_s* m;
+	struct list_s* next;
+};
+
+typedef struct nodeQueue_s* nodeQueue;
+typedef struct map_s* map;
+typedef struct list_s* list;
+
+list newListItem(map m, list prev)
 {
-	char* s = (char*)malloc(6*sizeof(char));
-	s[0] = m->numPiece + '0';
-	char d;
-	switch(m->d){
-		case UP: d = 'u';break;
-		case DOWN : d = 'd';break;
-		case LEFT : d = 'l';break;
-		case RIGHT : d = 'r';break;
-		default : d = '?';break;
-	}
-	s[1] = d;
-	s[2] = m->distance + '0';
-	s[3] = ';';
-	s[4] = '\0';
-	return s;
+	list ln = (list) malloc(sizeof(list));
+	ln->m = (map) malloc(sizeof(map));
+	ln->next = (list) malloc(sizeof(list));
+	ln->m = m;
+	ln->next = NULL;
+	if (prev)
+		prev->next = ln;
+	return ln;
 }
-move newMove(int numPiece, dir d, int distance)
+
+map newMap(game g, map prev)
 {
-	move m;
-	m = (move) malloc(sizeof(struct move_s));
-	m->numPiece = numPiece;
-	m->d = d;
-	m->distance = distance;
+	map m = (map) malloc(sizeof(map));
+	m->g = (game) malloc(sizeof(game));
+	m->from = (map) malloc(sizeof(map));
+	m->g = g;
+	m->from = prev;
 	return m;
 }
 
-node newNode(char* seq, game g, node parent, char* single_seq)
+nodeQueue newQueueItem(map m, nodeQueue current)
 {
-	node n = (node)malloc(sizeof(node));
-	n->seq = (char*)malloc(256*sizeof(char));
-	n->single_seq = (char*)malloc(6*sizeof(char));
-	n->g = new_game(1, 1, 0, NULL);
-	strcpy(n->seq, seq);
-	strcpy(n->single_seq, single_seq);
-	copy_game(g, n->g);
-	n->parent = (node)malloc(sizeof(node));
-	n->parent = parent;
+	nodeQueue n = (nodeQueue) malloc(sizeof(nodeQueue));
+	n->m = (map) malloc(sizeof(map));
+	n->next = (nodeQueue) malloc(sizeof(nodeQueue));
+	n->m = m;
+	n->next = NULL;
+	if (current)
+		current->next = n;
+	return n;	
+}
+void deleteMap(map m)
+{
+	free(m->g);
+	free(m->from);
+	free(m);
+}
+void deleteQueueItem(nodeQueue n)
+{
+	free(n->m);
+	free(n->next);
+	free(n);
+}
+void deleteListItem(list l)
+{
+	free(l->m);
+	free(l->next);
+	free(l);
+}
+void queueRemove(nodeQueue n)
+{	
+	//nodeQueue cn = n;
+	n = n->next;
+	//deleteQueueItem(cn);
+}
+
+nodeQueue getTop(nodeQueue n)
+{
+	while (n->next)
+	{
+		n = n->next;
+	}
 	return n;
 }
-node newNodeFromMove(node root, move m)
+
+bool isCleared(nodeQueue n)
+{
+	nodeQueue c = (nodeQueue) malloc(sizeof(nodeQueue));
+	c = n;
+	return game_over_hr(c->m->g);
+}
+
+map createNewState(map m, int nPiece, dir d, int dist)
 {
 	game g = new_game(1, 1, 0, NULL);
-	copy_game(root->g, g);
-	play_move(g, m->numPiece, m->d, m->distance);
-	char* seq = (char*)malloc(256*sizeof(char));
-	strcpy(seq, root->seq);
-	strcat(seq, getStringFromMove(m));
-	node n = newNode(seq, g, root, getStringFromMove(m));
-	return n;
-}
-
-bool testMove(game g, int numPiece, dir d, int distance)//, bool* clear)
-{
-	game tmp;
-	tmp = new_game(1,1,0,NULL);
-	copy_game(g, tmp);
-	bool r = play_move(tmp, numPiece, d, distance);
-	//*clear = game_over_hr(tmp);
-	delete_game(tmp);
+	copy_game(m->g, g);
+	map r = NULL;
+	if (play_move(g, nPiece, d, dist))
+		r = newMap(g, m);
+	else
+		delete_game(g);
 	return r;
 }
-
-move* getPossibleMoves(game g, int* len, node n)
+bool compareMap(map m1, map m2)
 {
-	int ind = 0;
-	move* table = (move*) malloc(12*game_nb_pieces(g)*sizeof(move));
-	for (int i = 0; i < game_nb_pieces(g); i++)
+	char* s1 = (char*) malloc(256*sizeof(char));
+	char* s2 = (char*) malloc(256*sizeof(char));
+	getIdFromGame(m1->g, s1);
+	getIdFromGame(m2->g, s2);
+	int r = strcmp(s1, s2);
+	free(s1);
+	free(s2);
+	return (r == 0);	//retourne true si les chaines sont identiques
+}
+map checkMapExistence(map m, list origin)
+{
+	if (compareMap(m, origin->m))
 	{
-		for (int k = 1; k < 6; k++)
+		//deleteMap(m);
+		//return origin->m;
+		return NULL;
+	}
+	if (origin->next == NULL)
+	{
+		newListItem(m, origin);
+		return m;
+	}
+	return checkMapExistence(m, origin->next);
+}
+void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, list listMap)
+{
+	//crée une map pour currentNode: currentMap si non présente dans la liste, si elle y est, on récupère
+
+	//cherche tous les coups possibles
+	for (int p = 0; p < game_nb_pieces(currentNode->m->g); p++)
+		//for (int dist = 1; dist < 5; dist++)
 			for (int d = 0; d < 4; d++)
 			{
-				if (testMove(g, i, d, k))//, &n->clear))
+				map r = createNewState(previousState, p, d, 1);
+
+				if (r)
 				{
-					table[ind] = newMove(i, d, k); 
-					ind++;
+					r = checkMapExistence(r, listMap);
+					if (r)
+					{
+						//drawInterface(r->g, "TEST");
+						newQueueItem(r, queueTop);
+						queueTop = queueTop->next;
+					}
 				}
 			}
-	}
-	*len = ind;
-	return table;
+	//pour chaque coup (donc game), on crée une Map: newMap(newGame, currentMap)
+	//si la map n'est pas présente dans  listMap, alors on l'y insère. On y ajoute un nouveau node dans la file, à partir de top
+		//et on "incrémente" top (top = top->next or something)
 }
-
-bool prevMet(node n, char* id)
+void trace(nodeQueue final)
 {
-	if (n->parent == NULL)
-		return false;
-	char* idp = (char*) malloc(128*sizeof(char));
-	getIdFromGame(n->parent->g, idp);
-	return (strcmp(n->single_seq, n->parent->single_seq) == 0 || strcmp(id, idp) == 0 || prevMet(n->parent, id));
+	map m = (map) malloc(sizeof(map));
+	m = final->m;
+	while (m->from)
+	{
+		drawInterface(m->g, "");
+		m = m->from;
+	}
 }
-
-bool assignChilds(node root, node* childsArray, int* index, node* clearedNode)
+void solve(game g)
 {
-	char* id = (char*)malloc(128*sizeof(char));
-	getIdFromGame(root->g, id);
-	if (game_over_hr(root->g))
+	
+	map origMap = newMap(g, NULL);
+	list listMap = newListItem(origMap, NULL);
+	nodeQueue root = newQueueItem(origMap, NULL);
+	nodeQueue currentNode = root;
+	while (!isCleared(currentNode))
 	{
-		clearedNode[0] = root;
-		printf("Fini\n");
-		return true;
+		nodeQueue top = getTop(currentNode); 
+		fillQueue(currentNode, top, currentNode->m, listMap);
+		//queueRemove(currentNode);
+		currentNode = currentNode->next;
 	}
-	if (prevMet(root, id))
-	{
-		return false;
-	}
-	free(id);
-	int nbMoves = 0;
-	move* m = getPossibleMoves(root->g, &nbMoves, root);
-	for (int i = 0; i < nbMoves; i++)
-	{
-		childsArray[*index] = newNodeFromMove(root, m[i]);
-		printf("Node : %s\n", childsArray[*index]->seq);
-		*(index) += 1;
-	}
-	printf("___\n");
-	return false;
-}
-
-bool solveArray(node* childsArray, int* len, node* clearedNode)
-{
-	int index = 0;
-	int newLen = game_nb_pieces(childsArray[0]->g)*12*(*len);
-	node* newChildsArray = (node*)malloc(newLen*sizeof(node));
-	for (int i = 0; i < *len; i++)
-	{
-		if (assignChilds(childsArray[i], newChildsArray, &index, clearedNode))
-			return true;
-	}
-
-	return solveArray(newChildsArray, &index, clearedNode);
-}
-
-bool solve(game g)
-{
-	bool r = false;
-	int len = 1;
-	node* clearedNode = (node*)malloc(sizeof(node));
-	node* childsArray = (node*)malloc(sizeof(node));
-	childsArray[0] = newNode("", g, NULL, "");
-	r = solveArray(childsArray, &len, clearedNode);
-	if (r)
-		printf("Terminé : %s\n", clearedNode[0]->seq);
-	printf("Done\n");
+	printf("Nombre de coup minimal : %d\n", game_nb_moves(currentNode->m->g));
+	//on trace la map de currentNode : map->prev jusqu'à NULL, et on a la séquence finale
+	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
+	trace(currentNode);
 }

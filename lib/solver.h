@@ -9,7 +9,7 @@
 #include <interface_txt.h>
 #include <utility.h>
 
-bool solve(game g);
+void solve(game g);
 
 
 #endif
