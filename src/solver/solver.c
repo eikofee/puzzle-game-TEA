@@ -86,11 +86,15 @@ nodeQueue getTop(nodeQueue n)
 	return n;
 }
 
-bool isCleared(nodeQueue n)
+bool isCleared(nodeQueue n, bool isRH)
 {
 	// nodeQueue c = (nodeQueue) malloc(sizeof(struct nodeQueue_s));
 	// c = n;
-	bool cleared = game_over_hr(n->m->g);
+	bool cleared;
+	if (isRH)
+		cleared = game_over_hr(n->m->g);
+	else
+		cleared = game_over_ar(n->m->g);
 	return cleared;
 }
 
@@ -140,7 +144,7 @@ map checkMapExistence(map m, list origin)
 	}
 	return checkMapExistence(m, origin->next);
 }
-void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, list listMap, bool* cleared)
+void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, list listMap, bool* cleared, bool isRH)
 {
 	//crée une map pour currentNode: currentMap si non présente dans la liste, si elle y est, on récupère
 
@@ -159,8 +163,9 @@ void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, lis
 					{
 						//drawInterface(r->g, "TEST");
 						newQueueItem(r, queueTop);
-						if (isCleared(queueTop))
+						if (isCleared(queueTop, isRH))
 						{
+							//drawInterface(queueTop->m->g, "TEST");
 							currentNode = queueTop;
 							*cleared = true;
 							return;
@@ -192,6 +197,7 @@ void trace(nodeQueue final)
 }
 void solve(game g)
 {
+	bool rh = whatGame("rush-hour\n");
 	clock_t c1;
 	clock_t c2;
 	float temps;
@@ -205,16 +211,22 @@ void solve(game g)
 	while (!cleared)
 	{
 		top = getTop(top);
-		fillQueue(currentNode, top, currentNode->m, listMap, &cleared);
+		fillQueue(currentNode, top, currentNode->m, listMap, &cleared, rh);
 		//queueRemove(currentNode);
-		currentNode = currentNode->next;
+		if (!cleared)
+			currentNode = currentNode->next;
 	}
 	c2 = clock();
 	temps = (float)(c2-c1) / CLOCKS_PER_SEC;
-	printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(currentNode->m->g), temps);
+	//drawInterface(currentNode->m->g, "TEST");
+	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(currentNode->m->g), temps);
+	
+	drawInterface(top->m->g, "TEST");
+	printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(top->m->g), temps);
+	
 	//on trace la map de currentNode : map->prev jusqu'�? NULL, et on a la séquence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
-	trace(top);
+	//trace(currentNode->next);
 	delete_game(origMap -> g);
 	nodeQueue tmp_node = currentNode;
 	while(tmp_node != NULL){
