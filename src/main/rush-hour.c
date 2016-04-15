@@ -40,6 +40,20 @@ int main(int argc, char* argv[])
 {
 	//On ecrit le nom du jeu en cours dans config.ini
 	initFileConfig("rush-hour");
+	if (argv[1])
+
+{	char* id = (char*) malloc(sizeof(char) * 256);
+		game g = getGameFromConfigFile(argv[1]);
+		getIdFromGame(g, id);
+		drawInterface(g, id);
+	
+		while (!game_over_hr(g))
+	{
+		printf("Enter the car's number you want to move :\n");
+		inputPlayer(g, id);
+		drawInterface(g, id);
+	}
+}
 
 	char* Game0 = "13n6x6p2w2h1x2y3p2w3h1x0y5p1w1h2x3y4p1w1h3x4y3p1w1h3x5y3p1w1h2x0y3p2w2h1x1y4p2w2h1x0y2p1w1h2x2y1p2w2h1x4y1p1w1h2x1y0p2w2h1x2y0p2w2h1x4y0";
 	//					 |0--------|13-------|4--------|5--------|6--------|1--------|14-------|16-------|3--------|17-------|2--------|18-------|24-------|

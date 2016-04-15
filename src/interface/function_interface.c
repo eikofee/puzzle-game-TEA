@@ -525,3 +525,45 @@ void removeSpaces(char* input)
 	}
 	input[j] = '\0';
 }
+
+game getGameFromConfigFile(char* fileName)
+{
+	//<L> <H>
+	//<nbPieces>
+	//<x> <y> <w> <h> <can_move_x> <can_move_y>
+	FILE* f = NULL;
+	f = fopen(fileName, "r");
+	char* s = (char*) malloc(128*sizeof(char));
+	fgets(s, 128, f);
+	int pos = 0;
+	int taille_x = readUntilChar(s, &pos);
+	pos++;
+	int taille_y = readUntilChar(s, &pos);
+	fgets(s, 128, f);
+	pos = 0;
+	int nbPieces = readUntilChar(s, &pos);
+	piece ap[nbPieces];
+	for (int i = 0; i < nbPieces; i++)
+	{
+		fgets(s, 128, f);
+		pos = 0;
+		int x = readUntilChar(s, &pos);
+		pos++;
+		int y = readUntilChar(s, &pos);
+		pos++;
+		int w = readUntilChar(s, &pos);
+		pos++;
+		int h = readUntilChar(s, &pos);
+		pos++;
+		int cmx = readUntilChar(s, &pos);
+		pos++;
+		int cmy = readUntilChar(s, &pos);
+		pos++;
+		piece p = new_piece(x, y, w, h, cmx, cmy);
+		ap[i] = p;
+	}
+	game g = new_game(taille_x, taille_y, nbPieces, ap);
+	free(s);
+	fclose(f);
+	return g;
+}
