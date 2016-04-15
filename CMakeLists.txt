@@ -10,7 +10,7 @@ set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
-#Dossier des headers et des librairies
+#Dossier des headers
 include_directories (${CMAKE_BINARY_DIR}/include)
 
 
