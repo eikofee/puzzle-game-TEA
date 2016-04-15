@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 #include <time.h>
-#include <game.h>
 #include <game_ar.h>
 #include <game_rh.h>
 #include <interface_txt.h>

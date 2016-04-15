@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <game_rh.h>
+// #include <game_rh.h>
+#include <game_ar.h>
 #include <utility.h>
 #include <interface_txt.h>
 
@@ -54,13 +55,13 @@ int main(int argc, char* argv[])
 		drawInterface(g, id);
 	}
 }
-
+	char* osef = "2n6x6p2w2h1x0y3p1w1h3x2y2";
 	char* Game0 = "13n6x6p2w2h1x2y3p2w3h1x0y5p1w1h2x3y4p1w1h3x4y3p1w1h3x5y3p1w1h2x0y3p2w2h1x1y4p2w2h1x0y2p1w1h2x2y1p2w2h1x4y1p1w1h2x1y0p2w2h1x2y0p2w2h1x4y0";
 	//					 |0--------|13-------|4--------|5--------|6--------|1--------|14-------|16-------|3--------|17-------|2--------|18-------|24-------|
 	char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
 	char* Game2 = "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0";
 	char* Game3 = "8n6x6p2w2h1x2y3p1w1h2x2y4p1w1h2x1y2p1w1h2x4y0p1w1h2x4y2p2w2h1x4y5p1w1h3x5y0p2w3h1x0y1";
-	
+	loadTheGame(osef);
 	loadTheGame(Game1);
 	loadTheGame(Game0);
 	loadTheGame(Game2);

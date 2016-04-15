@@ -134,7 +134,8 @@ map checkMapExistence(map m, list origin)
 	{
 		//deleteMap(m);
 		//return origin->m;
-		
+		delete_game(m->g);
+		free(m);
 		return NULL;
 	}
 	if (origin->next == NULL)
@@ -147,7 +148,6 @@ map checkMapExistence(map m, list origin)
 void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, list listMap, bool* cleared, bool isRH)
 {
 	//crée une map pour currentNode: currentMap si non présente dans la liste, si elle y est, on récupère
-
 	//cherche tous les coups possibles
 	for (int p = 0; p < game_nb_pieces(currentNode->m->g); p++)
 	{
@@ -156,10 +156,10 @@ void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, lis
 			{
 
 				map r = createNewState(previousState, p, d, 1);
-				if (r)
+				if (r != NULL)
 				{
 					r = checkMapExistence(r, listMap);
-					if (r)
+					if (r != NULL)
 					{
 						//drawInterface(r->g, "TEST");
 						newQueueItem(r, queueTop);
@@ -213,8 +213,9 @@ void solve(game g)
 		top = getTop(top);
 		fillQueue(currentNode, top, currentNode->m, listMap, &cleared, rh);
 		//queueRemove(currentNode);
-		if (!cleared)
+		if (!cleared){
 			currentNode = currentNode->next;
+		}
 	}
 	c2 = clock();
 	temps = (float)(c2-c1) / CLOCKS_PER_SEC;
@@ -223,15 +224,16 @@ void solve(game g)
 	
 	drawInterface(top->m->g, "TEST");
 	printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(top->m->g), temps);
-	
 	//on trace la map de currentNode : map->prev jusqu'�? NULL, et on a la séquence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
 	//trace(currentNode->next);
 	delete_game(origMap -> g);
 	nodeQueue tmp_node = currentNode;
-	while(tmp_node != NULL){
+	while(tmp_node != NULL){ // free de currentNode et de Top
 		currentNode = tmp_node;
 		tmp_node = currentNode -> next;
+		delete_game(currentNode -> m -> g);
+		free(currentNode ->m);
 		free(currentNode);
 	}
 	deleteQueueItem(root);
