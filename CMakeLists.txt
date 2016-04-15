@@ -11,7 +11,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
 #Dossier des headers
-include_directories (${CMAKE_BINARY_DIR}/lib/)
+include_directories (${CMAKE_BINARY_DIR}/include/)
 
 
 #Dossier des fichiers sources à compiler

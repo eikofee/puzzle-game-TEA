@@ -25,9 +25,7 @@ typedef struct list_s* list;
 
 list newListItem(map m, list prev)
 {
-	list ln = (list) malloc(sizeof(list));
-	ln->m = (map) malloc(sizeof(map));
-	ln->next = (list) malloc(sizeof(list));
+	list ln = (list) malloc(sizeof(struct list_s));
 	ln->m = m;
 	ln->next = NULL;
 	if (prev)
@@ -37,43 +35,40 @@ list newListItem(map m, list prev)
 
 map newMap(game g, map prev)
 {
-	map m = (map) malloc(sizeof(map));
-	m->g = (game) malloc(sizeof(game));
-	m->from = (map) malloc(sizeof(map));
-	m->g = g;
+	map m = (map) malloc(sizeof(struct map_s));
+	m->g = new_game(1,1,0,NULL);
 	m->from = prev;
+	copy_game(g,m->g);
 	return m;
 }
 
 nodeQueue newQueueItem(map m, nodeQueue current)
 {
-	nodeQueue n = (nodeQueue) malloc(sizeof(nodeQueue));
-	n->m = (map) malloc(sizeof(map));
-	n->next = (nodeQueue) malloc(sizeof(nodeQueue));
-	n->m = m;
+	nodeQueue n = (nodeQueue) malloc(sizeof(struct nodeQueue_s));
+	//n->m = (map) malloc(sizeof(struct map_s));
 	n->next = NULL;
+	n->m = m;
 	if (current)
 		current->next = n;
 	return n;	
 }
-void deleteMap(map m)
-{
-	free(m->g);
-	free(m->from);
-	free(m);
-}
+// void deleteMap(map m)
+// {
+// 	delete_game(m->g);
+// 	free(m);
+// }
 void deleteQueueItem(nodeQueue n)
 {
 	free(n->m);
 	free(n->next);
 	free(n);
 }
-void deleteListItem(list l)
-{
-	free(l->m);
-	free(l->next);
-	free(l);
-}
+// void deleteListItem(list l)
+// {
+// 	//free(l -> m);
+// 	free(l->next);
+// 	free(l);
+// }
 void queueRemove(nodeQueue n)
 {	
 	//nodeQueue cn = n;
@@ -92,9 +87,10 @@ nodeQueue getTop(nodeQueue n)
 
 bool isCleared(nodeQueue n)
 {
-	nodeQueue c = (nodeQueue) malloc(sizeof(nodeQueue));
-	c = n;
-	return game_over_hr(c->m->g);
+	// nodeQueue c = (nodeQueue) malloc(sizeof(struct nodeQueue_s));
+	// c = n;
+	bool cleared = game_over_hr(n->m->g);
+	return cleared;
 }
 
 map createNewState(map m, int nPiece, dir d, int dist)
@@ -102,8 +98,10 @@ map createNewState(map m, int nPiece, dir d, int dist)
 	game g = new_game(1, 1, 0, NULL);
 	copy_game(m->g, g);
 	map r = NULL;
-	if (play_move(g, nPiece, d, dist))
+	if (play_move(g, nPiece, d, dist)){
 		r = newMap(g, m);
+		delete_game(g);
+	}
 	else
 		delete_game(g);
 	return r;
@@ -125,6 +123,7 @@ map checkMapExistence(map m, list origin)
 	{
 		//deleteMap(m);
 		//return origin->m;
+		
 		return NULL;
 	}
 	if (origin->next == NULL)
@@ -139,7 +138,7 @@ void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, lis
 	//crée une map pour currentNode: currentMap si non présente dans la liste, si elle y est, on récupère
 
 	//cherche tous les coups possibles
-	for (int p = 0; p < game_nb_pieces(currentNode->m->g); p++)
+	for (int p = 0; p < game_nb_pieces(currentNode->m->g); p++){
 		//for (int dist = 1; dist < 5; dist++)
 			for (int d = 0; d < 4; d++)
 			{
@@ -156,18 +155,23 @@ void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, lis
 					}
 				}
 			}
+	}
 	//pour chaque coup (donc game), on crée une Map: newMap(newGame, currentMap)
 	//si la map n'est pas présente dans  listMap, alors on l'y insère. On y ajoute un nouveau node dans la file, à partir de top
 		//et on "incrémente" top (top = top->next or something)
 }
 void trace(nodeQueue final)
 {
-	map m = (map) malloc(sizeof(map));
-	m = final->m;
-	while (m->from)
+	// map m = final-> m;
+	// m = final->m;
+	
+	while (final->m ->from)
 	{
-		drawInterface(m->g, "");
-		m = m->from;
+		map tmp = final->m;
+		drawInterface(final->m->g, "");
+		delete_game(final->m->g);
+		final->m = final->m->from;
+		free(tmp);
 	}
 }
 void solve(game g)
@@ -188,4 +192,18 @@ void solve(game g)
 	//on trace la map de currentNode : map->prev jusqu'à NULL, et on a la séquence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
 	trace(currentNode);
+	delete_game(origMap -> g);
+	nodeQueue tmp_node = currentNode;
+	while(tmp_node != NULL){
+		currentNode = tmp_node;
+		tmp_node = currentNode -> next;
+		free(currentNode);
+	}
+	deleteQueueItem(root);
+	list tmp_list = listMap;
+	while(tmp_list != NULL){
+		listMap = tmp_list;
+		tmp_list= listMap -> next;
+		free(listMap);
+	}
 }
