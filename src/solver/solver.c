@@ -229,16 +229,18 @@ void solve(game g, bool rh)
 	//on trace la map de currentNode : map->prev jusqu'Ã? NULL, et on a la sÃ©quence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
 	//trace(currentNode->next);
-	delete_game(origMap -> g);
 	nodeQueue tmp_node = currentNode;
-	while(tmp_node != NULL){ // free de currentNode et de Top
+	while(tmp_node != NULL){
 		currentNode = tmp_node;
 		tmp_node = currentNode -> next;
-		delete_game(currentNode -> m -> g);
-		free(currentNode ->m);
+		if(currentNode -> m -> g != NULL){
+			delete_game(currentNode -> m -> g);
+			if (currentNode -> m != NULL)
+				free(currentNode -> m);
+		}
 		free(currentNode);
 	}
-	deleteQueueItem(root);
+	// free(root);
 	list tmp_list = listMap;
 	while(tmp_list != NULL){
 		listMap = tmp_list;
