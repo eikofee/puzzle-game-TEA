@@ -60,6 +60,7 @@ nodeQueue newQueueItem(map m, nodeQueue current)
 // }
 void deleteQueueItem(nodeQueue n)
 {
+	delete_game(n->m->g);
 	free(n->m);
 	free(n->next);
 	free(n);
@@ -162,7 +163,7 @@ void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, lis
 					if (r != NULL)
 					{
 						//drawInterface(r->g, "TEST");
-						newQueueItem(r, queueTop);
+						queueTop = newQueueItem(r, queueTop);
 						if (isCleared(queueTop, isRH))
 						{
 							//drawInterface(queueTop->m->g, "TEST");
@@ -170,7 +171,7 @@ void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, lis
 							*cleared = true;
 							return;
 						}
-						queueTop = queueTop->next;
+						// queueTop = queueTop->next;
 					}
 				}
 			}
@@ -241,6 +242,13 @@ void solve(game g, bool rh)
 		free(currentNode);
 	}
 	// free(root);
+	// delete_game(root -> m -> g);
+	// free(root -> m);
+	if (!(nbFinal == game_nb_moves(g))){
+		delete_game(root -> m -> g);
+		free(root -> m);
+		free(root);
+	}
 	list tmp_list = listMap;
 	while(tmp_list != NULL){
 		listMap = tmp_list;

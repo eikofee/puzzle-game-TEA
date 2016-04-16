@@ -28,8 +28,9 @@ add_library(game ${CMAKE_BINARY_DIR}/src/game/game.c ${CMAKE_BINARY_DIR}/src/pie
 # On cree l'executable x a partir du fichier correspondant... c 
 add_executable(rush-hour main/rush-hour)
 add_executable(klotski main/klotski)
-
+add_executable(solveur main/solver_exec)
 
 # On lie les librairies dont les exécutables ont besoin (game, rh/ar)
 target_link_libraries(rush-hour game )
 target_link_libraries(klotski game )
+target_link_libraries(solveur game)
