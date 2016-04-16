@@ -195,9 +195,9 @@ void trace(nodeQueue final)
 		free(tmp);
 	}
 }
-void solve(game g)
+void solve(game g, bool rh)
 {
-	bool rh = whatGame("rush-hour\n");
+	//bool rh = whatGame("rush-hour\n");
 	clock_t c1;
 	clock_t c2;
 	float temps;
@@ -222,8 +222,9 @@ void solve(game g)
 	//drawInterface(currentNode->m->g, "TEST");
 	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(currentNode->m->g), temps);
 	
-	drawInterface(top->m->g, "TEST");
-	printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(top->m->g), temps);
+	//drawInterface(top->m->g, "TEST");
+	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(top->m->g), temps);
+	printf("%d\n", game_nb_moves(top->m->g));
 	//on trace la map de currentNode : map->prev jusqu'Ã? NULL, et on a la sÃ©quence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
 	//trace(currentNode->next);

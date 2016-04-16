@@ -212,8 +212,8 @@ void inputPlayer(game g, char* id)
 	bool correct = false;
 	if (strEqual(input, "solve\n"))
 	{
-		solve(g);
-		drawInterface(g,id);
+		solve(g, whatGame("rush-hour\n"));
+		//drawInterface(g,id);
 		correct = true;
 	}
 	if (strEqual(input, "help\n"))

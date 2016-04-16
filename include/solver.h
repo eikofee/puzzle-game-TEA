@@ -8,7 +8,7 @@
 #include <interface_txt.h>
 #include <utility.h>
 
-void solve(game g);
+void solve(game g, bool rh);
 
 
 #endif
