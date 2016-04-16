@@ -208,7 +208,7 @@ void solve(game g, bool rh)
 	nodeQueue currentNode = root;
 	nodeQueue top = root;
 	bool cleared = false;
-	while (!cleared)
+	while (!cleared && currentNode)
 	{
 		top = getTop(top);
 		fillQueue(currentNode, top, currentNode->m, listMap, &cleared, rh);
@@ -224,7 +224,8 @@ void solve(game g, bool rh)
 	
 	//drawInterface(top->m->g, "TEST");
 	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(top->m->g), temps);
-	printf("%d\n", game_nb_moves(top->m->g));
+	int nbFinal = cleared?game_nb_moves(top->m->g):-1;
+	printf("%d\n", nbFinal);
 	//on trace la map de currentNode : map->prev jusqu'Ã? NULL, et on a la sÃ©quence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
 	//trace(currentNode->next);
