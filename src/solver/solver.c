@@ -1,9 +1,9 @@
 #include <solver.h>
 #include <stdio.h>
-#include <string.h>
-#include <time.h>
+//#include <string.h>
+//#include <time.h>
 
-
+//Remplacer "//SR" par du vide pour rendre le traçage fonctionnel
 
 struct map_s{
 	struct map_s* from;
@@ -199,10 +199,10 @@ void trace(nodeQueue final)
 void solve(game g, bool rh)
 {
 	//bool rh = whatGame("rush-hour\n");
-	clock_t c1;
-	clock_t c2;
-	float temps;
-	c1 = clock();
+	//clock_t c1;
+	//clock_t c2;
+	//float temps;
+	//c1 = clock();
 	map origMap = newMap(g, NULL);
 	list listMap = newListItem(origMap, NULL);
 	nodeQueue root = newQueueItem(origMap, NULL);
@@ -218,8 +218,8 @@ void solve(game g, bool rh)
 			currentNode = currentNode->next;
 		}
 	}
-	c2 = clock();
-	temps = (float)(c2-c1) / CLOCKS_PER_SEC;
+	//c2 = clock();
+	//temps = (float)(c2-c1) / CLOCKS_PER_SEC;
 	//drawInterface(currentNode->m->g, "TEST");
 	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(currentNode->m->g), temps);
 	
