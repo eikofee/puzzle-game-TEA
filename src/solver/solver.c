@@ -6,7 +6,7 @@
 //Remplacer "//SR" par du vide pour rendre le traçage fonctionnel
 
 struct map_s{
-	struct map_s* from;
+	//SRstruct map_s* from;
 	game g;
 };
 
@@ -34,11 +34,11 @@ list newListItem(map m, list prev)
 	return ln;
 }
 
-map newMap(game g, map prev)
+map newMap(game g)//SR, map prev)
 {
 	map m = (map) malloc(sizeof(struct map_s));
 	m->g = new_game(1,1,0,NULL);
-	m->from = prev;
+	//SRm->from = prev;
 	copy_game(g,m->g);
 	return m;
 }
@@ -105,7 +105,7 @@ map createNewState(map m, int nPiece, dir d, int dist)
 	copy_game(m->g, g);
 	map r = NULL;
 	if (play_move(g, nPiece, d, dist)){
-		r = newMap(g, m);
+		r = newMap(g);//SR, m);
 		delete_game(g);
 	}
 	else
@@ -182,20 +182,20 @@ void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, lis
 		//et on "incrÃ©mente" top (top = top->next or something)
 }
 
-void trace(nodeQueue final)
-{
+//SRvoid trace(nodeQueue final)
+//SR{
 	// map m = final-> m;
 	// m = final->m;
 	
-	while (final->m ->from)
-	{
-		map tmp = final->m;
-		drawInterface(final->m->g, "");
-		delete_game(final->m->g);
-		final->m = final->m->from;
-		free(tmp);
-	}
-}
+//SR	while (final->m ->from)
+//SR	{
+//SR		map tmp = final->m;
+//SR		drawInterface(final->m->g, "");
+//SR		delete_game(final->m->g);
+//SR		final->m = final->m->from;
+//SR		free(tmp);
+//SR	}
+//SR}
 void solve(game g, bool rh)
 {
 	//bool rh = whatGame("rush-hour\n");
@@ -203,7 +203,7 @@ void solve(game g, bool rh)
 	//clock_t c2;
 	//float temps;
 	//c1 = clock();
-	map origMap = newMap(g, NULL);
+	map origMap = newMap(g);//SR, NULL);
 	list listMap = newListItem(origMap, NULL);
 	nodeQueue root = newQueueItem(origMap, NULL);
 	nodeQueue currentNode = root;
