@@ -563,6 +563,9 @@ game getGameFromConfigFile(char* fileName)
 		ap[i] = p;
 	}
 	game g = new_game(taille_x, taille_y, nbPieces, ap);
+
+	for(int i = 0; i < nbPieces; i++)
+		delete_piece(ap[i]);
 	free(s);
 	fclose(f);
 	return g;
