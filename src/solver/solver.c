@@ -221,11 +221,12 @@ void solve(game g, bool rh)
 	//c2 = clock();
 	//temps = (float)(c2-c1) / CLOCKS_PER_SEC;
 	//drawInterface(currentNode->m->g, "TEST");
+	//drawInterface(top->next->m->g, "TEST");
 	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(currentNode->m->g), temps);
 	
 	//drawInterface(top->m->g, "TEST");
 	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(top->m->g), temps);
-	int nbFinal = cleared?game_nb_moves(top->m->g):-1;
+	int nbFinal = cleared?game_nb_moves(top->next->m->g):-1;
 	printf("%d\n", nbFinal);
 	//on trace la map de currentNode : map->prev jusqu'√? NULL, et on a la s√©quence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
