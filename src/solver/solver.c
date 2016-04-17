@@ -230,7 +230,8 @@ void solve(game g, bool rh)
 	//on trace la map de currentNode : map->prev jusqu'Ã? NULL, et on a la sÃ©quence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
 	//trace(currentNode->next);
-	nodeQueue tmp_node = currentNode;
+	//nodeQueue tmp_node = currentNode;
+	nodeQueue tmp_node = root;
 	while(tmp_node != NULL){
 		currentNode = tmp_node;
 		tmp_node = currentNode -> next;
@@ -244,11 +245,11 @@ void solve(game g, bool rh)
 	// free(root);
 	// delete_game(root -> m -> g);
 	// free(root -> m);
-	if (!(nbFinal == game_nb_moves(g))){
-		delete_game(root -> m -> g);
-		free(root -> m);
-		free(root);
-	}
+	//if (!(nbFinal == game_nb_moves(g))){
+	//	delete_game(root -> m -> g);
+	//	free(root -> m);
+	//	free(root);
+	//}
 	list tmp_list = listMap;
 	while(tmp_list != NULL){
 		listMap = tmp_list;

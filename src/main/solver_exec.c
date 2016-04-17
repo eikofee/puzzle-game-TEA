@@ -13,5 +13,6 @@ int main(int argc, char* argv[])
 
 	game g = getGameFromConfigFile(argv[2]);
 	solve(g, argv[1][0] == 'r');
+	delete_game(g);
 	return 0;
 }
