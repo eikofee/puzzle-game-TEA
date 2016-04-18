@@ -399,7 +399,8 @@ void init_sdl_game(game g){
 	    //event.key.keysym.sym -----------> Permet de savoir quelle touche est enfoncé avec SDL_KeyDown ( Up pour relaché)
 
 	}
-	son_fin();
+	if(game_over(g))
+		son_fin();
 
 
 	// ******************************************************** fin / FREE DE TOUT ******************************************************************
