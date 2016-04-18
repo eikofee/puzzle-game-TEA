@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
+#include <SDL/SDL_mixer.h>
 
 // #include <game.h>
 #include <game_ar.h>
@@ -185,6 +187,22 @@ bool game_over(game g){
 		return game_over_ar(g);
 	printf("game_over(), cas non prévu ...");
 	return false;
+}
+
+void son_fin(){
+	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) //Initialisation de l'API Mixer
+	{	
+		printf("%s", Mix_GetError());
+	}	
+	Mix_Music *musique; //Création du pointeur de type Mix_Music
+	musique = Mix_LoadMUS("Victoire.ogg"); //Chargement de la musique
+	Mix_PlayMusic(musique, -1); //Jouer infiniment la musique
+
+	clock_t arrivee=clock()+(2*CLOCKS_PER_SEC); // On calcule le moment où l'attente devra s'arrêter
+	while(clock() < arrivee);
+
+	Mix_FreeMusic(musique); //Libération de la musique
+	Mix_CloseAudio(); //Fermeture de l'API
 }
 
 // Permet d'afficher la fenetre principal, ainsi que le jeu.
@@ -381,6 +399,8 @@ void init_sdl_game(game g){
 	    //event.key.keysym.sym -----------> Permet de savoir quelle touche est enfoncé avec SDL_KeyDown ( Up pour relaché)
 
 	}
+	son_fin();
+
 
 	// ******************************************************** fin / FREE DE TOUT ******************************************************************
 	//libération des allocations mémoires
@@ -399,12 +419,12 @@ void init_sdl_game(game g){
 
 int main(){
 
-	// initFileConfig("rush-hour");
-	// char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
+	initFileConfig("rush-hour");
+	char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
 	// char* Game2 = "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0";
 
-	initFileConfig("klotski");
-	char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
+	// initFileConfig("klotski");
+	// char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 	
 	//oéoé on a pas free le game..
 	game g = getGameFromId(Game1);

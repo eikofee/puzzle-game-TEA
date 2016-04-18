@@ -40,4 +40,4 @@ add_executable(sdl interface/sdl)
 target_link_libraries(rush-hour game )
 target_link_libraries(klotski game )
 
-target_link_libraries(sdl game sdlT SDL SDL_image SDL_ttf)
+target_link_libraries(sdl game sdlT SDL SDL_image SDL_ttf SDL_mixer)
