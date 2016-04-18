@@ -86,7 +86,7 @@ void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL
 
 }
 
-void clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAILLE_CASE){
+int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAILLE_CASE){
 	//On recupere les coordonnées du clic
 	int x_mouse = event.button.x;
 	int y_mouse = event.button.y;
@@ -101,7 +101,7 @@ void clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TA
 	if(x_mouse < 0 || x_mouse >= NL || y_mouse < 0 || y_mouse >= NH)
 	{
 		printf("Les coordonnées du clic sont en dehors du plateau de jeu.\n\n");
-		return;
+		return -1;
 	}
 	//ici les coordonnées sont valides donc on peut les manipuler.
 	
@@ -109,45 +109,73 @@ void clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TA
 
 	int indice_piece = game_square_piece(g, x_mouse, y_mouse);
 	if(indice_piece < 0)
-		return;
+		return -1;
+	return indice_piece;
+}
 
-	int continuer = 1;
-	while(continuer)
-	{
-		SDL_WaitEvent(&event);
-		switch(event.type)
-		{
-			case SDL_KEYDOWN:
-				switch(event.key.keysym.sym)
-				{
-					case SDLK_UP:
-					//bool play_move(game g, int piece_num, dir d, int distance)
-					play_move(g, indice_piece, UP, 1);
-					continuer = 0;
-					break;
-					case SDLK_DOWN:
-					play_move(g, indice_piece, DOWN, 1);
-					continuer = 0;
-					break;
-					case SDLK_LEFT:
-					play_move(g, indice_piece, LEFT, 1);
-					continuer = 0;
-					break;
-					case SDLK_RIGHT:
-					play_move(g, indice_piece, RIGHT, 1);
-					continuer = 0;
-					break;
-					default:
-					continuer = 0;
-					break;
-				}
-				break;
-			default:
-				break;
 
-		}
-	}
+void menu_echap(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
+	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+	SDL_Surface *texte = NULL;
+	SDL_Surface *menu_echap = NULL;
 
+	SDL_Event event;
+	SDL_Rect position;
+	position.x = 0;
+	position.y = 0;
+	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+
+	texte = TTF_RenderText_Blended(police, "Voulez vous quitter le jeu ?", couleurFond);
+
+	int w_echap = texte->w + 100;
+	int h_echap = HEIGHT/4;
+
+	menu_echap = SDL_CreateRGBSurface(SDL_HWSURFACE, w_echap,  h_echap, 32, 0, 0, 0, 0);
+
+	position.x = (WIDTH - (w_echap))/2;
+	position.y = (HEIGHT - (h_echap))/2;
+	SDL_FillRect(menu_echap, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
+	SDL_BlitSurface(menu_echap, NULL, ecran, &position);
+
+    position.x = (position.x + ((position.x + w_echap) - texte->w))/2;
+    position.y = (position.y + texte->h);
+    SDL_BlitSurface(texte, NULL, ecran, &position);
+
+    texte = TTF_RenderText_Shaded(police, "Oui",couleurFond, couleurBasalt);
+    position.y = position.y - 3*texte->h + h_echap;
+    SDL_BlitSurface(texte, NULL, ecran, &position);
+
+    texte = TTF_RenderText_Shaded(police, "Non",couleurFond, couleurBasalt);
+    position.x += (w_echap - 100) - texte->w;
+    SDL_BlitSurface(texte, NULL, ecran, &position);
+
+    int continuer_echap = 1;
+
+    while(continuer_echap)
+    {
+    	SDL_WaitEvent(&event);
+    	switch(event.type)
+    	{
+    		case SDL_KEYDOWN:
+    			switch(event.key.keysym.sym)
+    			{
+    				case SDLK_ESCAPE:
+    					continuer_echap = 0;
+    					break;
+    				default:
+    					break;
+    			}
+    			break;
+    		default:
+    			break;
+
+    	}
+    	SDL_Flip(ecran);
+    }
+    position.x = 0;
+    position.y = 0;
+    SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
+    SDL_Flip(ecran);
 }
 
 bool game_over(game g){
@@ -185,7 +213,7 @@ void init_sdl_game(game g){
 
 	SDL_Surface *texte = NULL;
 	SDL_Surface *sortie_jeu = NULL;
-	SDL_Surface *menu_echap = NULL;
+	// SDL_Surface *menu_echap = NULL;
 	// SDL_Surface *fond = NULL;
 	SDL_Rect position;//Variable position, elle nous permet de positionner les rectangles.
 	SDL_Rect position_fin;
@@ -267,6 +295,7 @@ void init_sdl_game(game g){
 
     // ********************************************************* GESTION EVENT ************************************************************************
 	int continuer = 1;
+	int indice_piece = -1;
 	// int x_mouse;
 	// int y_mouse;
 
@@ -290,70 +319,52 @@ void init_sdl_game(game g){
 
 	         case SDL_MOUSEBUTTONUP:
 		        if (event.button.button == SDL_BUTTON_LEFT)
-		            clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
-		        	afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+		            indice_piece = clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
+		        	// doTheMove(g, indice_piece);
+		        	// afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 		        break;
 	        
 	        case SDL_KEYDOWN:
-	        	if(event.key.keysym.sym == SDLK_ESCAPE)
-	        	{
-	        		SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-	        		position.x = 0;
-	        		position.y = 0;
-	        		SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+	        	switch(event.key.keysym.sym)
+		        {
+		        	case SDLK_ESCAPE:
+		        		menu_echap(ecran, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+					    break;
+					case SDLK_UP:
+						if(indice_piece != -1)
+						{
+							play_move(g, indice_piece, UP, 1);
+							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+						}
 
-	        		texte = TTF_RenderText_Blended(police, "Voulez vous quitter le jeu ?", couleurFond);
+						break;
+					case SDLK_DOWN:
+						if(indice_piece != -1)
+						{
+							play_move(g, indice_piece, DOWN, 1);
+							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+						}
 
-	        		int w_echap = texte->w + 100;
-	        		int h_echap = HEIGHT/4;
+						break;
+					case SDLK_LEFT:
+						if(indice_piece != -1)
+						{
+							play_move(g, indice_piece, LEFT, 1);
+							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+						}
 
-	        		menu_echap = SDL_CreateRGBSurface(SDL_HWSURFACE, w_echap,  h_echap, 32, 0, 0, 0, 0);
+						break;
+					case SDLK_RIGHT:
+						if(indice_piece != -1)
+						{
+							play_move(g, indice_piece, RIGHT, 1);
+							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+						}
 
-	        		position.x = (WIDTH - (w_echap))/2;
-	        		position.y = (HEIGHT - (h_echap))/2;
-	        		SDL_FillRect(menu_echap, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
-	        		SDL_BlitSurface(menu_echap, NULL, ecran, &position);
+						break;
 
-				    position.x = (position.x + ((position.x + w_echap) - texte->w))/2;
-				    position.y = (position.y + texte->h);
-				    SDL_BlitSurface(texte, NULL, ecran, &position);
-
-				    texte = TTF_RenderText_Shaded(police, "Oui",couleurFond, couleurBasalt);
-				    position.y = position.y - 3*texte->h + h_echap;
-				    SDL_BlitSurface(texte, NULL, ecran, &position);
-
-				    texte = TTF_RenderText_Shaded(police, "Non",couleurFond, couleurBasalt);
-				    position.x += (w_echap - 100) - texte->w;
-				    SDL_BlitSurface(texte, NULL, ecran, &position);
-
-				    int continuer_echap = 1;
-
-				    while(continuer_echap)
-				    {
-				    	SDL_WaitEvent(&event);
-				    	switch(event.type)
-				    	{
-				    		case SDL_KEYDOWN:
-				    			switch(event.key.keysym.sym)
-				    			{
-				    				case SDLK_ESCAPE:
-				    					continuer_echap = 0;
-				    					break;
-				    				default:
-				    					break;
-				    			}
-				    			break;
-				    		default:
-				    			break;
-
-				    	}
-				    	SDL_Flip(ecran);
-				    }
-				    position.x = 0;
-				    position.y = 0;
-				    SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
-				    SDL_Flip(ecran);
-
+					default:
+						break;
 	        	}
 	        	// printf("x: %d\ny: %d\n\n", x_mouse, y_mouse);
 	        	break;
