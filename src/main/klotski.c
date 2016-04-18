@@ -44,7 +44,8 @@ int main(void)
 	char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 	char* Game2 = "10n4x5p3w2h2x2y0p3w1h1x1y0p3w1h1x0y0p3w1h1x0y1p3w1h1x1y1p3w2h1x0y2p3w2h1x2y2p3w2h1x0y3p3w2h1x0y4p3w2h1x2y4";
 	char* Game3 = "15n4x5p3w2h2x2y1p3w1h1x0y0p3w1h1x1y0p3w1h1x2y0p3w1h1x3y0p3w1h1x0y1p3w1h1x1y1p3w1h1x0y2p3w1h1x1y2p3w1h1x0y3p3w1h1x0y4p3w1h1x2y3p3w1h1x3y3p3w1h1x2y4p3w1h1x3y4";
-	loadTheGame(Game1);
+	char* Game4 = "10n4x5p3w2h2x1y3p3w1h2x0y3p3w1h2x3y3p3w1h2x0y1p3w2h1x1y2p3w1h2x3y1p3w1h1x1y1p3w1h1x2y1p3w1h1x0y0p3w1h1x3y0";
+	loadTheGame(Game4);
 	loadTheGame(Game2);
 	loadTheGame(Game3);
 

@@ -168,7 +168,10 @@ bool estPositionValide(game g, piece p){
 int game_square_piece (game g, int x, int y){
 	
 	int** tab = mapPieces(g->pieces, game_nb_pieces(g), game_width(g), game_height(g));
-	return tab[x][y];
+	int value = tab[x][y];
+	free(tab[0]);
+	free(tab);
+	return value;
 }
 
 //retourne le nombre de move fait
