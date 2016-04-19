@@ -7,8 +7,8 @@
 #include <game_rh.h>
 #include <interface_txt.h>
 #include <utility.h>
-
-void solve(game g, bool rh);
+typedef enum mode_e {OPTI_MOVES, HINT} mode;
+void solve(game g, bool rh, mode cmd);
 
 
 #endif

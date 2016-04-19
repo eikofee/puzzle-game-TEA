@@ -68,7 +68,7 @@ bool strEqual(char* a, char* b)
 
 bool isNumber(char c, int max_number)
 {
-	return ((c >= '0' && c <= '0' + max_number) || (c >= 'a' && c <= '\\' + max_number));
+	return (c >= '0' && c <= '0' + max_number);
 }
 
 bool isInt(char* s, int* pos)
@@ -460,6 +460,11 @@ void getCharFromInt(char* s, int* pos, int data, bool itoa)
 	{
 		s[*(pos)] = '0';
 		*(pos) += 1;
+		while(itoa && s[*pos])
+	{
+		s[*pos] = ' ';
+		*(pos) += 1;
+	}
 		return;
 	}
 	int taille = 1;
@@ -486,7 +491,7 @@ void getCharFromInt(char* s, int* pos, int data, bool itoa)
 void initFileConfig(char* level_name){
 
 	FILE *fichier = NULL;
-	fichier = fopen("../config.ini", "w");
+	fichier = fopen("config.ini", "w");
 
 	if(fichier == NULL)
 		error("initFileConfig(), probleme de création du fichier");
@@ -508,7 +513,7 @@ void initFileConfig(char* level_name){
 bool whatGame(char* name)
 {
     FILE *file = NULL;
-    file = fopen("../config.ini", "r");
+    file = fopen("config.ini", "r");
     if(file == NULL)
     	error("whatGame(), probleme d'ouverture du fichier config.ini");
     

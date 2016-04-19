@@ -3,10 +3,10 @@
 //#include <string.h>
 //#include <time.h>
 
-//Remplacer "//SR" par du vide pour rendre le traçage fonctionnel
+//Remplacer "" par du vide pour rendre le traçage fonctionnel
 
 struct map_s{
-	//SRstruct map_s* from;
+	struct map_s* from;
 	game g;
 };
 
@@ -34,11 +34,11 @@ list newListItem(map m, list prev)
 	return ln;
 }
 
-map newMap(game g)//SR, map prev)
+map newMap(game g, map prev)
 {
 	map m = (map) malloc(sizeof(struct map_s));
 	m->g = new_game(1,1,0,NULL);
-	//SRm->from = prev;
+	m->from = prev;
 	copy_game(g,m->g);
 	return m;
 }
@@ -105,7 +105,7 @@ map createNewState(map m, int nPiece, dir d, int dist)
 	copy_game(m->g, g);
 	map r = NULL;
 	if (play_move(g, nPiece, d, dist)){
-		r = newMap(g);//SR, m);
+		r = newMap(g, m);
 		delete_game(g);
 	}
 	else
@@ -182,28 +182,29 @@ void fillQueue(nodeQueue currentNode, nodeQueue queueTop, map previousState, lis
 		//et on "incrÃ©mente" top (top = top->next or something)
 }
 
-//SRvoid trace(nodeQueue final)
-//SR{
+void trace(nodeQueue final)
+{
 	// map m = final-> m;
 	// m = final->m;
 	
-//SR	while (final->m ->from)
-//SR	{
-//SR		map tmp = final->m;
-//SR		drawInterface(final->m->g, "");
-//SR		delete_game(final->m->g);
-//SR		final->m = final->m->from;
-//SR		free(tmp);
-//SR	}
-//SR}
-void solve(game g, bool rh)
+	while (final->m ->from)
+	{
+		map tmp = final->m;
+		drawInterface(final->m->g, "");
+		delete_game(final->m->g);
+		final->m = final->m->from;
+		free(tmp);
+	}
+}
+
+void solve(game g, bool rh, mode cmd)
 {
 	//bool rh = whatGame("rush-hour\n");
 	//clock_t c1;
 	//clock_t c2;
 	//float temps;
 	//c1 = clock();
-	map origMap = newMap(g);//SR, NULL);
+	map origMap = newMap(g, NULL);
 	list listMap = newListItem(origMap, NULL);
 	nodeQueue root = newQueueItem(origMap, NULL);
 	nodeQueue currentNode = root;
@@ -227,7 +228,18 @@ void solve(game g, bool rh)
 	//drawInterface(top->m->g, "TEST");
 	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(top->m->g), temps);
 	int nbFinal = cleared?game_nb_moves(top->next->m->g):-1;
-	printf("%d\n", nbFinal);
+	map mh;
+	switch(cmd)
+	{
+		case OPTI_MOVES:
+		printf("%d\n", nbFinal);break;
+
+		case HINT:
+			mh = top->next->m;
+			while (mh->from != origMap)
+				mh = mh->from;
+			drawInterface(mh->g, "HINT");break;
+	}
 	//on trace la map de currentNode : map->prev jusqu'Ã? NULL, et on a la sÃ©quence finale
 	//need delete everything else (parcourir les derniers nodes de la pile et effacer les map ?)
 	//trace(currentNode->next);
@@ -243,6 +255,7 @@ void solve(game g, bool rh)
 		}
 		free(currentNode);
 	}
+
 	// free(root);
 	// delete_game(root -> m -> g);
 	// free(root -> m);

@@ -5,6 +5,7 @@
 #include <solver.h>
 #include <interface_txt.h>
 
+
 void drawInterface(game g, char* id)
 {
 	int moves = game_nb_moves(g);
@@ -212,7 +213,7 @@ void inputPlayer(game g, char* id)
 	bool correct = false;
 	if (strEqual(input, "solve\n"))
 	{
-		solve(g, whatGame("rush-hour\n"));
+		solve(g, whatGame("rush-hour\n"), OPTI_MOVES);
 		//drawInterface(g,id);
 		correct = true;
 	}
@@ -229,12 +230,6 @@ void inputPlayer(game g, char* id)
 		}
 	}
 
-	if (strEqual(input, "hint\n"))
-	{
-		correct = true;
-		printf("hint [WIP]\n");
-		//Do a move 
-	}
 	if(strEqual(input, "skip\n"))
 	{
 		correct = true;
@@ -258,6 +253,11 @@ void inputPlayer(game g, char* id)
 	{
 		correct = true;
 		printf("Game ID : %s\n", id);
+	}
+	if (strEqual(input, "hint\n"))
+	{
+		correct = true;
+		solve(g, whatGame("rush-hour\n"), HINT);
 	}
 	if (strEqual(input, "load\n"))
 	{
