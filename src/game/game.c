@@ -113,6 +113,11 @@ bool play_move(game g, int piece_num, dir d, int distance)
 
 	int ptestx = get_x(ptest);
 	int ptesty = get_y(ptest);
+	if (((d == UP || d == DOWN) && !can_move_y(game_piece(g, piece_num))) || ((d == LEFT || d == RIGHT) && !can_move_x(game_piece(g, piece_num))))
+	{
+		delete_piece(ptest);
+		return false;
+	}
 
 	//Cette première boucle permet de faire pas à pas le déplacement lorsque celui ci est supérieur à 1
 	for (int step = 0; step < abs(distance); step++)

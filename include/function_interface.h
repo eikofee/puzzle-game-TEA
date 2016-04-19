@@ -184,4 +184,6 @@ bool whatGame(char* name);
  * @param input La chaine de caractère qui va être modifié.
  */
 void removeSpaces(char* input);
+
+game getGameFromConfigFile(char* fileName);
 #endif
