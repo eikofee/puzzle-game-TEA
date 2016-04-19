@@ -22,7 +22,7 @@ void toLower(char* s);
  * @param id Le numéro de la pièce à afficher
  * @param fill Est-ce que le caractère doit être imprimé ?
  */
-void setColorPiece(char c, int id, bool fill);
+void setColorPiece(int c, int id, bool fill);
 
 /**
  * Test deux chaines de caractere pour savoir si elles sont identiques.
@@ -164,7 +164,7 @@ int readUntilChar(char* s, int* pos);
  * @param pos La position actuelle dans la chaine de caractere `s`
  * @param data L'information que l'on veut écrire dans la chaine `s`
  */
-void getCharFromInt(char* s, int* pos, int data);
+void getCharFromInt(char* s, int* pos, int data, bool itoa);
 
 /**
  * Permet d'écrire dans le fichier config.ini le nom du jeu en cours d'execution

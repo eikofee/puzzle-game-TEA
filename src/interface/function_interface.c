@@ -3,6 +3,7 @@
 #include <game.h>
 #include <utility.h>
 #include <function_interface.h>
+#include <string.h>
 
 //Ce fichier sert a alleger le fichier interface_txt en y mettant les fonctions annexes à celle
 //présentes dans interface_txt
@@ -28,7 +29,7 @@ void toLower(char* s)
 	}
 }
 
-void setColorPiece(char c, int id, bool fill)
+void setColorPiece(int c, int id, bool fill)
 {
 	if (id)
 		printf("\x1b[%s%cm", (id % 12 >= 6 && id % 7 + 1 != 1?"10":"4"),getHexa(id % 7 + 1));
@@ -46,7 +47,10 @@ void setColorPiece(char c, int id, bool fill)
 		default:
 			printf("\x1b[97m");
 	}
-	printf("%c \x1b[0m", (fill?c:' '));
+	char s[3];
+	int p = 0;
+	getCharFromInt(s, &p, id, true);
+	printf("%s\x1b[0m", (fill?s:"  "));
 }
 
 bool strEqual(char* a, char* b)
@@ -75,7 +79,13 @@ bool isInt(char* s, int* pos)
 		if (!isInt(s, pos))
 			return false;
 	}
-	return isNumber(s[*pos], 9);
+	bool correct = false;
+	while (isNumber(s[*pos], 9)){
+		*(pos) += 1;
+		correct = true;
+		}
+	*(pos) -= 1;
+	return correct;
 }
 
 bool isDirection(char c)
@@ -356,13 +366,13 @@ void getIdFromGame(game g, char* id)
 {
 	int pos = 0;
 	int index_pieces = 0;
-	getCharFromInt(id, &pos, game_nb_pieces(g));
+	getCharFromInt(id, &pos, game_nb_pieces(g), false);
 	id[pos] = 'n';
 	pos++;
-	getCharFromInt(id, &pos, game_width(g));
+	getCharFromInt(id, &pos, game_width(g), false);
 	id[pos] = 'x';
 	pos++;
-	getCharFromInt(id, &pos, game_height(g));
+	getCharFromInt(id, &pos, game_height(g), false);
 	while (index_pieces < game_nb_pieces(g))
 	{
 		id[pos] = 'p';
@@ -371,16 +381,16 @@ void getIdFromGame(game g, char* id)
 		pos++;
 		id[pos] = 'w';
 		pos++;
-		getCharFromInt(id, &pos, get_width(game_piece(g, index_pieces)));
+		getCharFromInt(id, &pos, get_width(game_piece(g, index_pieces)), false);
 		id[pos] = 'h';
 		pos++;
-		getCharFromInt(id, &pos, get_height(game_piece(g, index_pieces)));
+		getCharFromInt(id, &pos, get_height(game_piece(g, index_pieces)), false);
 		id[pos] = 'x';
 		pos++;
-		getCharFromInt(id, &pos, get_x(game_piece(g, index_pieces)));
+		getCharFromInt(id, &pos, get_x(game_piece(g, index_pieces)), false);
 		id[pos] = 'y';
 		pos++;
-		getCharFromInt(id, &pos, get_y(game_piece(g, index_pieces)));
+		getCharFromInt(id, &pos, get_y(game_piece(g, index_pieces)), false);
 		index_pieces++;
 	}
 	id[pos] = '\0';
@@ -444,7 +454,7 @@ int readUntilChar(char* s, int* pos)
 	return n * multiplier;
 }
 
-void getCharFromInt(char* s, int* pos, int data)
+void getCharFromInt(char* s, int* pos, int data, bool itoa)
 {
 	if (!data)
 	{
@@ -465,6 +475,11 @@ void getCharFromInt(char* s, int* pos, int data)
 		*(pos) += 1;
 		data -= data / taille * taille;
 		taille /= 10;
+	}
+	while(itoa && s[*pos])
+	{
+		s[*pos] = ' ';
+		*(pos) += 1;
 	}
 }
 

@@ -33,7 +33,7 @@ void drawInterface(game g, char* id)
 				printf(". ");
 			else
 			{
-				setColorPiece(getHexa(t[j][i]), t[j][i], (toWrite[t[j][i]]?true:false));
+				setColorPiece(t[j][i], t[j][i], (toWrite[t[j][i]]?true:false));
 				toWrite[t[j][i]] = false;
 			}
 		}
@@ -325,7 +325,6 @@ void inputPlayer(game g, char* id)
 		{
 			pos = 0;
 			n_piece = readUntilChar(input, &pos);
-
 			if(n_piece < 0 || n_piece >= game_nb_pieces(g))
 			{
 				printf("Mauvais numero de piece -- Try Again\n");
