@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-
+#include <sdl.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
@@ -411,21 +411,21 @@ void init_sdl_game(game g){
 	SDL_Quit();
 }
 
-int main(){
+// int main(){
 
-	initFileConfig("rush-hour");
-	char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
-	// char* Game2 = "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0";
+// 	initFileConfig("rush-hour");
+// 	char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
+// 	// char* Game2 = "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0";
 
-	// initFileConfig("klotski");
-	// char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
+// 	// initFileConfig("klotski");
+// 	// char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 	
-	//oéoé on a pas free le game..
-	game g = getGameFromId(Game1);
-	init_sdl_game(g);
-	delete_game(g);
+// 	//oéoé on a pas free le game..
+// 	game g = getGameFromId(Game1);
+// 	init_sdl_game(g);
+// 	delete_game(g);
 	
 
-	return EXIT_SUCCESS;
+// 	return EXIT_SUCCESS;
 
-}
+// }

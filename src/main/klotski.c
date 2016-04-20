@@ -4,9 +4,11 @@
 #include <game_ar.h>
 #include <utility.h>
 #include <interface_txt.h>
+#include <string.h>
+#include <sdl.h>
 
 // Cette fonction sert a charger une partie et d'y jouer.
-void loadTheGame(char* id_src)
+void loadTheGame(char* id_src, bool sdl)
 {
 	//On crée le game g à partir d'un id source
 	printf("\nLoading Game ...\n");
@@ -17,11 +19,15 @@ void loadTheGame(char* id_src)
 	char* id = (char*) malloc(sizeof(char) * 256);
 	if(id == NULL)
 		error("getIdFromGame(), probleme d'allocation memoire");
+	if (sdl)
+		init_sdl_game(g);
+	else
+	{
+		getIdFromGame(g, id);
+		drawInterface(g, id);
+	}
 
-	getIdFromGame(g, id);
-	drawInterface(g, id);
-
-	while (!game_over_ar(g))
+	while (!game_over_ar(g) && !sdl)
 	{
 		printf("Enter the car's number you want to move :\n");
 		inputPlayer(g, id);
@@ -36,18 +42,27 @@ void loadTheGame(char* id_src)
 	delete_game(g);
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+	bool sdl = false;
+
 	//On ecrit le nom de l'exucutable dans le fichier config.ini puis on lance le jeu
 	initFileConfig("klotski");
+	if (argc > 1)
+		for (int i = 1; i < argc; i++)
+		{
+			if (!strcmp(argv[i], "-g"))
+				sdl = true;
+		}
 
 	char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 	char* Game2 = "10n4x5p3w2h2x2y0p3w1h1x1y0p3w1h1x0y0p3w1h1x0y1p3w1h1x1y1p3w2h1x0y2p3w2h1x2y2p3w2h1x0y3p3w2h1x0y4p3w2h1x2y4";
 	char* Game3 = "15n4x5p3w2h2x2y1p3w1h1x0y0p3w1h1x1y0p3w1h1x2y0p3w1h1x3y0p3w1h1x0y1p3w1h1x1y1p3w1h1x0y2p3w1h1x1y2p3w1h1x0y3p3w1h1x0y4p3w1h1x2y3p3w1h1x3y3p3w1h1x2y4p3w1h1x3y4";
 	char* Game4 = "10n4x5p3w2h2x1y3p3w1h2x0y3p3w1h2x3y3p3w1h2x0y1p3w2h1x1y2p3w1h2x3y1p3w1h1x1y1p3w1h1x2y1p3w1h1x0y0p3w1h1x3y0";
-	loadTheGame(Game4);
-	loadTheGame(Game2);
-	loadTheGame(Game3);
+	loadTheGame(Game1, sdl);
+	loadTheGame(Game2, sdl);
+	loadTheGame(Game3, sdl);
+	loadTheGame(Game4, sdl);
 
 	return 0;
 }

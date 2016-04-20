@@ -23,7 +23,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/config.ini "#Contiendra le nom du jeu exécuté")
 
 # On definit les elements necessaires aux librairies (*.a) puis on les cree
 #Librairie racine: game
-add_library(game ${CMAKE_BINARY_DIR}/src/game/game.c ${CMAKE_BINARY_DIR}/src/piece/piece.c ${CMAKE_BINARY_DIR}/src/game/game_ar.c ${CMAKE_BINARY_DIR}/src/game/game_rh.c ${CMAKE_BINARY_DIR}/src/piece/piece_rh.c ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c ${CMAKE_BINARY_DIR}/src/solver/solver.c)
+add_library(game ${CMAKE_BINARY_DIR}/src/game/game.c ${CMAKE_BINARY_DIR}/src/piece/piece.c ${CMAKE_BINARY_DIR}/src/game/game_ar.c ${CMAKE_BINARY_DIR}/src/game/game_rh.c ${CMAKE_BINARY_DIR}/src/piece/piece_rh.c ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c ${CMAKE_BINARY_DIR}/src/solver/solver.c )
 
 add_library(sdlT ${CMAKE_BINARY_DIR}/src/interface/sdl.c)
 
@@ -37,7 +37,7 @@ add_executable(sdl interface/sdl)
 
 
 # On lie les librairies dont les exécutables ont besoin (game, rh/ar)
-target_link_libraries(rush-hour game )
-target_link_libraries(klotski game )
+target_link_libraries(rush-hour game sdlT SDL SDL_image SDL_ttf SDL_mixer)
+target_link_libraries(klotski game sdlT SDL SDL_image SDL_ttf SDL_mixer)
 
 target_link_libraries(sdl game sdlT SDL SDL_image SDL_ttf SDL_mixer)
