@@ -178,6 +178,10 @@ void menu_echap(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond
     position.y = 0;
     SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
     SDL_Flip(ecran);
+
+    SDL_FreeSurface(ecran_tmp);
+    SDL_FreeSurface(texte);
+    SDL_FreeSurface(menu_echap);
 }
 
 bool game_over(game g){
@@ -189,6 +193,10 @@ bool game_over(game g){
 	return false;
 }
 
+int afficherNbMove(game g){
+	return 0;
+}
+
 void son_fin(){
 	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) //Initialisation de l'API Mixer
 	{	
@@ -196,9 +204,10 @@ void son_fin(){
 	}	
 	Mix_Music *musique; //Création du pointeur de type Mix_Music
 	musique = Mix_LoadMUS("Victoire.ogg"); //Chargement de la musique
-	Mix_PlayMusic(musique, -1); //Jouer infiniment la musique
+	Mix_PlayMusic(musique, 0); //Jouer infiniment la musique
 
-	clock_t arrivee=clock()+(2*CLOCKS_PER_SEC); // On calcule le moment où l'attente devra s'arrêter
+	//Pause de quelques secondes, juste pour que le son soit joué
+	clock_t arrivee=clock()+(2.5*CLOCKS_PER_SEC); // On calcule le moment où l'attente devra s'arrêter
 	while(clock() < arrivee);
 
 	Mix_FreeMusic(musique); //Libération de la musique
@@ -236,14 +245,14 @@ void init_sdl_game(game g){
 	SDL_Rect position;//Variable position, elle nous permet de positionner les rectangles.
 	SDL_Rect position_fin;
 	SDL_Event event;//Variable evenement
-	SDL_Color couleurEcriture = {0, 0, 0}; //Couleur du texte -> noir
-	SDL_Color couleurFond = {255,255,255};
-	SDL_Color couleurBasalt = {77, 83, 84};
 	
-
 	TTF_Font *police = NULL;
 
 	SDL_Init(SDL_INIT_VIDEO);
+
+	SDL_Color couleurEcriture = {0, 0, 0}; //Couleur du texte -> noir
+	SDL_Color couleurFond = {255,255,255};
+	SDL_Color couleurBasalt = {77, 83, 84};
 
 	TTF_Init();
 
@@ -257,7 +266,7 @@ void init_sdl_game(game g){
 	// **************On donne des valeurs a nos variables ********************
 	// fond = IMG_Load("voiture1.jpg");
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
-    texte = TTF_RenderText_Blended(police, "Puzzle Games", couleurEcriture);
+    texte = TTF_RenderText_Shaded(police, "Puzzle Games", couleurEcriture, couleurFond);
 
     if(whatGame("rush-hour\n"))
 	{
@@ -277,12 +286,8 @@ void init_sdl_game(game g){
 	
 	//On crée des rectangles que l'on stock dans le tableau 2D grille
 	for(int y = 0; y < NH; y++)
-	{
 		for(int x = 0; x < NL; x++)
-		{
 			grille[y][x] = SDL_CreateRGBSurface(SDL_HWSURFACE, TAILLE_CASE - 1, TAILLE_CASE - 1, 32, 0, 0, 0, 0);
-		}
-	}
 
 	// *************************************** COLORATION DES CASES *********************************************************************************
 
@@ -293,19 +298,16 @@ void init_sdl_game(game g){
 	SDL_FillRect(sortie_jeu, NULL, SDL_MapRGB(ecran->format, 250, 20, 20));
 	SDL_BlitSurface(sortie_jeu, NULL, ecran, &position_fin);
 
-	//Un truc qui est cool.. Je suppose
-	// SDL_Flip(ecran);
-
-	// pause();
-
 	// ****************************************  AFFICHAGE TEXTE  ***********************************************************
 	//Nom du jeu global ( Puzzle Games )
 	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
     position.y = 6/HEIGHT;
     SDL_BlitSurface(texte, NULL, ecran, &position);
+    // SDL_FreeSurface(texte);
 
     // On affiche le jeu précisement
-    texte = TTF_RenderText_Blended(police, whatGameStr(), couleurEcriture);
+    char* nomDuJeu = whatGameStr();
+    texte = TTF_RenderText_Blended(police, nomDuJeu, couleurEcriture);
 
     position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
     position.y = 6/HEIGHT + 20;
@@ -314,8 +316,6 @@ void init_sdl_game(game g){
     // ********************************************************* GESTION EVENT ************************************************************************
 	int continuer = 1;
 	int indice_piece = -1;
-	// int x_mouse;
-	// int y_mouse;
 
 	while(continuer && !game_over(g))
 	{
@@ -325,9 +325,6 @@ void init_sdl_game(game g){
 		//que quelque chose se passe, alors que dans le deuxieme cas, on attend pas a l'instruction, on execute la boucle infini jusqu'a avoir un evenement.
 		
 		//un ptit lien listant les constantes de la SDL en rapport aux events https://user.oc-static.com/ftp/mateo21/sdlkeysym.html
-		
-		// x_mouse = event.button.x;
-		// y_mouse = event.button.y;
 		SDL_WaitEvent(&event); /* Récupération de l'événement dans event */
 	    switch(event.type) /* Test du type d'événement */
 	    {
@@ -338,8 +335,6 @@ void init_sdl_game(game g){
 	         case SDL_MOUSEBUTTONUP:
 		        if (event.button.button == SDL_BUTTON_LEFT)
 		            indice_piece = clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
-		        	// doTheMove(g, indice_piece);
-		        	// afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 		        break;
 	        
 	        case SDL_KEYDOWN:
@@ -384,37 +379,35 @@ void init_sdl_game(game g){
 					default:
 						break;
 	        	}
-	        	// printf("x: %d\ny: %d\n\n", x_mouse, y_mouse);
 	        	break;
 	        default:
 	        	break;
-	        // case SDL_MOUSEMOTION:
-	        // 	printf("x: %d\ny: %d\n\n", x_mouse, y_mouse);
-	        // 	break;
 	    }
 
 	    SDL_Flip(ecran);
-
-	    
-	    //event.key.keysym.sym -----------> Permet de savoir quelle touche est enfoncé avec SDL_KeyDown ( Up pour relaché)
-
 	}
-	if(game_over(g))
-		son_fin();
 
+	// if(game_over(g))
+	// 	son_fin();
 
 	// ******************************************************** fin / FREE DE TOUT ******************************************************************
 	//libération des allocations mémoires
+	
+
+	TTF_CloseFont(police);
+	TTF_Quit();
+
+	// SDL_FreeSurface(grille[0]);
+	// SDL_FreeSurface(grille);
 	for(int y = 0; y < NH; y++)
 		for(int x = 0; x < NL; x++)
 			SDL_FreeSurface(grille[y][x]);
-
-	// SDL_FreeSurface(texte);
-	// SDL_FreeSurface(sortie_jeu);
-	// SDL_FreeSurface(menu_echap);
+	// free(grille[0]);
+	// free(grille);
+	free(nomDuJeu);
+	SDL_FreeSurface(texte);
+	SDL_FreeSurface(sortie_jeu);
 	
-	TTF_CloseFont(police);
-	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -430,6 +423,7 @@ int main(){
 	//oéoé on a pas free le game..
 	game g = getGameFromId(Game1);
 	init_sdl_game(g);
+	delete_game(g);
 	
 
 	return EXIT_SUCCESS;
