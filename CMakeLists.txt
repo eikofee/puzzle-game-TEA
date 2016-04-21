@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 
 project(Rush-Hour)
+Include(FindSDL)
+Include(FindSDL_image)
+include(FindSDL_mixer)
+Include(FindSDL_ttf)
 
 #Définitions des flags de gcc
 set(CMAKE_C_FLAGS "-std=c99 -g -Wall ")
