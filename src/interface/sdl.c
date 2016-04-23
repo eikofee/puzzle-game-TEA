@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <sdl.h>
+// #include <sdl.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
@@ -116,7 +116,7 @@ int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAI
 }
 
 
-void menu_echap(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
+void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
 	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
 	SDL_Surface *texte = NULL;
 	SDL_Surface *menu_echap = NULL;
@@ -143,12 +143,24 @@ void menu_echap(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond
     position.y = (position.y + texte->h);
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    texte = TTF_RenderText_Shaded(police, "Oui",couleurFond, couleurBasalt);
+    texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
     position.y = position.y - 3*texte->h + h_echap;
+
+    int xOui = position.x;
+    int yOui = position.y;
+    int wOui = texte->w;
+    int hOui = texte->h;
+
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    texte = TTF_RenderText_Shaded(police, "Non",couleurFond, couleurBasalt);
+    texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
     position.x += (w_echap - 100) - texte->w;
+
+    int xNon = position.x;
+    int yNon = position.y;
+    int wNon = texte->w;
+    int hNon = texte->h;
+
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
     int continuer_echap = 1;
@@ -158,12 +170,35 @@ void menu_echap(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond
     	SDL_WaitEvent(&event);
     	switch(event.type)
     	{
+			case SDL_MOUSEBUTTONUP:
+		        if (event.button.button == SDL_BUTTON_LEFT)
+		        {
+		        	int xMouse = event.button.x;
+		        	int yMouse = event.button.y;
+		        	if(xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui))
+		        	{
+		        		continuer_echap = 0;
+		        		*continuer = 0;
+		        	}
+		        	if(xMouse >= xNon && xMouse < (xNon + wNon) && yMouse >= yNon && yMouse < (yNon + hNon))
+		        	{
+		        		continuer_echap = 0;
+		        	}
+		        }
+		        break;
+
     		case SDL_KEYDOWN:
     			switch(event.key.keysym.sym)
     			{
     				case SDLK_ESCAPE:
     					continuer_echap = 0;
     					break;
+    				case SDLK_o:
+    					*continuer = 0;
+    					continuer_echap = 0;
+    					break;
+    				case SDLK_n:
+    					continuer_echap = 0;
     				default:
     					break;
     			}
@@ -341,7 +376,7 @@ void init_sdl_game(game g){
 	        	switch(event.key.keysym.sym)
 		        {
 		        	case SDLK_ESCAPE:
-		        		menu_echap(ecran, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+		        		menu_echap(ecran, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 					    break;
 					case SDLK_UP:
 						if(indice_piece != -1)
@@ -411,21 +446,21 @@ void init_sdl_game(game g){
 	SDL_Quit();
 }
 
-// int main(){
+int main(){
 
-// 	initFileConfig("rush-hour");
-// 	char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
-// 	// char* Game2 = "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0";
+	initFileConfig("rush-hour");
+	char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
+	// char* Game2 = "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0";
 
-// 	// initFileConfig("klotski");
-// 	// char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
+	// initFileConfig("klotski");
+	// char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 	
-// 	//oéoé on a pas free le game..
-// 	game g = getGameFromId(Game1);
-// 	init_sdl_game(g);
-// 	delete_game(g);
+	//oéoé on a pas free le game..
+	game g = getGameFromId(Game1);
+	init_sdl_game(g);
+	delete_game(g);
 	
 
-// 	return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 
-// }
+}
