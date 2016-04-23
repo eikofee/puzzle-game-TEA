@@ -102,12 +102,12 @@ int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAI
 	//On regarde si le clic s'est bien produit sur le plateau
 	if(x_mouse < 0 || x_mouse >= NL || y_mouse < 0 || y_mouse >= NH)
 	{
-		printf("Les coordonnées du clic sont en dehors du plateau de jeu.\n\n");
+		// printf("Les coordonnées du clic sont en dehors du plateau de jeu.\n\n");
 		return -1;
 	}
 	//ici les coordonnées sont valides donc on peut les manipuler.
 	
-	printf("x: %d\ny: %d\n\n", x_mouse, y_mouse);
+	// printf("x: %d\ny: %d\n\n", x_mouse, y_mouse);
 
 	int indice_piece = game_square_piece(g, x_mouse, y_mouse);
 	if(indice_piece < 0)
@@ -146,10 +146,10 @@ void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_C
     texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
     position.y = position.y - 3*texte->h + h_echap;
 
-    int xOui = position.x;
-    int yOui = position.y;
-    int wOui = texte->w;
-    int hOui = texte->h;
+	int xOui = position.x;
+	int yOui = position.y;
+	int wOui = texte->w;
+	int hOui = texte->h;
 
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
@@ -170,6 +170,11 @@ void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_C
     	SDL_WaitEvent(&event);
     	switch(event.type)
     	{
+    		case SDL_QUIT:
+    			continuer_echap = 0;
+    			continuer = 0;
+    			break;
+
 			case SDL_MOUSEBUTTONUP:
 		        if (event.button.button == SDL_BUTTON_LEFT)
 		        {
@@ -446,16 +451,138 @@ void init_sdl_game(game g){
 	SDL_Quit();
 }
 
+int choixDuJeu(){
+	SDL_Surface *ecran = NULL;
+	SDL_Surface *texte = NULL;
+	SDL_Event event;
+
+	SDL_Rect position;
+
+	TTF_Font *police = NULL;
+
+	int WIDTH = 680;
+	int HEIGHT = 420;
+
+	SDL_Init(SDL_INIT_VIDEO);
+
+	SDL_Color couleurEcriture = {0, 0, 0}; //Couleur du texte -> noir
+	SDL_Color couleurFond = {255,255,255};
+	SDL_Color couleurBasalt = {77, 83, 84};
+
+	TTF_Init();
+	
+	ecran = SDL_SetVideoMode(WIDTH, HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); 
+	
+	SDL_WM_SetCaption("Puzzle Games", NULL);
+	
+	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
+	
+	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
+	texte = TTF_RenderText_Shaded(police, "Puzzle Games - Choix du Jeu", couleurEcriture, couleurFond);
+
+	position.x = (WIDTH - texte->w) / 2;
+	position.y = HEIGHT / 8;
+
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	texte = TTF_RenderText_Shaded(police, "Rush Hour", couleurFond, couleurEcriture);
+
+	position.x = (WIDTH - texte->w) / 2;
+	position.y = HEIGHT / 3;
+
+	int xRh = position.x;
+	int yRh = position.y;
+	int wRh = texte->w;
+	int hRh = texte->h;
+
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	texte = TTF_RenderText_Shaded(police, "Klotski / L'Ane Rouge", couleurFond, couleurEcriture);
+
+	position.x = (WIDTH - texte->w) / 2;
+	position.y = position.y + ( 2 * texte->h );
+
+	int xAr = position.x;
+	int yAr = position.y;
+	int wAr = texte->w;
+	int hAr = texte->h;
+
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	int continuer = 1;
+	int xMouse;
+	int yMouse;
+
+	int valeur_retour;
+
+	while(continuer)
+	{
+		SDL_WaitEvent(&event);
+		switch(event.type)
+		{
+			case SDL_QUIT:
+				continuer = 0;
+				valeur_retour = -1;
+				break;
+			case SDL_KEYDOWN:
+				switch(event.key.keysym.sym)
+				{
+					case SDLK_ESCAPE:
+						menu_echap(ecran, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+						if(continuer == 0)
+							valeur_retour = -1;
+						break;
+					default:
+						break;
+				}
+				break;
+			case SDL_MOUSEBUTTONUP:
+				xMouse = event.button.x;
+				yMouse = event.button.y;
+				if(xMouse >= xRh && xMouse < (xRh + wRh) && yMouse >= yRh && yMouse < (yRh + hRh))
+				{
+					initFileConfig("rush-hour");
+					continuer = 0;
+				}
+				if(xMouse >= xAr && xMouse < (xAr + wAr) && yMouse >= yAr && yMouse < (yAr + hAr))
+				{
+					initFileConfig("klotski");
+					continuer = 0;
+				}
+				break;
+			default:
+				break;
+		}
+
+		SDL_Flip(ecran);
+	}
+
+
+	TTF_CloseFont(police);
+	TTF_Quit();
+
+	SDL_FreeSurface(texte);
+
+	SDL_Quit();
+
+	return valeur_retour;
+
+
+}
+
 int main(){
 
-	initFileConfig("rush-hour");
-	char* Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
-	// char* Game2 = "8n6x6p2w2h1x0y3p1w1h2x2y2p1w1h2x2y4p1w1h2x3y4p2w2h1x4y4p2w3h1x0y1p1w1h2x4y0p1w1h3x5y0";
+	int retour = choixDuJeu();
+	if(retour == -1)
+		return EXIT_SUCCESS;
 
-	// initFileConfig("klotski");
-	// char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
+	char *Game1;
+
+	if(whatGame("rush-hour\n"))
+		Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
+	else if(whatGame("klotski\n"))
+		Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 	
-	//oéoé on a pas free le game..
 	game g = getGameFromId(Game1);
 	init_sdl_game(g);
 	delete_game(g);
