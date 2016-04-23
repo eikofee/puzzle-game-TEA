@@ -321,6 +321,8 @@ void init_sdl_game(game g){
 		position_fin.y = TAILLE_CASE * NH + 1;
 	}
 
+
+
 	
 	//************************************************ INIT SDL  / TTF ************************************************************************
 	
@@ -353,9 +355,17 @@ void init_sdl_game(game g){
     position.y = 6/HEIGHT + 20;
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
+    texte = TTF_RenderText_Shaded(police, "Nombre de Deplacement:", couleurEcriture, couleurFond);
+    position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+    position.y = position.y + 40;
+    SDL_BlitSurface(texte, NULL, ecran, &position);
+    
+    int yNbMove = position.y;
+
     // ********************************************************* GESTION EVENT ************************************************************************
 	int continuer = 1;
 	int indice_piece = -1;
+	char NbMove[4];
 
 	while(continuer && !game_over(g))
 	{
@@ -419,10 +429,22 @@ void init_sdl_game(game g){
 					default:
 						break;
 	        	}
+
 	        	break;
 	        default:
 	        	break;
 	    }
+
+		texte = TTF_RenderText_Shaded(police, "xxxxxx", couleurFond, couleurFond);
+		position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+		position.y = yNbMove + texte->h;
+		SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	    sprintf(NbMove, "%d", game_nb_moves(g));
+		texte = TTF_RenderText_Shaded(police, NbMove, couleurEcriture, couleurFond);
+		position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+		position.y = yNbMove + texte->h;
+		SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	    SDL_Flip(ecran);
 	}
