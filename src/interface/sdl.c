@@ -13,6 +13,43 @@
 #include <utility.h>
 #include <interface_txt.h>
 
+typedef struct button_s* button;
+struct button_s{
+	int x;
+	int y;
+	int width;
+	int height;
+};
+
+button createButton(int x, int y, int width, int height){
+	button newButton = (button)malloc(sizeof(struct button_s));
+	if(newButton == NULL)
+		error("createButton(), probleme d'allocation du boutton");
+	int new_x = x;
+	int new_y = y;
+	int new_w = width;
+	int new_h = height;
+	newButton->x = new_x;
+	newButton->y = new_y;
+	newButton->width = new_w;
+	newButton->height = new_h;
+	return newButton;
+}
+
+bool checkButton(int xMouse, int yMouse, button Button){
+	if(Button == NULL)
+		error("checkButton(), le boutton n'est pas alloué ou n'existe pas ...");
+	//xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui)
+	return ( (xMouse >= (Button->x)) && (xMouse < ((Button->x) + (Button->width))) && (yMouse >= (Button->y)) && (yMouse < ((Button->y) + (Button->height))));
+	
+}
+
+void deleteButton(button Button){
+	if(Button == NULL)
+		error("deleteButton(), Button n'est pas alloué ou n'existe pas ...");
+	free(Button);
+}
+
 char* whatGameStr()
 {
     FILE *file = NULL;
@@ -50,6 +87,9 @@ void pause(){
 		{
 			case SDL_QUIT:
 				continuer = 0;
+				break;
+			default:
+				break;
 		}
 	}
 }
@@ -101,13 +141,8 @@ int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAI
 
 	//On regarde si le clic s'est bien produit sur le plateau
 	if(x_mouse < 0 || x_mouse >= NL || y_mouse < 0 || y_mouse >= NH)
-	{
-		// printf("Les coordonnées du clic sont en dehors du plateau de jeu.\n\n");
 		return -1;
-	}
 	//ici les coordonnées sont valides donc on peut les manipuler.
-	
-	// printf("x: %d\ny: %d\n\n", x_mouse, y_mouse);
 
 	int indice_piece = game_square_piece(g, x_mouse, y_mouse);
 	if(indice_piece < 0)
@@ -116,7 +151,7 @@ int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAI
 }
 
 
-void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
+void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
 	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
 	SDL_Surface *texte = NULL;
 	SDL_Surface *menu_echap = NULL;
@@ -146,20 +181,14 @@ void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_C
     texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
     position.y = position.y - 3*texte->h + h_echap;
 
-	int xOui = position.x;
-	int yOui = position.y;
-	int wOui = texte->w;
-	int hOui = texte->h;
+	button button_Oui = createButton(position.x, position.y, texte->w, texte->h);
 
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
     texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
     position.x += (w_echap - 100) - texte->w;
 
-    int xNon = position.x;
-    int yNon = position.y;
-    int wNon = texte->w;
-    int hNon = texte->h;
+	button button_Non = createButton(position.x, position.y, texte->w, texte->h);
 
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
@@ -172,7 +201,8 @@ void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_C
     	{
     		case SDL_QUIT:
     			continuer_echap = 0;
-    			continuer = 0;
+    			*continuer = 0;
+    			*continuer_principal = 0;
     			break;
 
 			case SDL_MOUSEBUTTONUP:
@@ -180,15 +210,14 @@ void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_C
 		        {
 		        	int xMouse = event.button.x;
 		        	int yMouse = event.button.y;
-		        	if(xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui))
+		        	if(checkButton(xMouse, yMouse, button_Oui))
 		        	{
 		        		continuer_echap = 0;
 		        		*continuer = 0;
+		        		*continuer_principal = 0;
 		        	}
-		        	if(xMouse >= xNon && xMouse < (xNon + wNon) && yMouse >= yNon && yMouse < (yNon + hNon))
-		        	{
+		        	if(checkButton(xMouse, yMouse, button_Non))
 		        		continuer_echap = 0;
-		        	}
 		        }
 		        break;
 
@@ -222,6 +251,9 @@ void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_C
     SDL_FreeSurface(ecran_tmp);
     SDL_FreeSurface(texte);
     SDL_FreeSurface(menu_echap);
+
+    deleteButton(button_Oui);
+    deleteButton(button_Non);
 }
 
 int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
@@ -254,20 +286,14 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
     texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
     position.y = position.y - 3*texte->h + h_continuer;
 
-	int xOui = position.x;
-	int yOui = position.y;
-	int wOui = texte->w;
-	int hOui = texte->h;
+	button button_Oui = createButton(position.x, position.y, texte->w, texte->h);
 
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
     texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
     position.x += (w_continuer - 100) - texte->w;
 
-    int xNon = position.x;
-    int yNon = position.y;
-    int wNon = texte->w;
-    int hNon = texte->h;
+    button button_Non = createButton(position.x, position.y, texte->w, texte->h);
 
     SDL_BlitSurface(texte, NULL, ecran, &position);
 
@@ -290,12 +316,12 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 		        {
 		        	int xMouse = event.button.x;
 		        	int yMouse = event.button.y;
-		        	if(xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui))
+		        	if(checkButton(xMouse, yMouse, button_Oui))
 		        	{
 		        		continuer_check = 0;
 		        		valeur_retour = 1;
 		        	}
-		        	if(xMouse >= xNon && xMouse < (xNon + wNon) && yMouse >= yNon && yMouse < (yNon + hNon))
+		        	if(checkButton(xMouse, yMouse, button_Non))
 		        	{
 		        		continuer_check = 0;
 		        		*continuer = 0;
@@ -318,6 +344,10 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
     SDL_FreeSurface(ecran_tmp);
     SDL_FreeSurface(texte);
     SDL_FreeSurface(menu_continuer);
+
+    deleteButton(button_Oui);
+    deleteButton(button_Non);
+
     return valeur_retour;
 
 }
@@ -359,12 +389,11 @@ void init_sdl_game(game g, int *continuer_principal){
 	int NL = game_width(g);//Nombre de case de largeur
 	int NH = game_height(g);//Nombre de case hauteur
 	int TAILLE_CASE = 75;//taille d'une case (CxC)
-	// int CASE = NL * NH;//Nombre de case total
+
 	int WIDTH = NL * TAILLE_CASE + 250;//Largeur de l'écran
 	int HEIGHT = NH * TAILLE_CASE + 15;//Hauteur de l'écran
 
 	SDL_Surface *ecran = NULL;//Notre fenetre principale
-	// SDL_Surface *grille[NL][NH];//tableau 2D recuperant chaque case
 
 	SDL_Surface ***grille = (SDL_Surface***) malloc(NH * sizeof(SDL_Surface**));
 	SDL_Surface **grille2 = (SDL_Surface**)	malloc(NH * NL * sizeof(SDL_Surface*));
@@ -378,12 +407,11 @@ void init_sdl_game(game g, int *continuer_principal){
 
 	SDL_Surface *texte = NULL;
 	SDL_Surface *sortie_jeu = NULL;
-	// SDL_Surface *menu_echap = NULL;
-	// SDL_Surface *fond = NULL;
+
 	SDL_Rect position;//Variable position, elle nous permet de positionner les rectangles.
 	SDL_Rect position_fin;
+
 	SDL_Event event;//Variable evenement
-	
 	TTF_Font *police = NULL;
 
 	SDL_Init(SDL_INIT_VIDEO);
@@ -490,7 +518,7 @@ void init_sdl_game(game g, int *continuer_principal){
 	        	switch(event.key.keysym.sym)
 		        {
 		        	case SDLK_ESCAPE:
-		        		menu_echap(ecran, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+		        		menu_echap(ecran, continuer_principal, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 					    break;
 					case SDLK_UP:
 						if(indice_piece != -1)
@@ -613,10 +641,7 @@ int choixDuJeu(){
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = HEIGHT / 3;
 
-	int xRh = position.x;
-	int yRh = position.y;
-	int wRh = texte->w;
-	int hRh = texte->h;
+	button button_Rh = createButton(position.x, position.y, texte->w, texte->h);
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
@@ -625,17 +650,14 @@ int choixDuJeu(){
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = position.y + ( 2 * texte->h );
 
-	int xAr = position.x;
-	int yAr = position.y;
-	int wAr = texte->w;
-	int hAr = texte->h;
+	button button_Ar = createButton(position.x, position.y, texte->w, texte->h);
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	int continuer = 1;
 	int xMouse;
 	int yMouse;
-
+	int tmp = 0;
 	int valeur_retour;
 
 	while(continuer)
@@ -651,7 +673,8 @@ int choixDuJeu(){
 				switch(event.key.keysym.sym)
 				{
 					case SDLK_ESCAPE:
-						menu_echap(ecran, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+						
+						menu_echap(ecran, &tmp, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 						if(continuer == 0)
 							valeur_retour = -1;
 						break;
@@ -662,12 +685,12 @@ int choixDuJeu(){
 			case SDL_MOUSEBUTTONUP:
 				xMouse = event.button.x;
 				yMouse = event.button.y;
-				if(xMouse >= xRh && xMouse < (xRh + wRh) && yMouse >= yRh && yMouse < (yRh + hRh))
+				if(checkButton(xMouse, yMouse, button_Rh))
 				{
 					initFileConfig("rush-hour");
 					continuer = 0;
 				}
-				if(xMouse >= xAr && xMouse < (xAr + wAr) && yMouse >= yAr && yMouse < (yAr + hAr))
+				if(checkButton(xMouse, yMouse, button_Ar))
 				{
 					initFileConfig("klotski");
 					continuer = 0;
@@ -687,6 +710,9 @@ int choixDuJeu(){
 	SDL_FreeSurface(texte);
 
 	SDL_Quit();
+
+	deleteButton(button_Rh);
+	deleteButton(button_Ar);
 
 	return valeur_retour;
 }
