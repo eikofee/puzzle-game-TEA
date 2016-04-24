@@ -13,6 +13,7 @@
 #include <utility.h>
 #include <interface_txt.h>
 
+//Cette structure permet la création de bouton. Nous définissons un bouton comme un rectangle, par son coin supérieur gauche, sa largeur/hauteur.
 typedef struct button_s* button;
 struct button_s{
 	int x;
@@ -21,6 +22,7 @@ struct button_s{
 	int height;
 };
 
+//Crée et retourne un boutton
 button createButton(int x, int y, int width, int height){
 	button newButton = (button)malloc(sizeof(struct button_s));
 	if(newButton == NULL)
@@ -36,20 +38,22 @@ button createButton(int x, int y, int width, int height){
 	return newButton;
 }
 
+//Vérifie si les coordonnées (xMouse;yMouse) sont bien dans la surface du boutton "Button"
 bool checkButton(int xMouse, int yMouse, button Button){
 	if(Button == NULL)
 		error("checkButton(), le boutton n'est pas alloué ou n'existe pas ...");
 	//xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui)
 	return ( (xMouse >= (Button->x)) && (xMouse < ((Button->x) + (Button->width))) && (yMouse >= (Button->y)) && (yMouse < ((Button->y) + (Button->height))));
-	
 }
 
+//Effectue un free sur un Button non null.
 void deleteButton(button Button){
 	if(Button == NULL)
 		error("deleteButton(), Button n'est pas alloué ou n'existe pas ...");
 	free(Button);
 }
 
+//Retourne le nom du jeu sous forme de char* (config.ini)
 char* whatGameStr()
 {
 	FILE *file = NULL;
@@ -71,36 +75,19 @@ char* whatGameStr()
 		}
 		i++;
 	}
-
 	return s;  
 }
 
-//Une boucle infini qui utilise WaitEvent. En gros, ca boucle, et ca attend qu'on clique sur la croix :-)
-void pause(){
-	int continuer = 1;
-	SDL_Event event;
-
-	while(continuer)
-	{
-		SDL_WaitEvent(&event);
-		switch(event.type)
-		{
-			case SDL_QUIT:
-				continuer = 0;
-				break;
-			default:
-				break;
-		}
-	}
-}
-
+//Affiche a l'ecran un jeu "game g"
 void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL, int NH, int TAILLE_CASE){
 	SDL_Rect position;
+	//Ce tableau contient les couleurs que peuvent avoir une pièce. (r,g,b)
 	int nb_couleurs = 9;
 	int tab_couleurs[9][3] = {{231, 76, 60}, {255, 51, 153}, {155, 89, 182}, {52, 152, 219}, {46, 204, 113}, {52, 73, 94}, {241, 196, 15}, {230, 126, 34}, {255, 51, 153}};
 
 	//On parcours chaque rectangle, et pour chaque rectangle, on regarde son equivalent dans le jeu. Si le jeu renvoi -1 alors y'a rien, donc gris.
 	//Sinon, le jeu va renvoyer l'indice associé au rectangle, et ainsi on va lui donner une couleur via le tableau.
+	//La couleur d'indice 0 est réservée exclusivement pour la voiture principale du même indice, elle est la seule rouge.
 	int i = 0;
 	for(int y = 0; y < NH; y++)
 	{
@@ -118,16 +105,14 @@ void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL
 					SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_couleurs[indice_piece%(nb_couleurs-1) + 1][0], tab_couleurs[indice_piece%(nb_couleurs-1) + 1][1], tab_couleurs[indice_piece%(nb_couleurs-1) + 1][2]));
 			}
 			else
-			{
 				SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, 210, 210, 210));
-			}
+
 			SDL_BlitSurface(grille[y][x], NULL, ecran, &position);
-			
 		}
 	}
-
 }
 
+//Retourne l'indice de la pièce cliquée par la souris. -1 si le clic ne s'est pas effectué sur une pièce.
 int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAILLE_CASE){
 	//On recupere les coordonnées du clic
 	int x_mouse = event.button.x;
@@ -136,6 +121,7 @@ int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAI
 	//On convertit ces coordonnées en coordonnées plateau
 	x_mouse = x_mouse / TAILLE_CASE;
 	y_mouse = y_mouse / TAILLE_CASE;
+
 	//on re oriente l'axe des ordonnées pour correspondre à l'orientation du jeu.
 	y_mouse = abs(y_mouse-NH +1);
 
@@ -150,8 +136,9 @@ int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAI
 	return indice_piece;
 }
 
-
+//Affiche un petit menu echap lorsqu'on appuie sur la touche echap.
 void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
+	//on crée une surface ecran_tmp pour conserver l'ancien écran, afin de le réafficher à la fin de la fonction.
 	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
 	SDL_Surface *texte = NULL;
 	SDL_Surface *menu_echap = NULL;
@@ -162,6 +149,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	position.y = 0;
 	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
 
+	//A partir d'ici, on va créer les deux bouttons Oui et Non, ainsi qu'afficher du texte.
 	texte = TTF_RenderText_Blended(police, "Voulez vous quitter le jeu ?", couleurFond);
 
 	int w_echap = texte->w + 100;
@@ -192,6 +180,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	//On commence la boucle while, avec la variable ci dessous comme condition.
 	int continuer_echap = 1;
 
 	while(continuer_echap)
@@ -247,7 +236,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	position.y = 0;
 	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
 	SDL_Flip(ecran);
-
+	//On libère ce qui a été alloué dans la fonction.
 	SDL_FreeSurface(ecran_tmp);
 	SDL_FreeSurface(texte);
 	SDL_FreeSurface(menu_echap);
@@ -256,6 +245,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	deleteButton(button_Non);
 }
 
+// Meme principe que la fonction menu_echap. On affiche ce menu après avoir gagné une partie et si il y a un autre niveau à jouer.
 int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
 	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
 	SDL_Surface *texte = NULL;
@@ -352,6 +342,7 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 
 }
 
+//Retourne si g rempli la condition de victoire du jeu selectionné.
 bool game_over(game g){
 	if(whatGame("rush-hour\n"))
 		return game_over_hr(g);
@@ -361,10 +352,7 @@ bool game_over(game g){
 	return false;
 }
 
-int afficherNbMove(game g){
-	return 0;
-}
-
+//Permet de lancer un son de quelques secondes.
 void son_fin(){
 	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) //Initialisation de l'API Mixer
 	{	
@@ -385,7 +373,6 @@ void son_fin(){
 // Permet d'afficher la fenetre principal, ainsi que le jeu.
 void init_sdl_game(game g, int *continuer_principal){
 	
-	//************************************************** INIT VARIABLE ***********************************************************************
 	int NL = game_width(g);//Nombre de case de largeur
 	int NH = game_height(g);//Nombre de case hauteur
 	int TAILLE_CASE = 75;//taille d'une case (CxC)
@@ -395,6 +382,7 @@ void init_sdl_game(game g, int *continuer_principal){
 
 	SDL_Surface *ecran = NULL;//Notre fenetre principale
 
+	//On alloue la grille du jeu qui correspond au plateau du jeu.
 	SDL_Surface ***grille = (SDL_Surface***) malloc(NH * sizeof(SDL_Surface**));
 	SDL_Surface **grille2 = (SDL_Surface**)	malloc(NH * NL * sizeof(SDL_Surface*));
 
@@ -406,34 +394,33 @@ void init_sdl_game(game g, int *continuer_principal){
 		grille[i] = &grille2[i * NL];
 
 	SDL_Surface *texte = NULL;
-	SDL_Surface *sortie_jeu = NULL;
+	SDL_Surface *sortie_jeu = NULL;//Un petit rectangle qui permet de localiser la fin du jeu.
 
 	SDL_Rect position;//Variable position, elle nous permet de positionner les rectangles.
-	SDL_Rect position_fin;
+	SDL_Rect position_fin;//Sert uniquement à positionner le rectangle de victoire.
 
-	SDL_Event event;//Variable evenement
+	SDL_Event event;
 	TTF_Font *police = NULL;
 
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO); // initialisation de la SDL
 
 	SDL_Color couleurEcriture = {0, 0, 0}; //Couleur du texte -> noir
-	SDL_Color couleurFond = {255,255,255};
-	SDL_Color couleurBasalt = {77, 83, 84};
+	SDL_Color couleurFond = {255,255,255}; // Blanc
+	SDL_Color couleurBasalt = {77, 83, 84};	// Basalt
 
-	TTF_Init();
+	TTF_Init(); // Initialisation de TTF
 
 	//Pour faire un plein ecran il faut mettre SDL_FULLSCREEN
 	ecran = SDL_SetVideoMode(WIDTH - 1, HEIGHT - 1, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); // On définit Ecran
-	//On donne un nom a la fenetre et une couleur etc..
-	SDL_WM_SetCaption("Puzzle Games", NULL);
+
+	SDL_WM_SetCaption("Puzzle Games", NULL); // Titre de la fenetre
 
 	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
 
-	// **************On donne des valeurs a nos variables ********************
-	// fond = IMG_Load("voiture1.jpg");
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
 	texte = TTF_RenderText_Shaded(police, "Puzzle Games", couleurEcriture, couleurFond);
 
+	//On positionne le rectangle de victoire selon le jeu
 	if(whatGame("rush-hour\n"))
 	{
 		sortie_jeu = SDL_CreateRGBSurface(SDL_HWSURFACE, TAILLE_CASE/6, TAILLE_CASE - 1, 32, 0, 0, 0, 0);
@@ -446,34 +433,25 @@ void init_sdl_game(game g, int *continuer_principal){
 		position_fin.x = TAILLE_CASE;
 		position_fin.y = TAILLE_CASE * NH + 1;
 	}
-
-
-
-	
-	//************************************************ INIT SDL  / TTF ************************************************************************
 	
 	//On crée des rectangles que l'on stock dans le tableau 2D grille
 	for(int y = 0; y < NH; y++)
 		for(int x = 0; x < NL; x++)
 			grille[y][x] = SDL_CreateRGBSurface(SDL_HWSURFACE, TAILLE_CASE - 1, TAILLE_CASE - 1, 32, 0, 0, 0, 0);
 
-	// *************************************** COLORATION DES CASES *********************************************************************************
-
-	//petits tableaux qui correspondent à des couleurs :) Je pense en mettre une dizaine, et faire un modulo pour gerer les cas avec beaucoup de pieces
-	
+	//on affiche la grille du jeu avec les pieces.
 	afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 
+	//On affiche le rectangle de la victoire
 	SDL_FillRect(sortie_jeu, NULL, SDL_MapRGB(ecran->format, 250, 20, 20));
 	SDL_BlitSurface(sortie_jeu, NULL, ecran, &position_fin);
 
-	// ****************************************  AFFICHAGE TEXTE  ***********************************************************
-	//Nom du jeu global ( Puzzle Games )
+	//On affiche Puzzle Games
 	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
 	position.y = 6/HEIGHT;
 	SDL_BlitSurface(texte, NULL, ecran, &position);
-	// SDL_FreeSurface(texte);
 
-	// On affiche le jeu précisement
+	// On affiche le nom du jeu précisement
 	char* nomDuJeu = whatGameStr();
 	texte = TTF_RenderText_Blended(police, nomDuJeu, couleurEcriture);
 
@@ -486,21 +464,14 @@ void init_sdl_game(game g, int *continuer_principal){
 	position.y = position.y + 40;
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-	int yNbMove = position.y;
+	int yNbMove = position.y; //Permet de conserver l'ordonnée du texte précedent afin d'afficher le nombre de mouvement.
 
-	// ********************************************************* GESTION EVENT ************************************************************************
-	int continuer = 1;
-	int indice_piece = -1;
-	char NbMove[4];
+	int continuer = 1;//Condition principale de la boucle while.
+	int indice_piece = -1;//On initialise cette variable à -1 afin qu'aucun move puisse être fait avant de cliquer sur une pièce.
+	char NbMove[4];//Chaine de caractère affichant le nombre de mouvement.
 
 	while(continuer && !game_over(g))
 	{
-		// Grossomodo, il y a deux types de gestions d'Event : SDL_WaitEvent et SDL_PollEvent Le premier evite de manger le processeur car 
-		//il met en pause le processus jusqu'a avoir un evenement. Le deuxieme par contre, on lui laisser manger ce qu'il veut, car il va juste attendre
-		// qu'un evenement se passe pour faire quelque chose sans mettre le processus en pause. Ainsi, dans le premier cas, on attend a l'instruction 
-		//que quelque chose se passe, alors que dans le deuxieme cas, on attend pas a l'instruction, on execute la boucle infini jusqu'a avoir un evenement.
-		
-		//un ptit lien listant les constantes de la SDL en rapport aux events https://user.oc-static.com/ftp/mateo21/sdlkeysym.html
 		SDL_WaitEvent(&event); /* Récupération de l'événement dans event */
 		switch(event.type) /* Test du type d'événement */
 		{
@@ -509,64 +480,64 @@ void init_sdl_game(game g, int *continuer_principal){
 				*continuer_principal = 0;
 				break;
 
-			case SDL_MOUSEBUTTONUP:
-				if (event.button.button == SDL_BUTTON_LEFT)
+			case SDL_MOUSEBUTTONUP: /* Si c'est un evenement de type Clic Souris */
+				if (event.button.button == SDL_BUTTON_LEFT)//clic gauche de la souris
 					indice_piece = clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
 				break;
 
-			case SDL_KEYDOWN:
+			case SDL_KEYDOWN: /* Evenement de type touche enfoncée */
 				switch(event.key.keysym.sym)
 				{
-					case SDLK_ESCAPE:
+					case SDLK_ESCAPE: //Touche Echap
 						menu_echap(ecran, continuer_principal, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 						break;
-					case SDLK_UP:
+
+					case SDLK_UP: //Touche fleche haut 
 						if(indice_piece != -1)
 						{
 							play_move(g, indice_piece, UP, 1);
 							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 						}
-
 						break;
-					case SDLK_DOWN:
+
+					case SDLK_DOWN: //Touche fleche bas
 						if(indice_piece != -1)
 						{
 							play_move(g, indice_piece, DOWN, 1);
 							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 						}
-
 						break;
-					case SDLK_LEFT:
+
+					case SDLK_LEFT://Touche fleche gauche
 						if(indice_piece != -1)
 						{
 							play_move(g, indice_piece, LEFT, 1);
 							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 						}
-
 						break;
-					case SDLK_RIGHT:
+					
+					case SDLK_RIGHT://Touche fleche droite
 						if(indice_piece != -1)
 						{
 							play_move(g, indice_piece, RIGHT, 1);
 							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 						}
-
 						break;
 
 					default:
 						break;
 				}
-
 				break;
 			default:
 				break;
 		}
-
+		//On affiche une sorte de masque blanc afin d'éviter de lire l'ancien affichage du nombre de mouvement quand celui ci est plus petit que l'ancien.
 		texte = TTF_RenderText_Shaded(police, "xxxxxx", couleurFond, couleurFond);
 		position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
 		position.y = yNbMove + texte->h;
 		SDL_BlitSurface(texte, NULL, ecran, &position);
 
+		//On affiche le nombre de mouvement effectué
 		sprintf(NbMove, "%d", game_nb_moves(g));
 		texte = TTF_RenderText_Shaded(police, NbMove, couleurEcriture, couleurFond);
 		position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
@@ -575,26 +546,18 @@ void init_sdl_game(game g, int *continuer_principal){
 
 		SDL_Flip(ecran);
 	}
+	//On regarde comment on est sorti de la boucle while.
 	if(game_over(g))
 		menu_continuer(ecran, continuer_principal, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 
-	// if(game_over(g))
-	// 	son_fin();
-
-	// ******************************************************** fin / FREE DE TOUT ******************************************************************
-	//libération des allocations mémoires
-	
-
+	//On libère les allocations.
 	TTF_CloseFont(police);
 	TTF_Quit();
 
-	// SDL_FreeSurface(grille[0]);
-	// SDL_FreeSurface(grille);
 	for(int y = 0; y < NH; y++)
 		for(int x = 0; x < NL; x++)
 			SDL_FreeSurface(grille[y][x]);
-	// free(grille[0]);
-	// free(grille);
+
 	free(nomDuJeu);
 	SDL_FreeSurface(texte);
 	SDL_FreeSurface(sortie_jeu);
@@ -602,6 +565,7 @@ void init_sdl_game(game g, int *continuer_principal){
 	SDL_Quit();
 }
 
+//Affiche le menu principal. Permet de choisir le jeu souhaité. Retourne -1 si l'utilisateur décide de quitter.
 int choixDuJeu(){
 	SDL_Surface *ecran = NULL;
 	SDL_Surface *texte = NULL;
@@ -720,17 +684,17 @@ int choixDuJeu(){
 
 
 int main(){
-
+	//On affiche le menu du choix du jeu.
 	int retour = choixDuJeu();
 	if(retour == -1)
 		return EXIT_SUCCESS;
 
-	
+	//ces deux variables permettent de charger les niveaux dans les fichiers txt.
 	int indGame = 1;
 	char *strIndGame = (char*)malloc(5 * sizeof(char));
 
 	int continuer = 1;
-	while(continuer && indGame < 4)
+	while(continuer && indGame < 4)//la deuxieme condition permet juste d'éviter de dépasser la fin du fichier txt.
 	{
 		char *Game1 = (char*)malloc(512 * sizeof(char));
 		sprintf(strIndGame, "%d\n", indGame);
@@ -746,6 +710,5 @@ int main(){
 		indGame++;
 		free(Game1);
 	}
-	
 	return EXIT_SUCCESS;
 }
