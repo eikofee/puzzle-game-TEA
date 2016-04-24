@@ -166,6 +166,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	position.y = (position.y + texte->h);
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	SDL_FreeSurface(texte);
 	texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
 	position.y = position.y - 3*texte->h + h_echap;
 
@@ -173,6 +174,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	SDL_FreeSurface(texte);
 	texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
 	position.x += (w_echap - 100) - texte->w;
 
@@ -275,6 +277,7 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 	position.y = (position.y + texte->h);
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	SDL_FreeSurface(texte);
 	texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
 	position.y = position.y - 3*texte->h + h_continuer;
 
@@ -282,6 +285,8 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+
+	SDL_FreeSurface(texte);
 	texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
 	position.x += (w_continuer - 100) - texte->w;
 
@@ -373,7 +378,7 @@ void son_fin(){
 }
 
 // Permet d'afficher la fenetre principal, ainsi que le jeu.
-void init_sdl_game(game g, int *continuer_principal){
+void init_sdl_game(game g, int *continuer_principal, int indGame){
 	
 	int NL = game_width(g);//Nombre de case de largeur
 	int NH = game_height(g);//Nombre de case hauteur
@@ -420,6 +425,7 @@ void init_sdl_game(game g, int *continuer_principal){
 	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
 
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
+
 	texte = TTF_RenderText_Shaded(police, "Puzzle Games", couleurEcriture, couleurFond);
 
 	//On positionne le rectangle de victoire selon le jeu
@@ -453,6 +459,7 @@ void init_sdl_game(game g, int *continuer_principal){
 	position.y = 6/HEIGHT;
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	SDL_FreeSurface(texte);
 	// On affiche le nom du jeu précisement
 	char* nomDuJeu = whatGameStr();
 	texte = TTF_RenderText_Blended(police, nomDuJeu, couleurEcriture);
@@ -461,6 +468,7 @@ void init_sdl_game(game g, int *continuer_principal){
 	position.y = 6/HEIGHT + 20;
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	SDL_FreeSurface(texte);
 	texte = TTF_RenderText_Shaded(police, "Nombre de Deplacement:", couleurEcriture, couleurFond);
 	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
 	position.y = position.y + 40;
@@ -533,12 +541,15 @@ void init_sdl_game(game g, int *continuer_principal){
 			default:
 				break;
 		}
+
+		SDL_FreeSurface(texte);
 		//On affiche une sorte de masque blanc afin d'éviter de lire l'ancien affichage du nombre de mouvement quand celui ci est plus petit que l'ancien.
 		texte = TTF_RenderText_Shaded(police, "xxxxxx", couleurFond, couleurFond);
 		position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
 		position.y = yNbMove + texte->h;
 		SDL_BlitSurface(texte, NULL, ecran, &position);
 
+		SDL_FreeSurface(texte);
 		//On affiche le nombre de mouvement effectué
 		sprintf(NbMove, "%d", game_nb_moves(g));
 		texte = TTF_RenderText_Shaded(police, NbMove, couleurEcriture, couleurFond);
@@ -549,7 +560,7 @@ void init_sdl_game(game g, int *continuer_principal){
 		SDL_Flip(ecran);
 	}
 	//On regarde comment on est sorti de la boucle while.
-	if(game_over(g))
+	if(game_over(g) && indGame < 3)
 		menu_continuer(ecran, continuer_principal, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 
 	//On libère les allocations.
@@ -559,7 +570,8 @@ void init_sdl_game(game g, int *continuer_principal){
 	for(int y = 0; y < NH; y++)
 		for(int x = 0; x < NL; x++)
 			SDL_FreeSurface(grille[y][x]);
-
+	free(grille[0]);
+	free(grille);
 	free(nomDuJeu);
 	SDL_FreeSurface(texte);
 	SDL_FreeSurface(sortie_jeu);
@@ -657,6 +669,8 @@ int choixDuJeu(){
 	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
 	
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
+
+	TTF_SetFontStyle(police, TTF_STYLE_UNDERLINE);
 	texte = TTF_RenderText_Shaded(police, "Puzzle Games - Choix du Jeu", couleurEcriture, couleurFond);
 
 	position.x = (WIDTH - texte->w) / 2;
@@ -664,6 +678,9 @@ int choixDuJeu(){
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	TTF_SetFontStyle(police, TTF_STYLE_NORMAL);
+
+	SDL_FreeSurface(texte);
 	texte = TTF_RenderText_Shaded(police, "Rush Hour", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
@@ -673,6 +690,7 @@ int choixDuJeu(){
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	SDL_FreeSurface(texte);
 	texte = TTF_RenderText_Shaded(police, "Klotski / L'Ane Rouge", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
@@ -682,6 +700,7 @@ int choixDuJeu(){
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
+	SDL_FreeSurface(texte);
 	texte = TTF_RenderText_Shaded(police, "A propos ...", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
@@ -755,6 +774,7 @@ int choixDuJeu(){
 
 	deleteButton(button_Rh);
 	deleteButton(button_Ar);
+	deleteButton(button_Apropos);
 
 	return valeur_retour;
 }
@@ -783,10 +803,11 @@ int main(){
 			Game1 = loadGameFromNum("games_ar.txt", strIndGame);
 		
 		game g = getGameFromId(Game1);
-		init_sdl_game(g, &continuer);
+		init_sdl_game(g, &continuer, indGame);
 		delete_game(g);
 		indGame++;
 		free(Game1);
 	}
+	free(strIndGame);
 	return EXIT_SUCCESS;
 }
