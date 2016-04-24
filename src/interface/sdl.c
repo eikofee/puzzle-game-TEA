@@ -153,7 +153,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	texte = TTF_RenderText_Blended(police, "Voulez vous quitter le jeu ?", couleurFond);
 
 	int w_echap = texte->w + 100;
-	int h_echap = HEIGHT/4;
+	int h_echap = HEIGHT/3;
 
 	menu_echap = SDL_CreateRGBSurface(SDL_HWSURFACE, w_echap,  h_echap, 32, 0, 0, 0, 0);
 
@@ -244,6 +244,8 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	deleteButton(button_Oui);
 	deleteButton(button_Non);
 }
+
+
 
 // Meme principe que la fonction menu_echap. On affiche ce menu après avoir gagné une partie et si il y a un autre niveau à jouer.
 int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
@@ -565,6 +567,68 @@ void init_sdl_game(game g, int *continuer_principal){
 	SDL_Quit();
 }
 
+
+void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
+	//on crée une surface ecran_tmp pour conserver l'ancien écran, afin de le réafficher à la fin de la fonction.
+	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+	SDL_Surface *texte = NULL;
+	SDL_Surface *menu_apropos = NULL;
+
+	menu_apropos = IMG_Load("a_propos.png");
+
+	SDL_Event event;
+	SDL_Rect position;
+	position.x = 0;
+	position.y = 0;
+	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+
+	SDL_BlitSurface(menu_apropos, NULL, ecran, &position);
+	
+	texte = TTF_RenderText_Shaded(police, "Retour", couleurBasalt, couleurFond);
+	position.x = 210;
+	position.y = 240;
+
+	button button_Retour = createButton(position.x, position.y, texte->w, texte->h);
+
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	//On commence la boucle while, avec la variable ci dessous comme condition.
+	int continuer_Apropos = 1;
+
+	while(continuer_Apropos)
+	{
+		SDL_WaitEvent(&event);
+		switch(event.type)
+		{
+
+			case SDL_MOUSEBUTTONUP:
+				if (event.button.button == SDL_BUTTON_LEFT)
+				{
+					int xMouse = event.button.x;
+					int yMouse = event.button.y;
+					if(checkButton(xMouse, yMouse, button_Retour))
+						continuer_Apropos = 0;
+				}
+				break;
+			default:
+				break;
+
+		}
+		SDL_Flip(ecran);
+	}
+	position.x = 0;
+	position.y = 0;
+	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
+	SDL_Flip(ecran);
+	//On libère ce qui a été alloué dans la fonction.
+	SDL_FreeSurface(ecran_tmp);
+	SDL_FreeSurface(texte);
+	SDL_FreeSurface(menu_apropos);
+
+	deleteButton(button_Retour);
+
+}
+
 //Affiche le menu principal. Permet de choisir le jeu souhaité. Retourne -1 si l'utilisateur décide de quitter.
 int choixDuJeu(){
 	SDL_Surface *ecran = NULL;
@@ -603,7 +667,7 @@ int choixDuJeu(){
 	texte = TTF_RenderText_Shaded(police, "Rush Hour", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
-	position.y = HEIGHT / 3;
+	position.y = (HEIGHT / 2) - texte->h;
 
 	button button_Rh = createButton(position.x, position.y, texte->w, texte->h);
 
@@ -615,6 +679,15 @@ int choixDuJeu(){
 	position.y = position.y + ( 2 * texte->h );
 
 	button button_Ar = createButton(position.x, position.y, texte->w, texte->h);
+
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	texte = TTF_RenderText_Shaded(police, "A propos ...", couleurFond, couleurEcriture);
+
+	position.x = (WIDTH - texte->w) / 2;
+	position.y = position.y + (2 * texte->h );
+
+	button button_Apropos = createButton(position.x, position.y, texte->w, texte->h);
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
@@ -658,6 +731,11 @@ int choixDuJeu(){
 				{
 					initFileConfig("klotski");
 					continuer = 0;
+				}
+				if(checkButton(xMouse, yMouse, button_Apropos))
+				{
+					//SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police
+					Apropos(ecran, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 				}
 				break;
 			default:
