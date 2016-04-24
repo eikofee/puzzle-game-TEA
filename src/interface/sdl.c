@@ -52,27 +52,27 @@ void deleteButton(button Button){
 
 char* whatGameStr()
 {
-    FILE *file = NULL;
-    file = fopen("../config.ini", "r");
-    if(file == NULL)
-    	error("whatGameStr(), probleme d'ouverture du fichier config.ini");
-    
-    char* s = (char*)malloc(sizeof(char) * 256);
-    fgets(s, 256, file);
-    fclose(file);
+	FILE *file = NULL;
+	file = fopen("../config.ini", "r");
+	if(file == NULL)
+		error("whatGameStr(), probleme d'ouverture du fichier config.ini");
+	
+	char* s = (char*)malloc(sizeof(char) * 256);
+	fgets(s, 256, file);
+	fclose(file);
 
-    int i = 0;
-    while(s[i] != '\0')
-    {
-    	if(s[i] == '\n')
-    	{
-    		s[i] = '\0';
-    		return s;
-    	}
-    	i++;
-    }
+	int i = 0;
+	while(s[i] != '\0')
+	{
+		if(s[i] == '\n')
+		{
+			s[i] = '\0';
+			return s;
+		}
+		i++;
+	}
 
-    return s;  
+	return s;  
 }
 
 //Une boucle infini qui utilise WaitEvent. En gros, ca boucle, et ca attend qu'on clique sur la croix :-)
@@ -174,86 +174,86 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	SDL_FillRect(menu_echap, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
 	SDL_BlitSurface(menu_echap, NULL, ecran, &position);
 
-    position.x = (position.x + ((position.x + w_echap) - texte->w))/2;
-    position.y = (position.y + texte->h);
-    SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.x = (position.x + ((position.x + w_echap) - texte->w))/2;
+	position.y = (position.y + texte->h);
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
-    position.y = position.y - 3*texte->h + h_echap;
+	texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
+	position.y = position.y - 3*texte->h + h_echap;
 
 	button button_Oui = createButton(position.x, position.y, texte->w, texte->h);
 
-    SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
-    position.x += (w_echap - 100) - texte->w;
+	texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
+	position.x += (w_echap - 100) - texte->w;
 
 	button button_Non = createButton(position.x, position.y, texte->w, texte->h);
 
-    SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    int continuer_echap = 1;
+	int continuer_echap = 1;
 
-    while(continuer_echap)
-    {
-    	SDL_WaitEvent(&event);
-    	switch(event.type)
-    	{
-    		case SDL_QUIT:
-    			continuer_echap = 0;
-    			*continuer = 0;
-    			*continuer_principal = 0;
-    			break;
+	while(continuer_echap)
+	{
+		SDL_WaitEvent(&event);
+		switch(event.type)
+		{
+			case SDL_QUIT:
+				continuer_echap = 0;
+				*continuer = 0;
+				*continuer_principal = 0;
+				break;
 
 			case SDL_MOUSEBUTTONUP:
-		        if (event.button.button == SDL_BUTTON_LEFT)
-		        {
-		        	int xMouse = event.button.x;
-		        	int yMouse = event.button.y;
-		        	if(checkButton(xMouse, yMouse, button_Oui))
-		        	{
-		        		continuer_echap = 0;
-		        		*continuer = 0;
-		        		*continuer_principal = 0;
-		        	}
-		        	if(checkButton(xMouse, yMouse, button_Non))
-		        		continuer_echap = 0;
-		        }
-		        break;
+				if (event.button.button == SDL_BUTTON_LEFT)
+				{
+					int xMouse = event.button.x;
+					int yMouse = event.button.y;
+					if(checkButton(xMouse, yMouse, button_Oui))
+					{
+						continuer_echap = 0;
+						*continuer = 0;
+						*continuer_principal = 0;
+					}
+					if(checkButton(xMouse, yMouse, button_Non))
+						continuer_echap = 0;
+				}
+				break;
 
-    		case SDL_KEYDOWN:
-    			switch(event.key.keysym.sym)
-    			{
-    				case SDLK_ESCAPE:
-    					continuer_echap = 0;
-    					break;
-    				case SDLK_o:
-    					*continuer = 0;
-    					continuer_echap = 0;
-    					break;
-    				case SDLK_n:
-    					continuer_echap = 0;
-    				default:
-    					break;
-    			}
-    			break;
-    		default:
-    			break;
+			case SDL_KEYDOWN:
+				switch(event.key.keysym.sym)
+				{
+					case SDLK_ESCAPE:
+						continuer_echap = 0;
+						break;
+					case SDLK_o:
+						*continuer = 0;
+						continuer_echap = 0;
+						break;
+					case SDLK_n:
+						continuer_echap = 0;
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
 
-    	}
-    	SDL_Flip(ecran);
-    }
-    position.x = 0;
-    position.y = 0;
-    SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
-    SDL_Flip(ecran);
+		}
+		SDL_Flip(ecran);
+	}
+	position.x = 0;
+	position.y = 0;
+	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
+	SDL_Flip(ecran);
 
-    SDL_FreeSurface(ecran_tmp);
-    SDL_FreeSurface(texte);
-    SDL_FreeSurface(menu_echap);
+	SDL_FreeSurface(ecran_tmp);
+	SDL_FreeSurface(texte);
+	SDL_FreeSurface(menu_echap);
 
-    deleteButton(button_Oui);
-    deleteButton(button_Non);
+	deleteButton(button_Oui);
+	deleteButton(button_Non);
 }
 
 int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
@@ -279,76 +279,76 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 	SDL_FillRect(menu_continuer, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
 	SDL_BlitSurface(menu_continuer, NULL, ecran, &position);
 
-    position.x = (position.x + ((position.x + w_continuer) - texte->w))/2;
-    position.y = (position.y + texte->h);
-    SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.x = (position.x + ((position.x + w_continuer) - texte->w))/2;
+	position.y = (position.y + texte->h);
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
-    position.y = position.y - 3*texte->h + h_continuer;
+	texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
+	position.y = position.y - 3*texte->h + h_continuer;
 
 	button button_Oui = createButton(position.x, position.y, texte->w, texte->h);
 
-    SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
-    position.x += (w_continuer - 100) - texte->w;
+	texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
+	position.x += (w_continuer - 100) - texte->w;
 
-    button button_Non = createButton(position.x, position.y, texte->w, texte->h);
+	button button_Non = createButton(position.x, position.y, texte->w, texte->h);
 
-    SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    int continuer_check = 1;
-    int valeur_retour;
+	int continuer_check = 1;
+	int valeur_retour;
 
-    while(continuer_check)
-    {
-    	SDL_WaitEvent(&event);
-    	switch(event.type)
-    	{
-    		case SDL_QUIT:
-    			continuer_check = 0;
-    			*continuer = 0;
-    			valeur_retour = 0;
-    			break;
+	while(continuer_check)
+	{
+		SDL_WaitEvent(&event);
+		switch(event.type)
+		{
+			case SDL_QUIT:
+				continuer_check = 0;
+				*continuer = 0;
+				valeur_retour = 0;
+				break;
 
 			case SDL_MOUSEBUTTONUP:
-		        if (event.button.button == SDL_BUTTON_LEFT)
-		        {
-		        	int xMouse = event.button.x;
-		        	int yMouse = event.button.y;
-		        	if(checkButton(xMouse, yMouse, button_Oui))
-		        	{
-		        		continuer_check = 0;
-		        		valeur_retour = 1;
-		        	}
-		        	if(checkButton(xMouse, yMouse, button_Non))
-		        	{
-		        		continuer_check = 0;
-		        		*continuer = 0;
-		        		valeur_retour = 0;
-		        	}
-		        }
-		        break;
+				if (event.button.button == SDL_BUTTON_LEFT)
+				{
+					int xMouse = event.button.x;
+					int yMouse = event.button.y;
+					if(checkButton(xMouse, yMouse, button_Oui))
+					{
+						continuer_check = 0;
+						valeur_retour = 1;
+					}
+					if(checkButton(xMouse, yMouse, button_Non))
+					{
+						continuer_check = 0;
+						*continuer = 0;
+						valeur_retour = 0;
+					}
+				}
+				break;
 
-    		default:
-    			break;
+			default:
+				break;
 
-    	}
-    	SDL_Flip(ecran);
-    }
-    position.x = 0;
-    position.y = 0;
-    SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
-    SDL_Flip(ecran);
+		}
+		SDL_Flip(ecran);
+	}
+	position.x = 0;
+	position.y = 0;
+	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
+	SDL_Flip(ecran);
 
-    SDL_FreeSurface(ecran_tmp);
-    SDL_FreeSurface(texte);
-    SDL_FreeSurface(menu_continuer);
+	SDL_FreeSurface(ecran_tmp);
+	SDL_FreeSurface(texte);
+	SDL_FreeSurface(menu_continuer);
 
-    deleteButton(button_Oui);
-    deleteButton(button_Non);
+	deleteButton(button_Oui);
+	deleteButton(button_Non);
 
-    return valeur_retour;
+	return valeur_retour;
 
 }
 
@@ -432,9 +432,9 @@ void init_sdl_game(game g, int *continuer_principal){
 	// **************On donne des valeurs a nos variables ********************
 	// fond = IMG_Load("voiture1.jpg");
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
-    texte = TTF_RenderText_Shaded(police, "Puzzle Games", couleurEcriture, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "Puzzle Games", couleurEcriture, couleurFond);
 
-    if(whatGame("rush-hour\n"))
+	if(whatGame("rush-hour\n"))
 	{
 		sortie_jeu = SDL_CreateRGBSurface(SDL_HWSURFACE, TAILLE_CASE/6, TAILLE_CASE - 1, 32, 0, 0, 0, 0);
 		position_fin.x = TAILLE_CASE * NL + 1;
@@ -469,26 +469,26 @@ void init_sdl_game(game g, int *continuer_principal){
 	// ****************************************  AFFICHAGE TEXTE  ***********************************************************
 	//Nom du jeu global ( Puzzle Games )
 	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
-    position.y = 6/HEIGHT;
-    SDL_BlitSurface(texte, NULL, ecran, &position);
-    // SDL_FreeSurface(texte);
+	position.y = 6/HEIGHT;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+	// SDL_FreeSurface(texte);
 
-    // On affiche le jeu précisement
-    char* nomDuJeu = whatGameStr();
-    texte = TTF_RenderText_Blended(police, nomDuJeu, couleurEcriture);
+	// On affiche le jeu précisement
+	char* nomDuJeu = whatGameStr();
+	texte = TTF_RenderText_Blended(police, nomDuJeu, couleurEcriture);
 
-    position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
-    position.y = 6/HEIGHT + 20;
-    SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+	position.y = 6/HEIGHT + 20;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    texte = TTF_RenderText_Shaded(police, "Nombre de Deplacement:", couleurEcriture, couleurFond);
-    position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
-    position.y = position.y + 40;
-    SDL_BlitSurface(texte, NULL, ecran, &position);
+	texte = TTF_RenderText_Shaded(police, "Nombre de Deplacement:", couleurEcriture, couleurFond);
+	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+	position.y = position.y + 40;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 
-    int yNbMove = position.y;
+	int yNbMove = position.y;
 
-    // ********************************************************* GESTION EVENT ************************************************************************
+	// ********************************************************* GESTION EVENT ************************************************************************
 	int continuer = 1;
 	int indice_piece = -1;
 	char NbMove[4];
@@ -502,24 +502,24 @@ void init_sdl_game(game g, int *continuer_principal){
 		
 		//un ptit lien listant les constantes de la SDL en rapport aux events https://user.oc-static.com/ftp/mateo21/sdlkeysym.html
 		SDL_WaitEvent(&event); /* Récupération de l'événement dans event */
-	    switch(event.type) /* Test du type d'événement */
-	    {
-	        case SDL_QUIT: /* Si c'est un événement de type "Quitter" */
-	            continuer = 0;
-	            *continuer_principal = 0;
-	            break;
+		switch(event.type) /* Test du type d'événement */
+		{
+			case SDL_QUIT: /* Si c'est un événement de type "Quitter" */
+				continuer = 0;
+				*continuer_principal = 0;
+				break;
 
-	         case SDL_MOUSEBUTTONUP:
-		        if (event.button.button == SDL_BUTTON_LEFT)
-		            indice_piece = clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
-		        break;
-	        
-	        case SDL_KEYDOWN:
-	        	switch(event.key.keysym.sym)
-		        {
-		        	case SDLK_ESCAPE:
-		        		menu_echap(ecran, continuer_principal, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
-					    break;
+			case SDL_MOUSEBUTTONUP:
+				if (event.button.button == SDL_BUTTON_LEFT)
+					indice_piece = clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
+				break;
+
+			case SDL_KEYDOWN:
+				switch(event.key.keysym.sym)
+				{
+					case SDLK_ESCAPE:
+						menu_echap(ecran, continuer_principal, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+						break;
 					case SDLK_UP:
 						if(indice_piece != -1)
 						{
@@ -555,25 +555,25 @@ void init_sdl_game(game g, int *continuer_principal){
 
 					default:
 						break;
-	        	}
+				}
 
-	        	break;
-	        default:
-	        	break;
-	    }
+				break;
+			default:
+				break;
+		}
 
 		texte = TTF_RenderText_Shaded(police, "xxxxxx", couleurFond, couleurFond);
 		position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
 		position.y = yNbMove + texte->h;
 		SDL_BlitSurface(texte, NULL, ecran, &position);
 
-	    sprintf(NbMove, "%d", game_nb_moves(g));
+		sprintf(NbMove, "%d", game_nb_moves(g));
 		texte = TTF_RenderText_Shaded(police, NbMove, couleurEcriture, couleurFond);
 		position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
 		position.y = yNbMove + texte->h;
 		SDL_BlitSurface(texte, NULL, ecran, &position);
 
-	    SDL_Flip(ecran);
+		SDL_Flip(ecran);
 	}
 	if(game_over(g))
 		menu_continuer(ecran, continuer_principal, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
@@ -736,10 +736,9 @@ int main(){
 		sprintf(strIndGame, "%d\n", indGame);
 		if(whatGame("rush-hour\n"))
 			Game1 = loadGameFromNum("games_rh.txt", strIndGame);
-			// Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
+
 		else if(whatGame("klotski\n"))
 			Game1 = loadGameFromNum("games_ar.txt", strIndGame);
-			// Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 		
 		game g = getGameFromId(Game1);
 		init_sdl_game(g, &continuer);
@@ -748,6 +747,5 @@ int main(){
 		free(Game1);
 	}
 	
-
 	return EXIT_SUCCESS;
 }
