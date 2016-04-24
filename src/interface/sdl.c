@@ -224,6 +224,104 @@ void menu_echap(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_C
     SDL_FreeSurface(menu_echap);
 }
 
+int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
+	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+	SDL_Surface *texte = NULL;
+	SDL_Surface *menu_continuer = NULL;
+
+	SDL_Event event;
+	SDL_Rect position;
+	position.x = 0;
+	position.y = 0;
+	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+
+	texte = TTF_RenderText_Blended(police, "Voulez vous continuer ?", couleurFond);
+
+	int w_continuer = texte->w + 100;
+	int h_continuer = HEIGHT/4;
+
+	menu_continuer = SDL_CreateRGBSurface(SDL_HWSURFACE, w_continuer,  h_continuer, 32, 0, 0, 0, 0);
+
+	position.x = (WIDTH - (w_continuer))/2;
+	position.y = (HEIGHT - (h_continuer))/2;
+	SDL_FillRect(menu_continuer, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
+	SDL_BlitSurface(menu_continuer, NULL, ecran, &position);
+
+    position.x = (position.x + ((position.x + w_continuer) - texte->w))/2;
+    position.y = (position.y + texte->h);
+    SDL_BlitSurface(texte, NULL, ecran, &position);
+
+    texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
+    position.y = position.y - 3*texte->h + h_continuer;
+
+	int xOui = position.x;
+	int yOui = position.y;
+	int wOui = texte->w;
+	int hOui = texte->h;
+
+    SDL_BlitSurface(texte, NULL, ecran, &position);
+
+    texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
+    position.x += (w_continuer - 100) - texte->w;
+
+    int xNon = position.x;
+    int yNon = position.y;
+    int wNon = texte->w;
+    int hNon = texte->h;
+
+    SDL_BlitSurface(texte, NULL, ecran, &position);
+
+    int continuer_check = 1;
+    int valeur_retour;
+
+    while(continuer_check)
+    {
+    	SDL_WaitEvent(&event);
+    	switch(event.type)
+    	{
+    		case SDL_QUIT:
+    			continuer_check = 0;
+    			*continuer = 0;
+    			valeur_retour = 0;
+    			break;
+
+			case SDL_MOUSEBUTTONUP:
+		        if (event.button.button == SDL_BUTTON_LEFT)
+		        {
+		        	int xMouse = event.button.x;
+		        	int yMouse = event.button.y;
+		        	if(xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui))
+		        	{
+		        		continuer_check = 0;
+		        		valeur_retour = 1;
+		        	}
+		        	if(xMouse >= xNon && xMouse < (xNon + wNon) && yMouse >= yNon && yMouse < (yNon + hNon))
+		        	{
+		        		continuer_check = 0;
+		        		*continuer = 0;
+		        		valeur_retour = 0;
+		        	}
+		        }
+		        break;
+
+    		default:
+    			break;
+
+    	}
+    	SDL_Flip(ecran);
+    }
+    position.x = 0;
+    position.y = 0;
+    SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
+    SDL_Flip(ecran);
+
+    SDL_FreeSurface(ecran_tmp);
+    SDL_FreeSurface(texte);
+    SDL_FreeSurface(menu_continuer);
+    return valeur_retour;
+
+}
+
 bool game_over(game g){
 	if(whatGame("rush-hour\n"))
 		return game_over_hr(g);
@@ -255,7 +353,7 @@ void son_fin(){
 }
 
 // Permet d'afficher la fenetre principal, ainsi que le jeu.
-void init_sdl_game(game g){
+void init_sdl_game(game g, int *continuer_principal){
 	
 	//************************************************** INIT VARIABLE ***********************************************************************
 	int NL = game_width(g);//Nombre de case de largeur
@@ -359,7 +457,7 @@ void init_sdl_game(game g){
     position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
     position.y = position.y + 40;
     SDL_BlitSurface(texte, NULL, ecran, &position);
-    
+
     int yNbMove = position.y;
 
     // ********************************************************* GESTION EVENT ************************************************************************
@@ -380,6 +478,7 @@ void init_sdl_game(game g){
 	    {
 	        case SDL_QUIT: /* Si c'est un événement de type "Quitter" */
 	            continuer = 0;
+	            *continuer_principal = 0;
 	            break;
 
 	         case SDL_MOUSEBUTTONUP:
@@ -448,6 +547,8 @@ void init_sdl_game(game g){
 
 	    SDL_Flip(ecran);
 	}
+	if(game_over(g))
+		menu_continuer(ecran, continuer_principal, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 
 	// if(game_over(g))
 	// 	son_fin();
@@ -482,8 +583,8 @@ int choixDuJeu(){
 
 	TTF_Font *police = NULL;
 
-	int WIDTH = 680;
-	int HEIGHT = 420;
+	int WIDTH = 480;
+	int HEIGHT = 300;
 
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -588,9 +689,9 @@ int choixDuJeu(){
 	SDL_Quit();
 
 	return valeur_retour;
-
-
 }
+
+
 
 int main(){
 
@@ -598,18 +699,29 @@ int main(){
 	if(retour == -1)
 		return EXIT_SUCCESS;
 
-	char *Game1;
-
-	if(whatGame("rush-hour\n"))
-		Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
-	else if(whatGame("klotski\n"))
-		Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
 	
-	game g = getGameFromId(Game1);
-	init_sdl_game(g);
-	delete_game(g);
+	int indGame = 1;
+	char *strIndGame = (char*)malloc(5 * sizeof(char));
+
+	int continuer = 1;
+	while(continuer && indGame < 4)
+	{
+		char *Game1 = (char*)malloc(512 * sizeof(char));
+		sprintf(strIndGame, "%d\n", indGame);
+		if(whatGame("rush-hour\n"))
+			Game1 = loadGameFromNum("games_rh.txt", strIndGame);
+			// Game1 = "4n6x6p2w2h1x0y3p2w3h1x0y0p1w1h3x2y2p1w1h2x5y2";
+		else if(whatGame("klotski\n"))
+			Game1 = loadGameFromNum("games_ar.txt", strIndGame);
+			// Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
+		
+		game g = getGameFromId(Game1);
+		init_sdl_game(g, &continuer);
+		delete_game(g);
+		indGame++;
+		free(Game1);
+	}
 	
 
 	return EXIT_SUCCESS;
-
 }
