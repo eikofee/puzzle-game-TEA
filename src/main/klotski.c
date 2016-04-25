@@ -5,7 +5,6 @@
 #include <utility.h>
 #include <interface_txt.h>
 #include <string.h>
-#include <sdl.h>
 
 // Cette fonction sert a charger une partie et d'y jouer.
 void loadTheGame(char* id_src, bool sdl)
