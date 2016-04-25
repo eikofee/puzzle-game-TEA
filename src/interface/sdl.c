@@ -361,21 +361,21 @@ bool game_over(game g){
 }
 
 //Permet de lancer un son de quelques secondes.
-void son_fin(){
-	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) //Initialisation de l'API Mixer
-	{	
-		printf("%s", Mix_GetError());
-	}	
-	Mix_Music *musique; //Création du pointeur de type Mix_Music
-	musique = Mix_LoadMUS("Victoire.ogg"); //Chargement de la musique
+void son(Mix_Music* musique){
+	
+	// Mix_Music *musique; //Création du pointeur de type Mix_Music
+	// musique = Mix_LoadMUS(nom); //Chargement de la musique
 	Mix_PlayMusic(musique, 0); //Jouer infiniment la musique
 
 	//Pause de quelques secondes, juste pour que le son soit joué
-	clock_t arrivee=clock()+(2.5*CLOCKS_PER_SEC); // On calcule le moment où l'attente devra s'arrêter
-	while(clock() < arrivee);
+	// clock_t arrivee=clock()+(temps * CLOCKS_PER_SEC); // On calcule le moment où l'attente devra s'arrêter
+	// while(clock() < arrivee);
 
-	Mix_FreeMusic(musique); //Libération de la musique
-	Mix_CloseAudio(); //Fermeture de l'API
+}
+
+void deleteSon(Mix_Music *musique){
+	if(musique != NULL)
+		Mix_FreeMusic(musique);
 }
 
 // Permet d'afficher la fenetre principal, ainsi que le jeu.
@@ -417,6 +417,11 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 	SDL_Color couleurBasalt = {77, 83, 84};	// Basalt
 
 	TTF_Init(); // Initialisation de TTF
+
+	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) //Initialisation de l'API Mixer
+	{	
+		printf("%s", Mix_GetError());
+	}	
 
 	//Pour faire un plein ecran il faut mettre SDL_FULLSCREEN
 	ecran = SDL_SetVideoMode(WIDTH - 1, HEIGHT - 1, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); // On définit Ecran
@@ -477,12 +482,16 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 
 	int yNbMove = position.y; //Permet de conserver l'ordonnée du texte précedent afin d'afficher le nombre de mouvement.
 
+	Mix_Music *music_move = Mix_LoadMUS("move.mp3"); //Chargement de la musique;
+	Mix_Music *music_wrongMove = Mix_LoadMUS("wrongMove.mp3"); //Chargement de la musique;
+
 	int continuer = 1;//Condition principale de la boucle while.
 	int indice_piece = -1;//On initialise cette variable à -1 afin qu'aucun move puisse être fait avant de cliquer sur une pièce.
 	char NbMove[4];//Chaine de caractère affichant le nombre de mouvement.
 
 	while(continuer && !game_over(g))
 	{
+		
 		SDL_WaitEvent(&event); /* Récupération de l'événement dans event */
 		switch(event.type) /* Test du type d'événement */
 		{
@@ -506,7 +515,10 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 					case SDLK_UP: //Touche fleche haut 
 						if(indice_piece != -1)
 						{
-							play_move(g, indice_piece, UP, 1);
+							if(play_move(g, indice_piece, UP, 1))
+								son(music_move);
+							else
+								son(music_wrongMove);
 							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 						}
 						break;
@@ -514,7 +526,10 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 					case SDLK_DOWN: //Touche fleche bas
 						if(indice_piece != -1)
 						{
-							play_move(g, indice_piece, DOWN, 1);
+							if(play_move(g, indice_piece, DOWN, 1))
+								son(music_move);
+							else
+								son(music_wrongMove);
 							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 						}
 						break;
@@ -522,7 +537,10 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 					case SDLK_LEFT://Touche fleche gauche
 						if(indice_piece != -1)
 						{
-							play_move(g, indice_piece, LEFT, 1);
+							if(play_move(g, indice_piece, LEFT, 1))
+								son(music_move);
+							else
+								son(music_wrongMove);
 							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 						}
 						break;
@@ -530,7 +548,10 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 					case SDLK_RIGHT://Touche fleche droite
 						if(indice_piece != -1)
 						{
-							play_move(g, indice_piece, RIGHT, 1);
+							if(play_move(g, indice_piece, RIGHT, 1))
+								son(music_move);
+							else
+								son(music_wrongMove);
 							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
 						}
 						break;
@@ -559,11 +580,27 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 		SDL_BlitSurface(texte, NULL, ecran, &position);
 
 		SDL_Flip(ecran);
+		
 	}
-	//On regarde comment on est sorti de la boucle while.
-	if(game_over(g) && indGame < 3)
-		menu_continuer(ecran, continuer_principal, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
 
+	//On regarde comment on est sorti de la boucle while.
+	if(game_over(g))
+	{
+		Mix_Music *music = Mix_LoadMUS("win.mp3");
+		son(music);
+		clock_t arrivee=clock()+(0.4 * CLOCKS_PER_SEC); // On calcule le moment où l'attente devra s'arrêter
+		while(clock() < arrivee);
+		deleteSon(music);
+
+		if(indGame < 3)
+		{
+			menu_continuer(ecran, continuer_principal, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+		}
+	}
+
+	deleteSon(music_move);
+	deleteSon(music_wrongMove);
+	Mix_CloseAudio(); //Fermeture de l'API
 	//On libère les allocations.
 	TTF_CloseFont(police);
 	TTF_Quit();
