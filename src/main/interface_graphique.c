@@ -1,9 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <game.h>
-#include <game_ar.h>
-#include <game_rh.h>
-#include <interface_txt.h>
 #include <interface_sdl.h>
 
 

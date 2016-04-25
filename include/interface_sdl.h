@@ -4,25 +4,19 @@
 #include <game.h>
 #include <game_rh.h>
 #include <game_ar.h>
+#include <interface_txt.h>
 
-bool game_over(game g);
-// #include <interface_txt.h>
 /**
- * Fonction qui effectue le mouvement en passant par une copie (p_copy)
- * @param p La pièce qui va subir le déplacement.
- * @param d La direction dans laquelle on veut déplacer la pièce p.
- * @param distance La distance sur laquelle on veut effectuer le déplacement.
+ * Permet l'affichage de la fenetre de selection de jeux sous sdl.
+ * @return un entier pour savoir comment s'est executé la fonction. retourn -1 si l'utilisateur décide de quitter.
  */
 int choixDuJeu();
 
 /**
- * Crée un tableau 2D correspondant au plateau du jeu. Les cases occupées par les pièces sont remplies
- * par l'indice de la pièce qui occupe la case. -1 sinon.
- * @param array_p Un tableau de pièce.
- * @param size La taille du tableau de pièce.
- * @param size_x La largeur du plateau ( en fonction du jeu )
- * @param size_y La hauteur du plateau
- * @return Un tableau 2D d'entiers.
+ * Affiche l'interface du jeu avec la grille du jeu, et le nombre de mouvement.
+ * @param g Le jeu qui doit être affiché
+ * @param *continuer un pointeur sur un entier, continuer représente la condition d'arret de la boucle qui agit sur la fonction.
+ * @param indGame Un entier qui permet de savoir quel niveau lire dans les fichiers .txt contenant les IDs.
  */
 void init_sdl_game(game g, int *continuer, int indGame);
 

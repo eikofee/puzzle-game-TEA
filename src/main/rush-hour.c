@@ -21,13 +21,9 @@ void loadTheGame(char* id_src, bool sdl)
 
 	//On recupère l'id de la game, et on affiche une première fois l'interface
 	
-	if (sdl)
-		init_sdl_game(g);
-	else
-	{
-		getIdFromGame(g, id);
-		drawInterface(g, id);
-	}
+	getIdFromGame(g, id);
+	drawInterface(g, id);
+	
 	while (!game_over_hr(g) && !sdl)
 	{
 		printf("Enter the car's number you want to move :\n");

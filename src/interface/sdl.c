@@ -8,12 +8,10 @@
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_mixer.h>
 
-// #include <game_ar.h>
-// #include <game_rh.h>
-#include <interface_sdl.h>
 
+#include <interface_sdl.h>
 #include <utility.h>
-#include <interface_txt.h>
+
 
 
 //Cette structure permet la création de bouton. Nous définissons un bouton comme un rectangle, par son coin supérieur gauche, sa largeur/hauteur.
