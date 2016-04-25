@@ -1,13 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-// #include <sdl.h>
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_mixer.h>
 
-// #include <game.h>
 #include <game_ar.h>
 #include <game_rh.h>
 #include <utility.h>
@@ -603,6 +602,7 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 	button button_Retour = createButton(position.x, position.y, texte->w, texte->h);
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_Flip(ecran);
 
 	//On commence la boucle while, avec la variable ci dessous comme condition.
 	int continuer_Apropos = 1;
