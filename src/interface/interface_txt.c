@@ -21,9 +21,9 @@ void drawInterface(game g, char* id)
 		printf("##");			//Affiche le bord supérieur
 
 	if (whatGame("rush-hour\n"))
-		printf("##\x1b[0m Rush Hour VERSION 2\n");		//Extensible pour d'autres jeux
+		printf("##\x1b[0m Rush Hour v. Finale\n");		//Extensible pour d'autres jeux
 	if (whatGame("klotski\n"))
-		printf("##\x1b[0m Red Klotski VERSION 2\n");
+		printf("##\x1b[0m Klotski v. Finale\n");
 
 	for (int i = game_height(g) - 1; i > -1; i--)
 	{
@@ -101,7 +101,7 @@ void getHelp(int input, bool* done)
 		case 3:
 			printf("\tList of available commands:\n\n");
 			printf("\thelp: Display this menu\n");
-			printf("\t[WIP] hint: Get closer to the end by cheating\n");
+			printf("\thint: Get closer to the end by cheating\n");
 			printf("\t[WIP] skip: Skip the current game for another\n");
 			printf("\tid: Display the current game's ID\n");
 			printf("\t[WIP] save: Save the current level for later\n");

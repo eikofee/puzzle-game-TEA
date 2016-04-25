@@ -47,7 +47,8 @@ void setColorPiece(int c, int id, bool fill)
 		default:
 			printf("\x1b[97m");
 	}
-	char s[3];
+	//char s[3];
+	char s[] = "XX";
 	int p = 0;
 	getCharFromInt(s, &p, id, true);
 	printf("%s\x1b[0m", (fill?s:"  "));
