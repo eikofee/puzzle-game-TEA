@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -79,7 +78,7 @@ void deleteButton(button Button){
 char* whatGameStr()
 {
 	FILE *file = NULL;
-	file = fopen("../config.ini", "r");
+	file = fopen("config.ini", "r");
 	if(file == NULL)
 		error("whatGameStr(), probleme d'ouverture du fichier config.ini");
 	
@@ -310,7 +309,7 @@ SDL_Surface* menu_Help(SDL_Surface *ecran, int WIDTH, int HEIGHT, TTF_Font *poli
 	SDL_Surface *texte = NULL;
 	SDL_Rect position;
 	int wMenu = 4*WIDTH / 5;
-	int hMenu = 3*HEIGHT / 4;
+	int hMenu = 5*HEIGHT / 8;
 
 	position.x = 0;
 	position.y = 0;
@@ -358,18 +357,8 @@ SDL_Surface* menu_Help(SDL_Surface *ecran, int WIDTH, int HEIGHT, TTF_Font *poli
 
 	SDL_Flip(ecran);
 	return ecran_tmp;
-
-
-// 	Rules are simple. You're the red piece and you need to go
-// to the exit (the red line at the board's edge). To do that, you need to move the other
-// pieces to free yourself a passage. Pieces can't cross
-// others or go outside the game area.
-
-// To move them, click on the desired piece, and press the directional keys.
-// Good luck. gh hf
-
-
 }
+
 // Meme principe que la fonction menu_echap. On affiche ce menu après avoir gagné une partie et si il y a un autre niveau à jouer.
 int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
 	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
