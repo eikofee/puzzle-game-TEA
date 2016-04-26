@@ -78,15 +78,21 @@ char* whatGameStr()
 	}
 	return s;  
 }
-
+int min(int a, int b)
+{
+	if (a > b)
+		return b;
+	return a;
+}
 //Affiche a l'ecran un jeu "game g"
-void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL, int NH, int TAILLE_CASE){
+void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL, int NH, int TAILLE_CASE, int selectedPiece){
 	SDL_Rect position;
 	//Ce tableau contient les couleurs que peuvent avoir une pièce. (r,g,b)
 	int nb_couleurs = 9;
 	int tab_couleurs[9][3] = {{231, 76, 60}, {255, 51, 153}, {155, 89, 182}, {52, 152, 219}, {46, 204, 113}, {52, 73, 94}, {241, 196, 15}, {230, 126, 34}, {255, 51, 153}};
-
-	//On parcours chaque rectangle, et pour chaque rectangle, on regarde son equivalent dans le jeu. Si le jeu renvoi -1 alors y'a rien, donc gris.
+	int decalZero = (!selectedPiece?0:1);
+	int tab_c_selected[3] = {min(tab_couleurs[selectedPiece % 9 + decalZero][0]*1.2, 255), min(tab_couleurs[selectedPiece % 9 + decalZero][1] *1.2, 255), min(tab_couleurs[selectedPiece % 9 + decalZero][2] *1.2, 255)};
+	//On parcours chaque rectangle, et pour chaque re)ctangle, on regarde son equivalent dans le jeu. Si le jeu renvoi -1 alors y'a rien, donc gris.
 	//Sinon, le jeu va renvoyer l'indice associé au rectangle, et ainsi on va lui donner une couleur via le tableau.
 	//La couleur d'indice 0 est réservée exclusivement pour la voiture principale du même indice, elle est la seule rouge.
 	int i = 0;
@@ -101,9 +107,18 @@ void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL
 			if(indice_piece != -1)
 			{
 				if(indice_piece == 0)
-					SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_couleurs[0][0], tab_couleurs[0][1], tab_couleurs[0][2]));
-				else
-					SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_couleurs[indice_piece%(nb_couleurs-1) + 1][0], tab_couleurs[indice_piece%(nb_couleurs-1) + 1][1], tab_couleurs[indice_piece%(nb_couleurs-1) + 1][2]));
+				{
+					if (indice_piece != selectedPiece)
+						SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_couleurs[0][0], tab_couleurs[0][1], tab_couleurs[0][2]));
+					else
+						SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_c_selected[0], tab_c_selected[1], tab_c_selected[2]));
+				}
+				else{
+					if (indice_piece != selectedPiece)
+						SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_couleurs[indice_piece%(nb_couleurs-1) + 1][0], tab_couleurs[indice_piece%(nb_couleurs-1) + 1][1], tab_couleurs[indice_piece%(nb_couleurs-1) + 1][2]));
+					else
+						SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_c_selected[0], tab_c_selected[1], tab_c_selected[2]));
+				}
 			}
 			else
 				SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, 210, 210, 210));
@@ -454,7 +469,7 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 			grille[y][x] = SDL_CreateRGBSurface(SDL_HWSURFACE, TAILLE_CASE - 1, TAILLE_CASE - 1, 32, 0, 0, 0, 0);
 
 	//on affiche la grille du jeu avec les pieces.
-	afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+	afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, -1);
 
 	//On affiche le rectangle de la victoire
 	SDL_FillRect(sortie_jeu, NULL, SDL_MapRGB(ecran->format, 250, 20, 20));
@@ -502,7 +517,10 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 
 			case SDL_MOUSEBUTTONUP: /* Si c'est un evenement de type Clic Souris */
 				if (event.button.button == SDL_BUTTON_LEFT)//clic gauche de la souris
+				{
 					indice_piece = clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
+					afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
+				}
 				break;
 
 			case SDL_KEYDOWN: /* Evenement de type touche enfoncée */
@@ -519,7 +537,7 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 								son(music_move);
 							else
 								son(music_wrongMove);
-							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
 						}
 						break;
 
@@ -530,7 +548,7 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 								son(music_move);
 							else
 								son(music_wrongMove);
-							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
 						}
 						break;
 
@@ -541,7 +559,7 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 								son(music_move);
 							else
 								son(music_wrongMove);
-							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
 						}
 						break;
 					
@@ -552,7 +570,7 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 								son(music_move);
 							else
 								son(music_wrongMove);
-							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE);
+							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
 						}
 						break;
 
