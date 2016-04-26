@@ -591,3 +591,18 @@ game getGameFromConfigFile(char* fileName)
 	fclose(f);
 	return g;
 }
+
+//Retourne l'id à la ligne indGame du fichier file.txt
+char* loadGameFromFile(char* file, int indGame)
+{
+	char* idGame = (char*) malloc(sizeof(char) * 512);
+	char *strIndGame = (char*)malloc(5 * sizeof(char));
+
+	sprintf(strIndGame, "%d\n", indGame);
+
+	idGame = loadGameFromNum(file, strIndGame);
+
+	free(strIndGame);
+
+	return idGame;
+}

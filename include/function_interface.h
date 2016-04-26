@@ -186,4 +186,12 @@ bool whatGame(char* name);
 void removeSpaces(char* input);
 
 game getGameFromConfigFile(char* fileName);
+
+/**
+ * Retourne l'id à la ligne ind du fichier file
+ * @param file le nom du fichier
+ * @param ind la ligne du fichier a lire
+ * @return un char* correspondant a un id
+ */
+char* loadGameFromFile(char* file, int ind); 
 #endif

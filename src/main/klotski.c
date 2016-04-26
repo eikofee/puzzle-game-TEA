@@ -7,7 +7,7 @@
 #include <string.h>
 
 // Cette fonction sert a charger une partie et d'y jouer.
-void loadTheGame(char* id_src, bool sdl)
+void loadTheGame(char* id_src)
 {
 	//On crée le game g à partir d'un id source
 	printf("\nLoading Game ...\n");
@@ -22,7 +22,7 @@ void loadTheGame(char* id_src, bool sdl)
 	getIdFromGame(g, id);
 	drawInterface(g, id);
 
-	while (!game_over_ar(g) && !sdl)
+	while (!game_over_ar(g))
 	{
 		printf("Enter the car's number you want to move :\n");
 		inputPlayer(g, id);
@@ -39,25 +39,18 @@ void loadTheGame(char* id_src, bool sdl)
 
 int main(int argc, char* argv[])
 {
-	bool sdl = false;
-
 	//On ecrit le nom de l'exucutable dans le fichier config.ini puis on lance le jeu
 	initFileConfig("klotski");
-	if (argc > 1)
-		for (int i = 1; i < argc; i++)
-		{
-			if (!strcmp(argv[i], "-g"))
-				sdl = true;
-		}
+		//Permet de savoir quelle ligne lire.
+	int indGame = 1;
 
-	char* Game1 = "10n4x5p3w2h2x2y0p3w1h2x1y0p3w1h2x0y0p3w2h1x0y2p3w2h1x2y2p3w1h2x0y3p3w1h1x1y3p3w1h1x1y4p3w1h1x2y3p3w1h1x2y4";
-	char* Game2 = "10n4x5p3w2h2x2y0p3w1h1x1y0p3w1h1x0y0p3w1h1x0y1p3w1h1x1y1p3w2h1x0y2p3w2h1x2y2p3w2h1x0y3p3w2h1x0y4p3w2h1x2y4";
-	char* Game3 = "15n4x5p3w2h2x2y1p3w1h1x0y0p3w1h1x1y0p3w1h1x2y0p3w1h1x3y0p3w1h1x0y1p3w1h1x1y1p3w1h1x0y2p3w1h1x1y2p3w1h1x0y3p3w1h1x0y4p3w1h1x2y3p3w1h1x3y3p3w1h1x2y4p3w1h1x3y4";
-	char* Game4 = "10n4x5p3w2h2x1y3p3w1h2x0y3p3w1h2x3y3p3w1h2x0y1p3w2h1x1y2p3w1h2x3y1p3w1h1x1y1p3w1h1x2y1p3w1h1x0y0p3w1h1x3y0";
-	loadTheGame(Game1, sdl);
-	loadTheGame(Game2, sdl);
-	loadTheGame(Game3, sdl);
-	loadTheGame(Game4, sdl);
+	while(indGame < 4)//Nombre de niveau + 1 dans le fichier .txt contenant les niveaux
+	{
+		char* idGame = loadGameFromFile("games_ar.txt", indGame);
+		loadTheGame(idGame);
+		indGame++;
+		free(idGame);
+	}
 
 	return 0;
 }
