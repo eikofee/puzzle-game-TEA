@@ -28,14 +28,10 @@ button createButton(int x, int y, int width, int height){
 	button newButton = (button)malloc(sizeof(struct button_s));
 	if(newButton == NULL)
 		error("createButton(), probleme d'allocation du bouton");
-	int new_x = x;
-	int new_y = y;
-	int new_w = width;
-	int new_h = height;
-	newButton->x = new_x;
-	newButton->y = new_y;
-	newButton->width = new_w;
-	newButton->height = new_h;
+	newButton->x = x;
+	newButton->y = y;
+	newButton->width = width;
+	newButton->height = height;
 	return newButton;
 }
 
@@ -48,11 +44,28 @@ bool checkButton(int xMouse, int yMouse, button Button){
 }
 
 //Vérifie si les coordonnées (xMouse;yMouse) sont bien dans la surface du boutton "Button"
-bool hoverButton(int xMouse, int yMouse, button Button){
-	//if(Button == NULL)
-	//	error("checkButton(), le bouton n'est pas alloué ou n'existe pas ...");
-	//xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui)
-	return ( (xMouse >= (Button->x)) && (xMouse < ((Button->x) + (Button->width))) && (yMouse >= (Button->y)) && (yMouse < ((Button->y) + (Button->height))));
+void hoverButton(SDL_Surface *ecran, char* str, button Button, SDL_Color couleurFond, TTF_Font *police){
+	SDL_Color newColor = {192, 57, 43};
+	SDL_Rect position;
+	position.x = Button->x;
+	position.y = Button->y;
+
+	SDL_Surface *texte = NULL;
+	texte = TTF_RenderText_Shaded(police, str, couleurFond, newColor);
+
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+}
+
+void hoverButtonReverse(SDL_Surface *ecran, char* str, button Button, SDL_Color couleurFond, TTF_Font *police){
+	SDL_Color newColor = {0,0,0};
+	SDL_Rect position;
+	position.x = Button->x;
+	position.y = Button->y;
+
+	SDL_Surface *texte = NULL;
+	texte = TTF_RenderText_Shaded(police, str, couleurFond, newColor);
+
+	SDL_BlitSurface(texte, NULL, ecran, &position);
 }
 
 //Effectue un free sur un Button non null.
@@ -755,7 +768,7 @@ int choixDuJeu(){
 	position.x = (WIDTH - texte[1]->w) / 2;
 	position.y = (HEIGHT / 2) - texte[1]->h;
 
-	button button_Rh = createButton(position.x, position.y, texte[0]->w, texte[0]->h);
+	button button_Rh = createButton(position.x, position.y, texte[1]->w, texte[1]->h);
 
 	SDL_BlitSurface(texte[1], NULL, ecran, &position);
 
@@ -765,7 +778,7 @@ int choixDuJeu(){
 	position.x = (WIDTH - texte[2]->w) / 2;
 	position.y = position.y + ( 2 * texte[2]->h );
 
-	button button_Ar = createButton(position.x, position.y, texte[0]->w, texte[0]->h);
+	button button_Ar = createButton(position.x, position.y, texte[2]->w, texte[2]->h);
 
 	SDL_BlitSurface(texte[2], NULL, ecran, &position);
 
@@ -775,7 +788,7 @@ int choixDuJeu(){
 	position.x = (WIDTH - texte[3]->w) / 2;
 	position.y = position.y + (2 * texte[3]->h );
 
-	button button_Apropos = createButton(position.x, position.y, texte[0]->w, texte[0]->h);
+	button button_Apropos = createButton(position.x, position.y, texte[3]->w, texte[3]->h);
 
 	SDL_BlitSurface(texte[3], NULL, ecran, &position);
 
@@ -812,47 +825,20 @@ int choixDuJeu(){
 				xMouse = event.motion.x;
 				yMouse = event.motion.y;
 				if (checkButton(xMouse, yMouse, button_Rh))
-				{
-					SDL_Color couleurmagique = {255,17,17};
-					texte[1] = TTF_RenderText_Shaded(police, "   Rush Hour   ", couleurFond, couleurmagique);
-					position.x = button_Rh->x;
-					position.y = button_Rh->y;
-					SDL_BlitSurface(texte[1], NULL, ecran, &position);
-				}else{
-					SDL_Color couleurmagique = {0,0,0};
-					texte[1] = TTF_RenderText_Shaded(police, "   Rush Hour   ", couleurFond, couleurmagique);
-					position.x = button_Rh->x;
-					position.y = button_Rh->y;
-					SDL_BlitSurface(texte[1], NULL, ecran, &position);
-				}
+					hoverButton(ecran, "   Rush Hour   ", button_Rh, couleurFond, police);
+				else
+					hoverButtonReverse(ecran, "   Rush Hour   ", button_Rh, couleurFond, police);
+
 				if (checkButton(xMouse, yMouse, button_Ar))
-				{
-					SDL_Color couleurmagique = {255,17,17};
-					texte[2] = TTF_RenderText_Shaded(police, "   Klotski   ", couleurFond, couleurmagique);
-					position.x = button_Ar->x;
-					position.y = button_Ar->y;
-					SDL_BlitSurface(texte[2], NULL, ecran, &position);
-				}else{
-					SDL_Color couleurmagique = {0,0,0};
-					texte[2] = TTF_RenderText_Shaded(police, "   Klotski   ", couleurFond, couleurmagique);
-					position.x = button_Ar->x;
-					position.y = button_Ar->y;
-					SDL_BlitSurface(texte[2], NULL, ecran, &position);
-				}
+					hoverButton(ecran, "   Klotski   ", button_Ar, couleurFond, police);
+				else
+					hoverButtonReverse(ecran, "   Klotski   ", button_Ar, couleurFond, police);
+				
 				if (checkButton(xMouse, yMouse, button_Apropos))
-				{
-					SDL_Color couleurmagique = {255,17,17};
-					texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurmagique);
-					position.x = button_Apropos->x;
-					position.y = button_Apropos->y;
-					SDL_BlitSurface(texte[3], NULL, ecran, &position);
-				}else{
-					SDL_Color couleurmagique = {0,0,0};
-					texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurmagique);
-					position.x = button_Apropos->x;
-					position.y = button_Apropos->y;
-					SDL_BlitSurface(texte[3], NULL, ecran, &position);
-				}
+					hoverButton(ecran, "   A propos ...   ", button_Apropos, couleurFond, police);
+				else
+					hoverButtonReverse(ecran, "   A propos ...   ", button_Apropos, couleurFond, police);
+				
 			break;
 			case SDL_MOUSEBUTTONUP:
 				xMouse = event.button.x;
