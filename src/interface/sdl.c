@@ -661,13 +661,72 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 }
 
 
+// void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
+// 	//on crée une surface ecran_tmp pour conserver l'ancien écran, afin de le réafficher à la fin de la fonction.
+// 	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+// 	SDL_Surface *texte = NULL;
+// 	SDL_Surface *menu_apropos = NULL;
+
+// 	menu_apropos = IMG_Load("a_propos.png");
+
+// 	SDL_Event event;
+// 	SDL_Rect position;
+// 	position.x = 0;
+// 	position.y = 0;
+// 	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+
+// 	SDL_BlitSurface(menu_apropos, NULL, ecran, &position);
+	
+// 	texte = TTF_RenderText_Shaded(police, "   Back   ", couleurBasalt, couleurFond);
+// 	position.x = 210;
+// 	position.y = 240;
+
+// 	button button_Retour = createButton(position.x, position.y, texte->w, texte->h);
+
+// 	SDL_BlitSurface(texte, NULL, ecran, &position);
+// 	SDL_Flip(ecran);
+
+// 	//On commence la boucle while, avec la variable ci dessous comme condition.
+// 	int continuer_Apropos = 1;
+
+// 	while(continuer_Apropos)
+// 	{
+// 		SDL_WaitEvent(&event);
+// 		switch(event.type)
+// 		{
+
+// 			case SDL_MOUSEBUTTONUP:
+// 				if (event.button.button == SDL_BUTTON_LEFT)
+// 				{
+// 					int xMouse = event.button.x;
+// 					int yMouse = event.button.y;
+// 					if(checkButton(xMouse, yMouse, button_Retour))
+// 						continuer_Apropos = 0;
+// 				}
+// 				break;
+// 			default:
+// 				break;
+
+// 		}
+// 		SDL_Flip(ecran);
+// 	}
+// 	position.x = 0;
+// 	position.y = 0;
+// 	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
+// 	SDL_Flip(ecran);
+// 	//On libère ce qui a été alloué dans la fonction.
+// 	SDL_FreeSurface(ecran_tmp);
+// 	SDL_FreeSurface(texte);
+// 	SDL_FreeSurface(menu_apropos);
+
+// 	deleteButton(button_Retour);
+
+// }
 void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
 	//on crée une surface ecran_tmp pour conserver l'ancien écran, afin de le réafficher à la fin de la fonction.
 	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
 	SDL_Surface *texte = NULL;
-	SDL_Surface *menu_apropos = NULL;
-
-	menu_apropos = IMG_Load("a_propos.png");
+	SDL_Surface *menu_Apropos = NULL;
 
 	SDL_Event event;
 	SDL_Rect position;
@@ -675,17 +734,61 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 	position.y = 0;
 	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
 
-	SDL_BlitSurface(menu_apropos, NULL, ecran, &position);
-	
-	texte = TTF_RenderText_Shaded(police, "   Back   ", couleurBasalt, couleurFond);
-	position.x = 210;
-	position.y = 240;
+	//A partir d'ici, on va créer les deux bouttons Oui et Non, ainsi qu'afficher du texte.
+	texte = TTF_RenderText_Blended(police, "A propos ...", couleurFond);
+
+	int w_Apropos = WIDTH;
+	int h_Apropos = HEIGHT;
+
+	menu_Apropos = SDL_CreateRGBSurface(SDL_HWSURFACE, w_Apropos,  h_Apropos, 32, 0, 0, 0, 0);
+
+	position.x = (WIDTH - (w_Apropos))/2;
+	position.y = (HEIGHT - (h_Apropos))/2;
+	SDL_FillRect(menu_Apropos, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
+	SDL_BlitSurface(menu_Apropos, NULL, ecran, &position);
+
+	position.x = (position.x + ((position.x + w_Apropos) - texte->w))/2;
+	position.y = (position.y + texte->h);
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	position.y = position.y + 2 * texte->h;
+	texte = TTF_RenderText_Shaded(police, "Projet Universitaire (2015-2016) realise par", couleurFond, couleurBasalt);
+	position.x = ((WIDTH - (w_Apropos))/2) + 15;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	position.y = position.y + texte->h;
+	texte = TTF_RenderText_Shaded(police, "Halnaut Adrien, Marty Yoan et Ordonez Romain a la", couleurFond, couleurBasalt);
+	position.x = ((WIDTH - (w_Apropos))/2) + 15;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	position.y = position.y + texte->h;
+	texte = TTF_RenderText_Shaded(police, "faculte de Sciences et Technologies de Bordeaux.", couleurFond, couleurBasalt);
+	position.x = ((WIDTH - (w_Apropos))/2) + 15;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	position.y = position.y + texte->h;
+	texte = TTF_RenderText_Shaded(police, "Ce projet est une version graphique, sous SDL,", couleurFond, couleurBasalt);
+	position.x = ((WIDTH - (w_Apropos))/2) + 15;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	position.y = position.y + texte->h;
+	texte = TTF_RenderText_Shaded(police, "s'inspirant des jeux du type Rush Hour et", couleurFond, couleurBasalt);
+	position.x = ((WIDTH - (w_Apropos))/2) + 15;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	position.y = position.y + texte->h;
+	texte = TTF_RenderText_Shaded(police, "Klotski / L'Ane Rouge.", couleurFond, couleurBasalt);
+	position.x = ((WIDTH - (w_Apropos))/2) + 15;
+	SDL_BlitSurface(texte, NULL, ecran, &position);
+
+	position.y = position.y + 2 * texte->h;
+	texte = TTF_RenderText_Shaded(police, "Back", couleurBasalt, couleurFond);
+	position.x = (WIDTH - texte->w) / 2;
 
 	button button_Retour = createButton(position.x, position.y, texte->w, texte->h);
 
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 	SDL_Flip(ecran);
-
 	//On commence la boucle while, avec la variable ci dessous comme condition.
 	int continuer_Apropos = 1;
 
@@ -694,14 +797,16 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 		SDL_WaitEvent(&event);
 		switch(event.type)
 		{
-
 			case SDL_MOUSEBUTTONUP:
 				if (event.button.button == SDL_BUTTON_LEFT)
 				{
 					int xMouse = event.button.x;
 					int yMouse = event.button.y;
 					if(checkButton(xMouse, yMouse, button_Retour))
+					{
+						printf("%d\n%d\n", button_Retour->x, button_Retour->y);//(210, 240)
 						continuer_Apropos = 0;
+					}
 				}
 				break;
 			default:
@@ -717,7 +822,7 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 	//On libère ce qui a été alloué dans la fonction.
 	SDL_FreeSurface(ecran_tmp);
 	SDL_FreeSurface(texte);
-	SDL_FreeSurface(menu_apropos);
+	SDL_FreeSurface(menu_Apropos);
 
 	deleteButton(button_Retour);
 
