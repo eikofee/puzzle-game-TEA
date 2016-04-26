@@ -217,6 +217,11 @@ void inputPlayer(game g, char* id)
 		//drawInterface(g,id);
 		correct = true;
 	}
+	if (strEqual(input, "halp\n"))
+	{
+		correct = true;
+		printf("no\n");
+	}
 	if (strEqual(input, "help\n"))
 	{
 		correct = true;
