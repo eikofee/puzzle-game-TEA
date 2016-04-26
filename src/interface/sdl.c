@@ -27,7 +27,7 @@ struct button_s{
 button createButton(int x, int y, int width, int height){
 	button newButton = (button)malloc(sizeof(struct button_s));
 	if(newButton == NULL)
-		error("createButton(), probleme d'allocation du boutton");
+		error("createButton(), probleme d'allocation du bouton");
 	int new_x = x;
 	int new_y = y;
 	int new_w = width;
@@ -42,7 +42,7 @@ button createButton(int x, int y, int width, int height){
 //Vérifie si les coordonnées (xMouse;yMouse) sont bien dans la surface du boutton "Button"
 bool checkButton(int xMouse, int yMouse, button Button){
 	if(Button == NULL)
-		error("checkButton(), le boutton n'est pas alloué ou n'existe pas ...");
+		error("checkButton(), le bouton n'est pas alloué ou n'existe pas ...");
 	//xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui)
 	return ( (xMouse >= (Button->x)) && (xMouse < ((Button->x) + (Button->width))) && (yMouse >= (Button->y)) && (yMouse < ((Button->y) + (Button->height))));
 }
@@ -88,10 +88,10 @@ int min(int a, int b)
 void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL, int NH, int TAILLE_CASE, int selectedPiece){
 	SDL_Rect position;
 	//Ce tableau contient les couleurs que peuvent avoir une pièce. (r,g,b)
-	int nb_couleurs = 9;
-	int tab_couleurs[9][3] = {{231, 76, 60}, {255, 51, 153}, {155, 89, 182}, {52, 152, 219}, {46, 204, 113}, {52, 73, 94}, {241, 196, 15}, {230, 126, 34}, {255, 51, 153}};
+	int nb_couleurs = 11;
+	int tab_couleurs[11][3] = {{231, 76, 60}, {255, 51, 153}, {155, 89, 182}, {52, 152, 219}, {46, 204, 113}, {52, 73, 94}, {241, 196, 15}, {230, 126, 34}, {246, 36, 89}, {51, 110, 123}, {31, 58, 147}};
 	int decalZero = (!selectedPiece?0:1);
-	int tab_c_selected[3] = {min(tab_couleurs[selectedPiece % 9 + decalZero][0]*1.2, 255), min(tab_couleurs[selectedPiece % 9 + decalZero][1] *1.2, 255), min(tab_couleurs[selectedPiece % 9 + decalZero][2] *1.2, 255)};
+	int tab_c_selected[3] = {min(tab_couleurs[selectedPiece % nb_couleurs + decalZero][0]*1.2, 255), min(tab_couleurs[selectedPiece % nb_couleurs + decalZero][1] *1.2, 255), min(tab_couleurs[selectedPiece % nb_couleurs + decalZero][2] *1.2, 255)};
 	//On parcours chaque rectangle, et pour chaque re)ctangle, on regarde son equivalent dans le jeu. Si le jeu renvoi -1 alors y'a rien, donc gris.
 	//Sinon, le jeu va renvoyer l'indice associé au rectangle, et ainsi on va lui donner une couleur via le tableau.
 	//La couleur d'indice 0 est réservée exclusivement pour la voiture principale du même indice, elle est la seule rouge.
@@ -714,7 +714,7 @@ int choixDuJeu(){
 	SDL_Init(SDL_INIT_VIDEO);
 
 	SDL_Color couleurEcriture = {0, 0, 0}; //Couleur du texte -> noir
-	SDL_Color couleurFond = {255,255,255};
+	SDL_Color couleurFond = {236, 240, 241};
 	SDL_Color couleurBasalt = {77, 83, 84};
 
 	TTF_Init();
@@ -723,12 +723,12 @@ int choixDuJeu(){
 	
 	SDL_WM_SetCaption("Puzzle Games", NULL);
 	
-	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
+	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 236, 240, 241));
 	
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
 
 	TTF_SetFontStyle(police, TTF_STYLE_UNDERLINE);
-	texte = TTF_RenderText_Shaded(police, "Puzzle Games - Choix du Jeu", couleurEcriture, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "   Puzzle Games - Choix du Jeu   ", couleurEcriture, couleurFond);
 
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = HEIGHT / 8;
@@ -738,7 +738,7 @@ int choixDuJeu(){
 	TTF_SetFontStyle(police, TTF_STYLE_NORMAL);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "Rush Hour", couleurFond, couleurEcriture);
+	texte = TTF_RenderText_Shaded(police, "   Rush Hour   ", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = (HEIGHT / 2) - texte->h;
@@ -748,7 +748,7 @@ int choixDuJeu(){
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "Klotski / L'Ane Rouge", couleurFond, couleurEcriture);
+	texte = TTF_RenderText_Shaded(police, "   Klotski / L'Ane Rouge   ", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = position.y + ( 2 * texte->h );
@@ -758,7 +758,7 @@ int choixDuJeu(){
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "A propos ...", couleurFond, couleurEcriture);
+	texte = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = position.y + (2 * texte->h );
