@@ -376,6 +376,7 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 	SDL_Surface *texte = NULL;
 	SDL_Surface *menu_continuer = NULL;
 
+	SDL_Color newColorHover = {149, 165, 166};
 	SDL_Event event;
 	SDL_Rect position;
 	position.x = 0;
@@ -417,6 +418,8 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 
 	int continuer_check = 1;
 	int valeur_retour;
+	int xMouse;
+	int yMouse;
 
 	while(continuer_check)
 	{
@@ -429,11 +432,25 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 				valeur_retour = 0;
 				break;
 
+			case SDL_MOUSEMOTION:
+				xMouse = event.motion.x;
+				yMouse = event.motion.y;
+				if(checkButton(xMouse, yMouse, button_Non))
+					hoverButton(ecran, "   No   ", button_Non, couleurFond, newColorHover, police);
+				else
+					hoverButtonReverse(ecran, "   No   ", button_Non, couleurBasalt, couleurFond, police);
+
+				if(checkButton(xMouse, yMouse, button_Oui))
+					hoverButton(ecran, "   Yes   ", button_Oui, couleurFond, newColorHover, police);
+				else
+					hoverButtonReverse(ecran, "   Yes   ", button_Oui, couleurBasalt, couleurFond, police);
+			break;
+
 			case SDL_MOUSEBUTTONUP:
 				if (event.button.button == SDL_BUTTON_LEFT)
 				{
-					int xMouse = event.button.x;
-					int yMouse = event.button.y;
+					xMouse = event.button.x;
+					yMouse = event.button.y;
 					if(checkButton(xMouse, yMouse, button_Oui))
 					{
 						continuer_check = 0;
@@ -445,6 +462,23 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 						*continuer = 0;
 						valeur_retour = 0;
 					}
+				}
+				break;
+			case SDL_KEYDOWN:
+				switch(event.key.keysym.sym)
+				{
+					case SDLK_y:
+						continuer_check = 0;
+						valeur_retour = 1;
+						break;
+
+					case SDLK_n:
+						continuer_check = 0;
+						*continuer = 0;
+						valeur_retour = 0;
+						break;
+					default:
+						break;
 				}
 				break;
 
