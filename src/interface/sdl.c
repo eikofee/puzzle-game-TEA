@@ -181,6 +181,8 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	SDL_Surface *texte = NULL;
 	SDL_Surface *menu_echap = NULL;
 
+	SDL_Color newColorHover = {149, 165, 166};
+
 	SDL_Event event;
 	SDL_Rect position;
 	position.x = 0;
@@ -236,6 +238,17 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 				*continuer_principal = 0;
 				break;
 			case SDL_MOUSEMOTION:
+				xMouse = event.motion.x;
+				yMouse = event.motion.y;
+				if(checkButton(xMouse, yMouse, button_Non))
+					hoverButton(ecran, "   No   ", button_Non, couleurFond, newColorHover, police);
+				else
+					hoverButtonReverse(ecran, "   No   ", button_Non, couleurBasalt, couleurFond, police);
+
+				if(checkButton(xMouse, yMouse, button_Oui))
+					hoverButton(ecran, "   Yes   ", button_Oui, couleurFond, newColorHover, police);
+				else
+					hoverButtonReverse(ecran, "   Yes   ", button_Oui, couleurBasalt, couleurFond, police);
 			break;
 
 
