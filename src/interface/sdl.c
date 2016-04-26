@@ -245,6 +245,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 					case SDLK_o:
 						*continuer = 0;
 						continuer_echap = 0;
+						*continuer_principal = 0;
 						break;
 					case SDLK_n:
 						continuer_echap = 0;
