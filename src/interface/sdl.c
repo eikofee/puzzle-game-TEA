@@ -7,7 +7,6 @@
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_mixer.h>
 
-
 #include <interface_sdl.h>
 #include <utility.h>
 
@@ -38,33 +37,19 @@ button createButton(int x, int y, int width, int height){
 bool checkButton(int xMouse, int yMouse, button Button){
 	if(Button == NULL)
 		error("checkButton(), le bouton n'est pas alloué ou n'existe pas ...");
-	//xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui)
 	return ( (xMouse >= (Button->x)) && (xMouse < ((Button->x) + (Button->width))) && (yMouse >= (Button->y)) && (yMouse < ((Button->y) + (Button->height))));
 }
 
 //Vérifie si les coordonnées (xMouse;yMouse) sont bien dans la surface du boutton "Button"
-void hoverButton(SDL_Surface *ecran, char* str, button Button, SDL_Color couleurFond, SDL_Color newColor, TTF_Font *police){
-	// SDL_Color newColor = {192, 57, 43};
+void hoverButton(SDL_Surface *screen, char* str, button Button, SDL_Color colorWrite, SDL_Color colorBackground, TTF_Font *font){
 	SDL_Rect position;
 	position.x = Button->x;
 	position.y = Button->y;
 
-	SDL_Surface *texte = NULL;
-	texte = TTF_RenderText_Shaded(police, str, couleurFond, newColor);
+	SDL_Surface *text = NULL;
+	text = TTF_RenderText_Shaded(font, str, colorWrite, colorBackground);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
-}
-
-void hoverButtonReverse(SDL_Surface *ecran, char* str, button Button, SDL_Color couleurFond, SDL_Color newColor, TTF_Font *police){
-	// SDL_Color newColor = {0,0,0};
-	SDL_Rect position;
-	position.x = Button->x;
-	position.y = Button->y;
-
-	SDL_Surface *texte = NULL;
-	texte = TTF_RenderText_Shaded(police, str, couleurFond, newColor);
-
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(text, NULL, screen, &position);
 }
 
 //Effectue un free sur un Button non null.
@@ -82,37 +67,39 @@ char* whatGameStr()
 	if(file == NULL)
 		error("whatGameStr(), probleme d'ouverture du fichier config.ini");
 	
-	char* s = (char*)malloc(sizeof(char) * 256);
-	fgets(s, 256, file);
+	char* str = (char*)malloc(sizeof(char) * 256);
+	fgets(str, 256, file);
 	fclose(file);
 
 	int i = 0;
-	while(s[i] != '\0')
+	while(str[i] != '\0')
 	{
-		if(s[i] == '\n')
+		if(str[i] == '\n')
 		{
-			s[i] = '\0';
-			return s;
+			str[i] = '\0';
+			return str;
 		}
 		i++;
 	}
-	return s;  
+	return str;  
 }
+
 int min(int a, int b)
 {
 	if (a > b)
 		return b;
 	return a;
 }
+
 //Affiche a l'ecran un jeu "game g"
-void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL, int NH, int TAILLE_CASE, int selectedPiece){
+void displayGridGame(game g, SDL_Surface *screen, SDL_Surface ***grid, int NL, int NH, int SIZE_SQUARE, int selectedPiece){
 	SDL_Rect position;
 	//Ce tableau contient les couleurs que peuvent avoir une pièce. (r,g,b)
-	int nb_couleurs = 11;
-	int tab_couleurs[11][3] = {{231, 76, 60}, {255, 51, 153}, {155, 89, 182}, {52, 152, 219}, {46, 204, 113}, {52, 73, 94}, {241, 196, 15}, {230, 126, 34}, {246, 36, 89}, {51, 110, 123}, {31, 58, 147}};
+	int nb_Colors = 11;
+	int array_colors[11][3] = {{231, 76, 60}, {255, 51, 153}, {155, 89, 182}, {52, 152, 219}, {46, 204, 113}, {52, 73, 94}, {241, 196, 15}, {230, 126, 34}, {246, 36, 89}, {51, 110, 123}, {31, 58, 147}};
 	int decalZero = (!selectedPiece?0:1);
 	float lighterRatio = 1.3;
-	int tab_c_selected[3] = {min(tab_couleurs[selectedPiece % nb_couleurs + decalZero][0]*lighterRatio, 255), min(tab_couleurs[selectedPiece % nb_couleurs + decalZero][1] *lighterRatio, 255), min(tab_couleurs[selectedPiece % nb_couleurs + decalZero][2] *lighterRatio, 255)};
+	int colorLighter[3] = {min(array_colors[selectedPiece % nb_Colors + decalZero][0]*lighterRatio, 255), min(array_colors[selectedPiece % nb_Colors + decalZero][1] *lighterRatio, 255), min(array_colors[selectedPiece % nb_Colors + decalZero][2] *lighterRatio, 255)};
 	//On parcours chaque rectangle, et pour chaque re)ctangle, on regarde son equivalent dans le jeu. Si le jeu renvoi -1 alors y'a rien, donc gris.
 	//Sinon, le jeu va renvoyer l'indice associé au rectangle, et ainsi on va lui donner une couleur via le tableau.
 	//La couleur d'indice 0 est réservée exclusivement pour la voiture principale du même indice, elle est la seule rouge.
@@ -121,64 +108,64 @@ void afficherGrilleJeu(game g, SDL_Surface *ecran, SDL_Surface ***grille, int NL
 	{
 		for(int x = 0; x < NL; x++)
 		{
-			int indice_piece = game_square_piece(g, x, abs(y-NH +1));
+			int indexPiece = game_square_piece(g, x, abs(y-NH +1));
 			
-			position.x = x*TAILLE_CASE + i;
-			position.y = y*TAILLE_CASE + i;
-			if(indice_piece != -1)
+			position.x = x*SIZE_SQUARE + i;
+			position.y = y*SIZE_SQUARE + i;
+			if(indexPiece != -1)
 			{
-				if(indice_piece == 0)
+				if(indexPiece == 0)
 				{
-					if (indice_piece != selectedPiece)
-						SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_couleurs[0][0], tab_couleurs[0][1], tab_couleurs[0][2]));
+					if (indexPiece != selectedPiece)
+						SDL_FillRect(grid[y][x], NULL, SDL_MapRGB(screen->format, array_colors[0][0], array_colors[0][1], array_colors[0][2]));
 					else
-						SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_c_selected[0], tab_c_selected[1], tab_c_selected[2]));
+						SDL_FillRect(grid[y][x], NULL, SDL_MapRGB(screen->format, colorLighter[0], colorLighter[1], colorLighter[2]));
 				}
 				else{
-					if (indice_piece != selectedPiece)
-						SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_couleurs[indice_piece%(nb_couleurs-1) + 1][0], tab_couleurs[indice_piece%(nb_couleurs-1) + 1][1], tab_couleurs[indice_piece%(nb_couleurs-1) + 1][2]));
+					if (indexPiece != selectedPiece)
+						SDL_FillRect(grid[y][x], NULL, SDL_MapRGB(screen->format, array_colors[indexPiece%(nb_Colors-1) + 1][0], array_colors[indexPiece%(nb_Colors-1) + 1][1], array_colors[indexPiece%(nb_Colors-1) + 1][2]));
 					else
-						SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, tab_c_selected[0], tab_c_selected[1], tab_c_selected[2]));
+						SDL_FillRect(grid[y][x], NULL, SDL_MapRGB(screen->format, colorLighter[0], colorLighter[1], colorLighter[2]));
 				}
 			}
 			else
-				SDL_FillRect(grille[y][x], NULL, SDL_MapRGB(ecran->format, 210, 210, 210));
+				SDL_FillRect(grid[y][x], NULL, SDL_MapRGB(screen->format, 210, 210, 210));
 
-			SDL_BlitSurface(grille[y][x], NULL, ecran, &position);
+			SDL_BlitSurface(grid[y][x], NULL, screen, &position);
 		}
 	}
 }
 
 //Retourne l'indice de la pièce cliquée par la souris. -1 si le clic ne s'est pas effectué sur une pièce.
-int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int TAILLE_CASE){
+int clic(SDL_Event event, game g, int WIDTH, int HEIGHT, int NL, int NH, int SIZE_SQUARE){
 	//On recupere les coordonnées du clic
-	int x_mouse = event.button.x;
-	int y_mouse = event.button.y;
+	int xMouse = event.button.x;
+	int yMouse = event.button.y;
 
 	//On convertit ces coordonnées en coordonnées plateau
-	x_mouse = x_mouse / TAILLE_CASE;
-	y_mouse = y_mouse / TAILLE_CASE;
+	xMouse = xMouse / SIZE_SQUARE;
+	yMouse = yMouse / SIZE_SQUARE;
 
 	//on re oriente l'axe des ordonnées pour correspondre à l'orientation du jeu.
-	y_mouse = abs(y_mouse-NH +1);
+	yMouse = abs(yMouse-NH +1);
 
 	//On regarde si le clic s'est bien produit sur le plateau
-	if(x_mouse < 0 || x_mouse >= NL || y_mouse < 0 || y_mouse >= NH)
+	if(xMouse < 0 || xMouse >= NL || yMouse < 0 || yMouse >= NH)
 		return -1;
 	//ici les coordonnées sont valides donc on peut les manipuler.
 
-	int indice_piece = game_square_piece(g, x_mouse, y_mouse);
-	if(indice_piece < 0)
+	int indexPiece = game_square_piece(g, xMouse, yMouse);
+	if(indexPiece < 0)
 		return -1;
-	return indice_piece;
+	return indexPiece;
 }
 
 //Affiche un petit menu echap lorsqu'on appuie sur la touche echap.
-void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
-	//on crée une surface ecran_tmp pour conserver l'ancien écran, afin de le réafficher à la fin de la fonction.
-	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-	SDL_Surface *texte = NULL;
-	SDL_Surface *menu_echap = NULL;
+void menu_echap(SDL_Surface *screen, int *MAIN_CHECK, int *CHECK, int WIDTH, int HEIGHT, SDL_Color color1, SDL_Color color2, TTF_Font *font){
+	//on crée une surface screenTMP pour conserver l'ancien écran, afin de le réafficher à la fin de la fonction.
+	SDL_Surface *screenTMP = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+	SDL_Surface *text = NULL;
+	SDL_Surface *menuEchap = NULL;
 
 	SDL_Color newColorHover = {149, 165, 166};
 
@@ -186,68 +173,68 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	SDL_Rect position;
 	position.x = 0;
 	position.y = 0;
-	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+	SDL_BlitSurface(screen, NULL, screenTMP, &position);
 
-	//A partir d'ici, on va créer les deux bouttons Oui et Non, ainsi qu'afficher du texte.
-	texte = TTF_RenderText_Blended(police, "Do you want to leave the game ?", couleurFond);
+	//A partir d'ici, on va créer les deux bouttons Oui et Non, ainsi qu'afficher du text.
+	text = TTF_RenderText_Blended(font, "Do you want to leave the game ?", color1);
 	
-	int w_echap = texte->w + 100;
-	int h_echap = HEIGHT/3;
+	int widthEchap = text->w + 100;
+	int heightEchap = HEIGHT/3;
 
-	menu_echap = SDL_CreateRGBSurface(SDL_HWSURFACE, w_echap,  h_echap, 32, 0, 0, 0, 0);
+	menuEchap = SDL_CreateRGBSurface(SDL_HWSURFACE, widthEchap,  heightEchap, 32, 0, 0, 0, 0);
 
-	position.x = (WIDTH - (w_echap))/2;
-	position.y = (HEIGHT - (h_echap))/2;
-	SDL_FillRect(menu_echap, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
-	SDL_BlitSurface(menu_echap, NULL, ecran, &position);
+	position.x = (WIDTH - (widthEchap))/2;
+	position.y = (HEIGHT - (heightEchap))/2;
+	SDL_FillRect(menuEchap, NULL, SDL_MapRGB(screen->format, 77, 83, 84)); //couleur Basalt
+	SDL_BlitSurface(menuEchap, NULL, screen, &position);
 
-	position.x = (position.x + ((position.x + w_echap) - texte->w))/2;
-	position.y = (position.y + texte->h);
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.x = (position.x + ((position.x + widthEchap) - text->w))/2;
+	position.y = (position.y + text->h);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   Yes   ", couleurBasalt, couleurFond);
-	position.y = position.y - 3*texte->h + h_echap;
+	SDL_FreeSurface(text);
+	text = TTF_RenderText_Shaded(font, "   Yes   ", color2, color1);
+	position.y = position.y - 3*text->h + heightEchap;
 
-	button button_Oui = createButton(position.x, position.y, texte->w, texte->h);
+	button button_Oui = createButton(position.x, position.y, text->w, text->h);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   No   ", couleurBasalt, couleurFond);
-	position.x += (w_echap - 100) - texte->w;
+	SDL_FreeSurface(text);
+	text = TTF_RenderText_Shaded(font, "   No   ", color2, color1);
+	position.x += (widthEchap - 100) - text->w;
 
-	button button_Non = createButton(position.x, position.y, texte->w, texte->h);
+	button button_Non = createButton(position.x, position.y, text->w, text->h);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
 	//On commence la boucle while, avec la variable ci dessous comme condition.
-	int continuer_echap = 1;
+	int echapCheck = 1;
 	int xMouse;
 	int yMouse;
 
-	while(continuer_echap)
+	while(echapCheck)
 	{
 		SDL_WaitEvent(&event);
 		switch(event.type)
 		{
 			case SDL_QUIT:
-				continuer_echap = 0;
-				*continuer = 0;
-				*continuer_principal = 0;
+				echapCheck = 0;
+				*CHECK = 0;
+				*MAIN_CHECK = 0;
 				break;
 			case SDL_MOUSEMOTION:
 				xMouse = event.motion.x;
 				yMouse = event.motion.y;
 				if(checkButton(xMouse, yMouse, button_Non))
-					hoverButton(ecran, "   No   ", button_Non, couleurFond, newColorHover, police);
+					hoverButton(screen, "   No   ", button_Non, color1, newColorHover, font);
 				else
-					hoverButtonReverse(ecran, "   No   ", button_Non, couleurBasalt, couleurFond, police);
+					hoverButton(screen, "   No   ", button_Non, color2, color1, font);
 
 				if(checkButton(xMouse, yMouse, button_Oui))
-					hoverButton(ecran, "   Yes   ", button_Oui, couleurFond, newColorHover, police);
+					hoverButton(screen, "   Yes   ", button_Oui, color1, newColorHover, font);
 				else
-					hoverButtonReverse(ecran, "   Yes   ", button_Oui, couleurBasalt, couleurFond, police);
+					hoverButton(screen, "   Yes   ", button_Oui, color2, color1, font);
 			break;
 
 
@@ -258,12 +245,12 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 					yMouse = event.button.y;
 					if(checkButton(xMouse, yMouse, button_Oui))
 					{
-						continuer_echap = 0;
-						*continuer = 0;
-						*continuer_principal = 0;
+						echapCheck = 0;
+						*CHECK = 0;
+						*MAIN_CHECK = 0;
 					}
 					if(checkButton(xMouse, yMouse, button_Non))
-						continuer_echap = 0;
+						echapCheck = 0;
 				}
 				break;
 
@@ -271,15 +258,15 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 				switch(event.key.keysym.sym)
 				{
 					case SDLK_ESCAPE:
-						continuer_echap = 0;
+						echapCheck = 0;
 						break;
 					case SDLK_y:
-						*continuer = 0;
-						continuer_echap = 0;
-						*continuer_principal = 0;
+						*CHECK = 0;
+						echapCheck = 0;
+						*MAIN_CHECK = 0;
 						break;
 					case SDLK_n:
-						continuer_echap = 0;
+						echapCheck = 0;
 					default:
 						break;
 				}
@@ -288,151 +275,151 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 				break;
 
 		}
-		SDL_Flip(ecran);
+		SDL_Flip(screen);
 	}
 	position.x = 0;
 	position.y = 0;
-	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
-	SDL_Flip(ecran);
+	SDL_BlitSurface(screenTMP, NULL, screen, &position);
+	SDL_Flip(screen);
 	//On libère ce qui a été alloué dans la fonction.
-	SDL_FreeSurface(ecran_tmp);
-	SDL_FreeSurface(texte);
-	SDL_FreeSurface(menu_echap);
+	SDL_FreeSurface(screenTMP);
+	SDL_FreeSurface(text);
+	SDL_FreeSurface(menuEchap);
 
 	deleteButton(button_Oui);
 	deleteButton(button_Non);
 }
 
-SDL_Surface* menu_Help(SDL_Surface *ecran, int WIDTH, int HEIGHT, TTF_Font *police, SDL_Color couleurEcriture, SDL_Color couleurBasalt){
-	SDL_Surface *menu_Help = NULL;
-	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-	SDL_Surface *texte = NULL;
+SDL_Surface* menu_Help(SDL_Surface *screen, int WIDTH, int HEIGHT, TTF_Font *font, SDL_Color colorWrite, SDL_Color colorBackground){
+	SDL_Surface *menuHelp = NULL;
+	SDL_Surface *screenTMP = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+	SDL_Surface *text = NULL;
 	SDL_Rect position;
-	int wMenu = 4*WIDTH / 5;
-	int hMenu = 5*HEIGHT / 8;
+	int widthMenu = 4*WIDTH / 5;
+	int heightMenu = 5*HEIGHT / 8;
 
 	position.x = 0;
 	position.y = 0;
-	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+	SDL_BlitSurface(screen, NULL, screenTMP, &position);
 
-	position.x = ((WIDTH - wMenu) / 2);
-	position.y = ((HEIGHT - hMenu) / 2);
+	position.x = ((WIDTH - widthMenu) / 2);
+	position.y = ((HEIGHT - heightMenu) / 2);
 
-	menu_Help = SDL_CreateRGBSurface(SDL_HWSURFACE, wMenu, hMenu, 32, 0, 0, 0, 0);
-	SDL_FillRect(menu_Help, NULL, SDL_MapRGB(ecran->format, 77, 83, 84));
-	SDL_BlitSurface(menu_Help, NULL, ecran, &position);
+	menuHelp = SDL_CreateRGBSurface(SDL_HWSURFACE, widthMenu, heightMenu, 32, 0, 0, 0, 0);
+	SDL_FillRect(menuHelp, NULL, SDL_MapRGB(screen->format, 77, 83, 84));
+	SDL_BlitSurface(menuHelp, NULL, screen, &position);
 
-	texte = TTF_RenderText_Shaded(police, "Rules are simple. You're the red piece and", couleurEcriture, couleurBasalt);
+	text = TTF_RenderText_Shaded(font, "Rules are simple. You're the red piece and", colorWrite, colorBackground);
 	position.x = position.x + 5;
 	position.y = position.y + 5;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	texte = TTF_RenderText_Shaded(police, "you need to go to the exit (the red line at the", couleurEcriture, couleurBasalt);
-	position.y = position.y + texte->h;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	text = TTF_RenderText_Shaded(font, "you need to go to the exit (the red line at the", colorWrite, colorBackground);
+	position.y = position.y + text->h;
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	texte = TTF_RenderText_Shaded(police, "board's edge). To do that, you need to move the", couleurEcriture, couleurBasalt);
-	position.y = position.y + texte->h;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	text = TTF_RenderText_Shaded(font, "board's edge). To do that, you need to move the", colorWrite, colorBackground);
+	position.y = position.y + text->h;
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	texte = TTF_RenderText_Shaded(police, "other pieces to free yourself a passage.", couleurEcriture, couleurBasalt);
-	position.y = position.y + texte->h;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	text = TTF_RenderText_Shaded(font, "other pieces to free yourself a passage.", colorWrite, colorBackground);
+	position.y = position.y + text->h;
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	texte = TTF_RenderText_Shaded(police, "can't cross others or go outside the game area.", couleurEcriture, couleurBasalt);
-	position.y = position.y + texte->h;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	text = TTF_RenderText_Shaded(font, "can't cross others or go outside the game area.", colorWrite, colorBackground);
+	position.y = position.y + text->h;
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	texte = TTF_RenderText_Shaded(police, "To move them, click on the desired piece, and", couleurEcriture, couleurBasalt);
-	position.y = position.y + (texte->h * 2);
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	text = TTF_RenderText_Shaded(font, "To move them, click on the desired piece, and", colorWrite, colorBackground);
+	position.y = position.y + (text->h * 2);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	texte = TTF_RenderText_Shaded(police, "press the directional keys.", couleurEcriture, couleurBasalt);
-	position.y = position.y + texte->h;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	text = TTF_RenderText_Shaded(font, "press the directional keys.", colorWrite, colorBackground);
+	position.y = position.y + text->h;
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	texte = TTF_RenderText_Shaded(police, "Good Luck !", couleurEcriture, couleurBasalt);
-	position.y = position.y + texte->h;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	text = TTF_RenderText_Shaded(font, "Good Luck !", colorWrite, colorBackground);
+	position.y = position.y + text->h;
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	SDL_Flip(ecran);
-	return ecran_tmp;
+	SDL_Flip(screen);
+	return screenTMP;
 }
 
 // Meme principe que la fonction menu_echap. On affiche ce menu après avoir gagné une partie et si il y a un autre niveau à jouer.
-int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
-	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-	SDL_Surface *texte = NULL;
-	SDL_Surface *menu_continuer = NULL;
+int menu_continue(SDL_Surface *screen, int *check, int WIDTH, int HEIGHT, SDL_Color colorWrite, SDL_Color colorBackground, TTF_Font *font){
+	SDL_Surface *screenTMP = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+	SDL_Surface *text = NULL;
+	SDL_Surface *menuContinue = NULL;
 
 	SDL_Color newColorHover = {149, 165, 166};
 	SDL_Event event;
 	SDL_Rect position;
 	position.x = 0;
 	position.y = 0;
-	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+	SDL_BlitSurface(screen, NULL, screenTMP, &position);
 
-	texte = TTF_RenderText_Blended(police, "Proceed to the next level ?", couleurFond);
+	text = TTF_RenderText_Blended(font, "Proceed to the next level ?", colorWrite);
 
-	int w_continuer = texte->w + 100;
-	int h_continuer = HEIGHT/4;
+	int widthMenu = text->w + 100;
+	int heightMenu = HEIGHT/4;
 
-	menu_continuer = SDL_CreateRGBSurface(SDL_HWSURFACE, w_continuer,  h_continuer, 32, 0, 0, 0, 0);
+	menuContinue = SDL_CreateRGBSurface(SDL_HWSURFACE, widthMenu,  heightMenu, 32, 0, 0, 0, 0);
 
-	position.x = (WIDTH - (w_continuer))/2;
-	position.y = (HEIGHT - (h_continuer))/2;
-	SDL_FillRect(menu_continuer, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
-	SDL_BlitSurface(menu_continuer, NULL, ecran, &position);
+	position.x = (WIDTH - (widthMenu))/2;
+	position.y = (HEIGHT - (heightMenu))/2;
+	SDL_FillRect(menuContinue, NULL, SDL_MapRGB(screen->format, 77, 83, 84)); //couleur Basalt
+	SDL_BlitSurface(menuContinue, NULL, screen, &position);
 
-	position.x = (position.x + ((position.x + w_continuer) - texte->w))/2;
-	position.y = (position.y + texte->h);
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.x = (position.x + ((position.x + widthMenu) - text->w))/2;
+	position.y = (position.y + text->h);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   Yes   ", couleurBasalt, couleurFond);
-	position.y = position.y - 3*texte->h + h_continuer;
+	SDL_FreeSurface(text);
+	text = TTF_RenderText_Shaded(font, "   Yes   ", colorBackground, colorWrite);
+	position.y = position.y - 3*text->h + heightMenu;
 
-	button button_Oui = createButton(position.x, position.y, texte->w, texte->h);
+	button button_Yes = createButton(position.x, position.y, text->w, text->h);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
 
-	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   No   ", couleurBasalt, couleurFond);
-	position.x += (w_continuer - 100) - texte->w;
+	SDL_FreeSurface(text);
+	text = TTF_RenderText_Shaded(font, "   No   ", colorBackground, colorWrite);
+	position.x += (widthMenu - 100) - text->w;
 
-	button button_Non = createButton(position.x, position.y, texte->w, texte->h);
+	button button_No = createButton(position.x, position.y, text->w, text->h);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	int continuer_check = 1;
-	int valeur_retour;
+	int continueCheck = 1;
+	int valReturn;
 	int xMouse;
 	int yMouse;
 
-	while(continuer_check)
+	while(continueCheck)
 	{
 		SDL_WaitEvent(&event);
 		switch(event.type)
 		{
 			case SDL_QUIT:
-				continuer_check = 0;
-				*continuer = 0;
-				valeur_retour = 0;
+				continueCheck = 0;
+				*check = 0;
+				valReturn = 0;
 				break;
 
 			case SDL_MOUSEMOTION:
 				xMouse = event.motion.x;
 				yMouse = event.motion.y;
-				if(checkButton(xMouse, yMouse, button_Non))
-					hoverButton(ecran, "   No   ", button_Non, couleurFond, newColorHover, police);
+				if(checkButton(xMouse, yMouse, button_No))
+					hoverButton(screen, "   No   ", button_No, colorWrite, newColorHover, font);
 				else
-					hoverButtonReverse(ecran, "   No   ", button_Non, couleurBasalt, couleurFond, police);
+					hoverButton(screen, "   No   ", button_No, colorBackground, colorWrite, font);
 
-				if(checkButton(xMouse, yMouse, button_Oui))
-					hoverButton(ecran, "   Yes   ", button_Oui, couleurFond, newColorHover, police);
+				if(checkButton(xMouse, yMouse, button_Yes))
+					hoverButton(screen, "   Yes   ", button_Yes, colorWrite, newColorHover, font);
 				else
-					hoverButtonReverse(ecran, "   Yes   ", button_Oui, couleurBasalt, couleurFond, police);
+					hoverButton(screen, "   Yes   ", button_Yes, colorBackground, colorWrite, font);
 			break;
 
 			case SDL_MOUSEBUTTONUP:
@@ -440,16 +427,16 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 				{
 					xMouse = event.button.x;
 					yMouse = event.button.y;
-					if(checkButton(xMouse, yMouse, button_Oui))
+					if(checkButton(xMouse, yMouse, button_Yes))
 					{
-						continuer_check = 0;
-						valeur_retour = 1;
+						continueCheck = 0;
+						valReturn = 1;
 					}
-					if(checkButton(xMouse, yMouse, button_Non))
+					if(checkButton(xMouse, yMouse, button_No))
 					{
-						continuer_check = 0;
-						*continuer = 0;
-						valeur_retour = 0;
+						continueCheck = 0;
+						*check = 0;
+						valReturn = 0;
 					}
 				}
 				break;
@@ -457,14 +444,14 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 				switch(event.key.keysym.sym)
 				{
 					case SDLK_y:
-						continuer_check = 0;
-						valeur_retour = 1;
+						continueCheck = 0;
+						valReturn = 1;
 						break;
 
 					case SDLK_n:
-						continuer_check = 0;
-						*continuer = 0;
-						valeur_retour = 0;
+						continueCheck = 0;
+						*check = 0;
+						valReturn = 0;
 						break;
 					default:
 						break;
@@ -475,21 +462,21 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 				break;
 
 		}
-		SDL_Flip(ecran);
+		SDL_Flip(screen);
 	}
 	position.x = 0;
 	position.y = 0;
-	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
-	SDL_Flip(ecran);
+	SDL_BlitSurface(screenTMP, NULL, screen, &position);
+	SDL_Flip(screen);
 
-	SDL_FreeSurface(ecran_tmp);
-	SDL_FreeSurface(texte);
-	SDL_FreeSurface(menu_continuer);
+	SDL_FreeSurface(screenTMP);
+	SDL_FreeSurface(text);
+	SDL_FreeSurface(menuContinue);
 
-	deleteButton(button_Oui);
-	deleteButton(button_Non);
+	deleteButton(button_Yes);
+	deleteButton(button_No);
 
-	return valeur_retour;
+	return valReturn;
 
 }
 
@@ -505,15 +492,8 @@ bool game_over(game g){
 
 //Permet de lancer un son de quelques secondes.
 void son(Mix_Music* musique){
-	
-	// Mix_Music *musique; //Création du pointeur de type Mix_Music
-	// musique = Mix_LoadMUS(nom); //Chargement de la musique
-	Mix_PlayMusic(musique, 0); //Jouer infiniment la musique
-
-	//Pause de quelques secondes, juste pour que le son soit joué
-	// clock_t arrivee=clock()+(temps * CLOCKS_PER_SEC); // On calcule le moment où l'attente devra s'arrêter
-	// while(clock() < arrivee);
-
+	if(musique != NULL)
+		Mix_PlayMusic(musique, 0); //Jouer infiniment la musique
 }
 
 void deleteSon(Mix_Music *musique){
@@ -522,43 +502,43 @@ void deleteSon(Mix_Music *musique){
 }
 
 // Permet d'afficher la fenetre principal, ainsi que le jeu.
-void init_sdl_game(game g, int *continuer_principal, int indGame){
+void init_sdl_game(game g, int *MAIN_CHECK, int indGame){
 	
 	int NL = game_width(g);//Nombre de case de largeur
 	int NH = game_height(g);//Nombre de case hauteur
-	int TAILLE_CASE = 75;//taille d'une case (CxC)
+	int SIZE_SQUARE = 75;//taille d'une case (CxC)
 
-	int WIDTH = NL * TAILLE_CASE + 250;//Largeur de l'écran
-	int HEIGHT = NH * TAILLE_CASE + 15;//Hauteur de l'écran
+	int WIDTH = NL * SIZE_SQUARE + 250;//Largeur de l'écran
+	int HEIGHT = NH * SIZE_SQUARE + 15;//Hauteur de l'écran
 
-	SDL_Surface *ecran = NULL;//Notre fenetre principale
-	SDL_Surface *ecran_tmp = NULL;
+	SDL_Surface *screen = NULL;//Notre fenetre principale
+	SDL_Surface *screenTMP = NULL;
 
 	//On alloue la grille du jeu qui correspond au plateau du jeu.
-	SDL_Surface ***grille = (SDL_Surface***) malloc(NH * sizeof(SDL_Surface**));
-	SDL_Surface **grille2 = (SDL_Surface**)	malloc(NH * NL * sizeof(SDL_Surface*));
+	SDL_Surface ***grid = (SDL_Surface***) malloc(NH * sizeof(SDL_Surface**));
+	SDL_Surface **grid2 = (SDL_Surface**)	malloc(NH * NL * sizeof(SDL_Surface*));
 
-	if(grille == NULL)
-		error("init_sdl_game(), Probleme d'allocation sur grille");
-	if(grille2 == NULL)
-		error("init_sdl_game(), Probleme d'allocation sur grille2");
+	if(grid == NULL)
+		error("init_sdl_game(), Probleme d'allocation sur grid");
+	if(grid2 == NULL)
+		error("init_sdl_game(), Probleme d'allocation sur grid2");
 	for(int i = 0; i < NH; i++)
-		grille[i] = &grille2[i * NL];
+		grid[i] = &grid2[i * NL];
 
-	SDL_Surface *texte = NULL;
-	SDL_Surface *sortie_jeu = NULL;//Un petit rectangle qui permet de localiser la fin du jeu.
+	SDL_Surface *text = NULL;
+	SDL_Surface *exitGame = NULL;//Un petit rectangle qui permet de localiser la fin du jeu.
 
 	SDL_Rect position;//Variable position, elle nous permet de positionner les rectangles.
-	SDL_Rect position_fin;//Sert uniquement à positionner le rectangle de victoire.
+	SDL_Rect positionExit;//Sert uniquement à positionner le rectangle de victoire.
 
 	SDL_Event event;
-	TTF_Font *police = NULL;
+	TTF_Font *font = NULL;
 
 	SDL_Init(SDL_INIT_VIDEO); // initialisation de la SDL
 
-	SDL_Color couleurEcriture = {0, 0, 0}; //Couleur du texte -> noir
-	SDL_Color couleurFond = {255,255,255}; // Blanc
-	SDL_Color couleurBasalt = {77, 83, 84};	// Basalt
+	SDL_Color colorBlack = {0, 0, 0}; //Couleur du texte -> noir
+	SDL_Color colorWhite = {255,255,255}; // Blanc
+	SDL_Color colorBasalt = {77, 83, 84};	// Basalt
 	SDL_Color colorSilver = {189, 195, 199};
 	SDL_Color colorGrey = {127, 140, 141};
 
@@ -569,73 +549,73 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 		printf("%s", Mix_GetError());
 	}	
 
-	//Pour faire un plein ecran il faut mettre SDL_FULLSCREEN
-	ecran = SDL_SetVideoMode(WIDTH - 1, HEIGHT - 1, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); // On définit Ecran
+	//Pour faire un plein screen il faut mettre SDL_FULLSCREEN
+	screen = SDL_SetVideoMode(WIDTH - 1, HEIGHT - 1, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); // On définit screen
 
 	SDL_WM_SetCaption("Puzzle Games", NULL); // Titre de la fenetre
 	SDL_WM_SetIcon(IMG_Load("truck.png"), NULL);
 
-	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
+	SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
 
-	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
+	font = TTF_OpenFont("Sansation-Regular.ttf", 20);
 
-	texte = TTF_RenderText_Shaded(police, "Puzzle Games", couleurEcriture, couleurFond);
+	text = TTF_RenderText_Shaded(font, "Puzzle Games", colorBlack, colorWhite);
 
 	//On positionne le rectangle de victoire selon le jeu
 	if(whatGame("rush-hour\n"))
 	{
-		sortie_jeu = SDL_CreateRGBSurface(SDL_HWSURFACE, TAILLE_CASE/6, TAILLE_CASE - 1, 32, 0, 0, 0, 0);
-		position_fin.x = TAILLE_CASE * NL + 1;
-		position_fin.y = abs(get_y(game_piece(g, 0)) - NH + 1) * TAILLE_CASE;
+		exitGame = SDL_CreateRGBSurface(SDL_HWSURFACE, SIZE_SQUARE/6, SIZE_SQUARE - 1, 32, 0, 0, 0, 0);
+		positionExit.x = SIZE_SQUARE * NL + 1;
+		positionExit.y = abs(get_y(game_piece(g, 0)) - NH + 1) * SIZE_SQUARE;
 	}
 	else if(whatGame("klotski\n"))
 	{
-		sortie_jeu = SDL_CreateRGBSurface(SDL_HWSURFACE, TAILLE_CASE*2 - 2, TAILLE_CASE/6, 32, 0, 0, 0, 0);
-		position_fin.x = TAILLE_CASE;
-		position_fin.y = TAILLE_CASE * NH + 1;
+		exitGame = SDL_CreateRGBSurface(SDL_HWSURFACE, SIZE_SQUARE*2 - 2, SIZE_SQUARE/6, 32, 0, 0, 0, 0);
+		positionExit.x = SIZE_SQUARE;
+		positionExit.y = SIZE_SQUARE * NH + 1;
 	}
 	
 	//On crée des rectangles que l'on stock dans le tableau 2D grille
 	for(int y = 0; y < NH; y++)
 		for(int x = 0; x < NL; x++)
-			grille[y][x] = SDL_CreateRGBSurface(SDL_HWSURFACE, TAILLE_CASE - 1, TAILLE_CASE - 1, 32, 0, 0, 0, 0);
+			grid[y][x] = SDL_CreateRGBSurface(SDL_HWSURFACE, SIZE_SQUARE - 1, SIZE_SQUARE - 1, 32, 0, 0, 0, 0);
 
 	//on affiche la grille du jeu avec les pieces.
-	afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, -1);
+	displayGridGame(g, screen, grid, NL, NH, SIZE_SQUARE, -1);
 
 	//On affiche le rectangle de la victoire
-	SDL_FillRect(sortie_jeu, NULL, SDL_MapRGB(ecran->format, 250, 20, 20));
-	SDL_BlitSurface(sortie_jeu, NULL, ecran, &position_fin);
+	SDL_FillRect(exitGame, NULL, SDL_MapRGB(screen->format, 250, 20, 20));
+	SDL_BlitSurface(exitGame, NULL, screen, &positionExit);
 
 	//On affiche Puzzle Games
-	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+	position.x = (((NL * SIZE_SQUARE) + WIDTH) / 2) - (text->w / 2);
 	position.y = 6/HEIGHT;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	SDL_FreeSurface(texte);
+	SDL_FreeSurface(text);
 	// On affiche le nom du jeu précisement
-	char* nomDuJeu = whatGameStr();
-	texte = TTF_RenderText_Blended(police, nomDuJeu, couleurEcriture);
+	char* nameOfTheGame = whatGameStr();
+	text = TTF_RenderText_Blended(font, nameOfTheGame, colorBlack);
 
-	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+	position.x = (((NL * SIZE_SQUARE) + WIDTH) / 2) - (text->w / 2);
 	position.y = 6/HEIGHT + 20;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	SDL_FreeSurface(texte);
+	SDL_FreeSurface(text);
 
-	texte = TTF_RenderText_Shaded(police, "Number of moves :", couleurEcriture, couleurFond);
-	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+	text = TTF_RenderText_Shaded(font, "Number of moves :", colorBlack, colorWhite);
+	position.x = (((NL * SIZE_SQUARE) + WIDTH) / 2) - (text->w / 2);
 	position.y = position.y + 40;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
-	SDL_FreeSurface(texte);
-	int yNbMove = position.y; //Permet de conserver l'ordonnée du texte précedent afin d'afficher le nombre de mouvement.
+	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
+	int yNbMove = position.y; //Permet de conserver l'ordonnée du text précedent afin d'afficher le nombre de mouvement.
 
-	texte = TTF_RenderText_Shaded(police, "   Help   ", couleurEcriture, colorSilver);
-	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
+	text = TTF_RenderText_Shaded(font, "   Help   ", colorBlack, colorSilver);
+	position.x = (((NL * SIZE_SQUARE) + WIDTH) / 2) - (text->w / 2);
 	position.y = 5*HEIGHT / 6;
 
-	button button_Help = createButton(position.x, position.y, texte->w, texte->h);
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	button button_Help = createButton(position.x, position.y, text->w, text->h);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
 	Mix_Music *music_move = Mix_LoadMUS("move.mp3"); //Chargement de la musique;
 	Mix_Music *music_wrongMove = Mix_LoadMUS("wrongMove.mp3"); //Chargement de la musique;
@@ -643,19 +623,19 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 	int xMouse;
 	int yMouse;
 	int checkHelp = 0;
-	int continuer = 1;//Condition principale de la boucle while.
-	int indice_piece = -1;//On initialise cette variable à -1 afin qu'aucun move puisse être fait avant de cliquer sur une pièce.
+	int check = 1;//Condition principale de la boucle while.
+	int indexPiece = -1;//On initialise cette variable à -1 afin qu'aucun move puisse être fait avant de cliquer sur une pièce.
 	char NbMove[4];//Chaine de caractère affichant le nombre de mouvement.
 
-	while(continuer && !game_over(g))
+	while(check && !game_over(g))
 	{
 		
 		SDL_WaitEvent(&event); /* Récupération de l'événement dans event */
 		switch(event.type) /* Test du type d'événement */
 		{
 			case SDL_QUIT: /* Si c'est un événement de type "Quitter" */
-				continuer = 0;
-				*continuer_principal = 0;
+				check = 0;
+				*MAIN_CHECK = 0;
 				break;
 
 			case SDL_MOUSEMOTION:
@@ -664,13 +644,13 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 				if(checkButton(xMouse, yMouse, button_Help))
 				{
 					
-					//(SDL_Surface *ecran, char* str, button Button, SDL_Color couleurFond, SDL_Color newColor, TTF_Font *police){
-					hoverButton(ecran, "   Help   ", button_Help, couleurEcriture, colorGrey, police);
-					//(SDL_Surface *ecran, int WIDTH, int HEIGHT, TTF_Font *police, SDL_Color couleurEcriture)
+					//(SDL_Surface *screen, char* str, button Button, SDL_Color colorWhite, SDL_Color newColor, TTF_Font *font){
+					hoverButton(screen, "   Help   ", button_Help, colorBlack, colorGrey, font);
+					//(SDL_Surface *screen, int WIDTH, int HEIGHT, TTF_Font *font, SDL_Color colorBlack)
 					if(checkHelp == 0)
 					{
 						checkHelp = 1;
-						ecran_tmp = menu_Help(ecran, WIDTH, HEIGHT, police, couleurFond, couleurBasalt);
+						screenTMP = menu_Help(screen, WIDTH, HEIGHT, font, colorWhite, colorBasalt);
 					}
 				}
 				else
@@ -679,67 +659,67 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 					{
 						position.x = 0;
 						position.y = 0;
-						SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
+						SDL_BlitSurface(screenTMP, NULL, screen, &position);
 						checkHelp = 0;
 					}
-					hoverButtonReverse(ecran, "   Help   ", button_Help, couleurEcriture,colorSilver, police);
+					hoverButton(screen, "   Help   ", button_Help, colorBlack,colorSilver, font);
 				}
 
 			case SDL_MOUSEBUTTONUP: /* Si c'est un evenement de type Clic Souris */
-				if (event.button.button == SDL_BUTTON_LEFT && checkHelp == 0)//clic gauche de la souris
+				if (checkHelp == 0 && (event.button.button == SDL_BUTTON_LEFT))//clic gauche de la souris
 				{
-					indice_piece = clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
-					afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
+					indexPiece = clic(event, g, WIDTH, HEIGHT, NL, NH, SIZE_SQUARE);
+					displayGridGame(g, screen, grid, NL, NH, SIZE_SQUARE, indexPiece);
 				}
 				break;
 			case SDL_KEYDOWN: /* Evenement de type touche enfoncée */
 				switch(event.key.keysym.sym)
 				{
 					case SDLK_ESCAPE: //Touche Echap
-						menu_echap(ecran, continuer_principal, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+						menu_echap(screen, MAIN_CHECK, &check, WIDTH, HEIGHT, colorWhite, colorBasalt, font);
 						break;
 
 					case SDLK_UP: //Touche fleche haut 
-						if(indice_piece != -1 && checkHelp == 0)
+						if(checkHelp == 0 && indexPiece != -1 )
 						{
-							if(play_move(g, indice_piece, UP, 1))
+							if(play_move(g, indexPiece, UP, 1))
 								son(music_move);
 							else
 								son(music_wrongMove);
-							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
+							displayGridGame(g, screen, grid, NL, NH, SIZE_SQUARE, indexPiece);
 						}
 						break;
 
 					case SDLK_DOWN: //Touche fleche bas
-						if(indice_piece != -1 && checkHelp == 0)
+						if(checkHelp == 0 && indexPiece != -1)
 						{
-							if(play_move(g, indice_piece, DOWN, 1))
+							if(play_move(g, indexPiece, DOWN, 1))
 								son(music_move);
 							else
 								son(music_wrongMove);
-							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
+							displayGridGame(g, screen, grid, NL, NH, SIZE_SQUARE, indexPiece);
 						}
 						break;
 
 					case SDLK_LEFT://Touche fleche gauche
-						if(indice_piece != -1 && checkHelp == 0)
+						if(checkHelp == 0 && indexPiece != -1)
 						{
-							if(play_move(g, indice_piece, LEFT, 1))
+							if(play_move(g, indexPiece, LEFT, 1))
 								son(music_move);
 							else
 								son(music_wrongMove);
-							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
+							displayGridGame(g, screen, grid, NL, NH, SIZE_SQUARE, indexPiece);
 						}
 						break;
 					
 					case SDLK_RIGHT://Touche fleche droite
-						if(indice_piece != -1 && checkHelp == 0)
+						if(checkHelp == 0 && indexPiece != -1)
 						{
-							if(play_move(g, indice_piece, RIGHT, 1))
+							if(play_move(g, indexPiece, RIGHT, 1))
 								son(music_move);
 							else
 								son(music_wrongMove);
-							afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
+							displayGridGame(g, screen, grid, NL, NH, SIZE_SQUARE, indexPiece);
 						}
 						break;
 
@@ -753,22 +733,22 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 
 		if(checkHelp == 0)
 		{
-			SDL_FreeSurface(texte);
+			SDL_FreeSurface(text);
 			//On affiche une sorte de masque blanc afin d'éviter de lire l'ancien affichage du nombre de mouvement quand celui ci est plus petit que l'ancien.
-			texte = TTF_RenderText_Shaded(police, "xxxxxx", couleurFond, couleurFond);
-			position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
-			position.y = yNbMove + texte->h;
-			SDL_BlitSurface(texte, NULL, ecran, &position);
+			text = TTF_RenderText_Shaded(font, "xxxxxx", colorWhite, colorWhite);
+			position.x = (((NL * SIZE_SQUARE) + WIDTH) / 2) - (text->w / 2);
+			position.y = yNbMove + text->h;
+			SDL_BlitSurface(text, NULL, screen, &position);
 
-			SDL_FreeSurface(texte);
+			SDL_FreeSurface(text);
 			//On affiche le nombre de mouvement effectué
 			sprintf(NbMove, "%d", game_nb_moves(g));
-			texte = TTF_RenderText_Shaded(police, NbMove, couleurEcriture, couleurFond);
-			position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
-			position.y = yNbMove + texte->h;
-			SDL_BlitSurface(texte, NULL, ecran, &position);
+			text = TTF_RenderText_Shaded(font, NbMove, colorBlack, colorWhite);
+			position.x = (((NL * SIZE_SQUARE) + WIDTH) / 2) - (text->w / 2);
+			position.y = yNbMove + text->h;
+			SDL_BlitSurface(text, NULL, screen, &position);
 		}	
-		SDL_Flip(ecran);
+		SDL_Flip(screen);
 
 		
 	}
@@ -776,168 +756,100 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 	//On regarde comment on est sorti de la boucle while.
 	if(game_over(g))
 	{
-		Mix_Music *music = Mix_LoadMUS("win.mp3");
-		son(music);
+		Mix_Music *music_win = Mix_LoadMUS("win.mp3");
+		son(music_win);
 		clock_t arrivee=clock()+(0.4 * CLOCKS_PER_SEC); // On calcule le moment où l'attente devra s'arrêter
 		while(clock() < arrivee);
-		deleteSon(music);
+		deleteSon(music_win);
 
 		if(indGame < 3)
-		{
-			menu_continuer(ecran, continuer_principal, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
-		}
+			menu_continue(screen, MAIN_CHECK, WIDTH, HEIGHT, colorWhite, colorBasalt, font);
 	}
 
 	deleteSon(music_move);
 	deleteSon(music_wrongMove);
 	Mix_CloseAudio(); //Fermeture de l'API
 	//On libère les allocations.
-	TTF_CloseFont(police);
+	TTF_CloseFont(font);
 	TTF_Quit();
 
 	for(int y = 0; y < NH; y++)
 		for(int x = 0; x < NL; x++)
-			SDL_FreeSurface(grille[y][x]);
-	free(grille[0]);
-	free(grille);
-	free(nomDuJeu);
-	SDL_FreeSurface(texte);
-	SDL_FreeSurface(sortie_jeu);
+			SDL_FreeSurface(grid[y][x]);
+	free(grid[0]);
+	free(grid);
+	free(nameOfTheGame);
+	SDL_FreeSurface(text);
+	SDL_FreeSurface(exitGame);
 	
 	SDL_Quit();
 }
 
-
-// void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
-// 	//on crée une surface ecran_tmp pour conserver l'ancien écran, afin de le réafficher à la fin de la fonction.
-// 	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-// 	SDL_Surface *texte = NULL;
-// 	SDL_Surface *menu_apropos = NULL;
-
-// 	menu_apropos = IMG_Load("a_propos.png");
-
-// 	SDL_Event event;
-// 	SDL_Rect position;
-// 	position.x = 0;
-// 	position.y = 0;
-// 	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
-
-// 	SDL_BlitSurface(menu_apropos, NULL, ecran, &position);
-	
-// 	texte = TTF_RenderText_Shaded(police, "   Back   ", couleurBasalt, couleurFond);
-// 	position.x = 210;
-// 	position.y = 240;
-
-// 	button button_Retour = createButton(position.x, position.y, texte->w, texte->h);
-
-// 	SDL_BlitSurface(texte, NULL, ecran, &position);
-// 	SDL_Flip(ecran);
-
-// 	//On commence la boucle while, avec la variable ci dessous comme condition.
-// 	int continuer_Apropos = 1;
-
-// 	while(continuer_Apropos)
-// 	{
-// 		SDL_WaitEvent(&event);
-// 		switch(event.type)
-// 		{
-
-// 			case SDL_MOUSEBUTTONUP:
-// 				if (event.button.button == SDL_BUTTON_LEFT)
-// 				{
-// 					int xMouse = event.button.x;
-// 					int yMouse = event.button.y;
-// 					if(checkButton(xMouse, yMouse, button_Retour))
-// 						continuer_Apropos = 0;
-// 				}
-// 				break;
-// 			default:
-// 				break;
-
-// 		}
-// 		SDL_Flip(ecran);
-// 	}
-// 	position.x = 0;
-// 	position.y = 0;
-// 	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
-// 	SDL_Flip(ecran);
-// 	//On libère ce qui a été alloué dans la fonction.
-// 	SDL_FreeSurface(ecran_tmp);
-// 	SDL_FreeSurface(texte);
-// 	SDL_FreeSurface(menu_apropos);
-
-// 	deleteButton(button_Retour);
-
-// }
-void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police){
+void Apropos(SDL_Surface *screen, int WIDTH, int HEIGHT, SDL_Color colorWrite, SDL_Color colorBackground, TTF_Font *font){
 	//on crée une surface ecran_tmp pour conserver l'ancien écran, afin de le réafficher à la fin de la fonction.
-	SDL_Surface *ecran_tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
-	SDL_Surface *texte = NULL;
-	SDL_Surface *menu_Apropos = NULL;
+	SDL_Surface *screenTMP = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, 0, 0, 0, 0);
+	SDL_Surface *text = NULL;
+	SDL_Surface *menuApropos = NULL;
 	SDL_Color newColorHover = {149, 165, 166};
 
 	SDL_Event event;
 	SDL_Rect position;
 	position.x = 0;
 	position.y = 0;
-	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
+	SDL_BlitSurface(screen, NULL, screenTMP, &position);
 
-	//A partir d'ici, on va créer les deux bouttons Oui et Non, ainsi qu'afficher du texte.
-	texte = TTF_RenderText_Blended(police, "A propos ...", couleurFond);
+	//A partir d'ici, on va créer les deux bouttons Oui et Non, ainsi qu'afficher du text.
+	text = TTF_RenderText_Blended(font, "A propos ...", colorWrite);
 
-	int w_Apropos = WIDTH;
-	int h_Apropos = HEIGHT;
+	int widthMenu = WIDTH;
+	int heightMenu = HEIGHT;
 
-	menu_Apropos = SDL_CreateRGBSurface(SDL_HWSURFACE, w_Apropos,  h_Apropos, 32, 0, 0, 0, 0);
+	menuApropos = SDL_CreateRGBSurface(SDL_HWSURFACE, widthMenu,  heightMenu, 32, 0, 0, 0, 0);
 
-	position.x = (WIDTH - (w_Apropos))/2;
-	position.y = (HEIGHT - (h_Apropos))/2;
-	SDL_FillRect(menu_Apropos, NULL, SDL_MapRGB(ecran->format, 77, 83, 84)); //couleur Basalt
-	SDL_BlitSurface(menu_Apropos, NULL, ecran, &position);
+	position.x = (WIDTH - (widthMenu))/2;
+	position.y = (HEIGHT - (heightMenu))/2;
+	SDL_FillRect(menuApropos, NULL, SDL_MapRGB(screen->format, 77, 83, 84)); //couleur Basalt
+	SDL_BlitSurface(menuApropos, NULL, screen, &position);
 
-	position.x = (position.x + ((position.x + w_Apropos) - texte->w))/2;
-	position.y = (position.y + texte->h);
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.x = (position.x + ((position.x + widthMenu) - text->w))/2;
+	position.y = (position.y + text->h);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	position.y = position.y + 2 * texte->h;
-	texte = TTF_RenderText_Shaded(police, "Puzzle Games Project (2015-2016) realized by", couleurFond, couleurBasalt);
-	position.x = ((WIDTH - (w_Apropos))/2) + 15;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.y = position.y + 2 * text->h;
+	text = TTF_RenderText_Shaded(font, "Puzzle Games Project (2015-2016) realized by", colorWrite, colorBackground);
+	position.x = ((WIDTH - (widthMenu))/2) + 15;
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	position.y = position.y + texte->h;
-	texte = TTF_RenderText_Shaded(police, "Halnaut Adrien, Marty Yoan and Ordonez Romain at", couleurFond, couleurBasalt);
-	position.x = ((WIDTH - (w_Apropos))/2) + 15;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.y = position.y + text->h;
+	text = TTF_RenderText_Shaded(font, "Halnaut Adrien, Marty Yoan and Ordonez Romain at", colorWrite, colorBackground);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	position.y = position.y + texte->h;
-	texte = TTF_RenderText_Shaded(police, "the University of Bordeaux. This binary is a", couleurFond, couleurBasalt);
-	position.x = ((WIDTH - (w_Apropos))/2) + 15;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.y = position.y + text->h;
+	text = TTF_RenderText_Shaded(font, "the University of Bordeaux. This binary is a", colorWrite, colorBackground);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	position.y = position.y + texte->h;
-	texte = TTF_RenderText_Shaded(police, "graphic version, using SDL-1.2, inspired by", couleurFond, couleurBasalt);
-	position.x = ((WIDTH - (w_Apropos))/2) + 15;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.y = position.y + text->h;
+	text = TTF_RenderText_Shaded(font, "graphic version, using SDL-1.2, inspired by", colorWrite, colorBackground);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	position.y = position.y + texte->h;
-	texte = TTF_RenderText_Shaded(police, "games such as Rush Hour and Klotski.", couleurFond, couleurBasalt);
-	position.x = ((WIDTH - (w_Apropos))/2) + 15;
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	position.y = position.y + text->h;
+	text = TTF_RenderText_Shaded(font, "games such as Rush Hour and Klotski.", colorWrite, colorBackground);
+	SDL_BlitSurface(text, NULL, screen, &position);
 
-	position.y = position.y + 2 * texte->h;
-	texte = TTF_RenderText_Shaded(police, "   Back   ", couleurBasalt, couleurFond);
-	position.x = (WIDTH - texte->w) / 2;
+	position.y = position.y + 2 * text->h;
+	text = TTF_RenderText_Shaded(font, "   Back   ", colorBackground, colorWrite);
+	position.x = (WIDTH - text->w) / 2;
 
-	button button_Retour = createButton(position.x, position.y, texte->w, texte->h);
+	button button_Retour = createButton(position.x, position.y, text->w, text->h);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
-	SDL_Flip(ecran);
+	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_Flip(screen);
 	//On commence la boucle while, avec la variable ci dessous comme condition.
-	int continuer_Apropos = 1;
+	int checkApropos = 1;
 	int xMouse;
 	int yMouse;
 
-	while(continuer_Apropos)
+	while(checkApropos)
 	{
 		SDL_WaitEvent(&event);
 		switch(event.type)
@@ -946,34 +858,34 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 				xMouse = event.motion.x;
 				yMouse = event.motion.y;
 				if (checkButton(xMouse, yMouse, button_Retour))
-					hoverButton(ecran, "   Back   ", button_Retour, couleurFond, newColorHover, police);
+					hoverButton(screen, "   Back   ", button_Retour, colorWrite, newColorHover, font);
 				else
-					hoverButtonReverse(ecran, "   Back   ", button_Retour, couleurBasalt, couleurFond, police);
+					hoverButton(screen, "   Back   ", button_Retour, colorBackground, colorWrite, font);
 			break;
 
 			case SDL_MOUSEBUTTONUP:
 				if (event.button.button == SDL_BUTTON_LEFT)
 				{
-					int xMouse = event.button.x;
-					int yMouse = event.button.y;
+					xMouse = event.button.x;
+					yMouse = event.button.y;
 					if(checkButton(xMouse, yMouse, button_Retour))
-						continuer_Apropos = 0;
+						checkApropos = 0;
 				}
 				break;
 			default:
 				break;
 
 		}
-		SDL_Flip(ecran);
+		SDL_Flip(screen);
 	}
 	position.x = 0;
 	position.y = 0;
-	SDL_BlitSurface(ecran_tmp, NULL, ecran, &position);
-	SDL_Flip(ecran);
+	SDL_BlitSurface(screenTMP, NULL, screen, &position);
+	SDL_Flip(screen);
 	//On libère ce qui a été alloué dans la fonction.
-	SDL_FreeSurface(ecran_tmp);
-	SDL_FreeSurface(texte);
-	SDL_FreeSurface(menu_Apropos);
+	SDL_FreeSurface(screenTMP);
+	SDL_FreeSurface(text);
+	SDL_FreeSurface(menuApropos);
 
 	deleteButton(button_Retour);
 
@@ -981,99 +893,99 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 
 //Affiche le menu principal. Permet de choisir le jeu souhaité. Retourne -1 si l'utilisateur décide de quitter.
 int choixDuJeu(){
-	SDL_Surface *ecran = NULL;
-	SDL_Surface **texte = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * 4);
+	SDL_Surface *screen = NULL;
+	SDL_Surface **text = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * 4);
 	SDL_Event event;
 
 	SDL_Rect position;
 
-	TTF_Font *police = NULL;
+	TTF_Font *font = NULL;
 
 	int WIDTH = 480;
 	int HEIGHT = 300;
 
 	SDL_Init(SDL_INIT_VIDEO);
 
-	SDL_Color couleurEcriture = {0, 0, 0}; //Couleur du texte -> noir
-	SDL_Color couleurFond = {236, 240, 241};
-	SDL_Color couleurBasalt = {77, 83, 84};
+	SDL_Color colorWrite = {0, 0, 0}; //Couleur du text -> noir
+	SDL_Color colorBackground = {236, 240, 241};
+	SDL_Color colorBasalt = {77, 83, 84};
 	SDL_Color newColorHover = {192, 57, 43};
 
 	TTF_Init();
 	
-	ecran = SDL_SetVideoMode(WIDTH, HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); 
+	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); 
 	
 	SDL_WM_SetCaption("Puzzle Games", NULL);
 	SDL_WM_SetIcon(IMG_Load("truck.png"), NULL);
 	
-	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 236, 240, 241));
+	SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 236, 240, 241));
 	
-	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
+	font = TTF_OpenFont("Sansation-Regular.ttf", 20);
 
-	TTF_SetFontStyle(police, TTF_STYLE_UNDERLINE);
-	texte[0] = TTF_RenderText_Shaded(police, "   Puzzle Games - Game Selection   ", couleurEcriture, couleurFond);
+	TTF_SetFontStyle(font, TTF_STYLE_UNDERLINE);
+	text[0] = TTF_RenderText_Shaded(font, "   Puzzle Games - Game Selection   ", colorWrite, colorBackground);
 
-	position.x = (WIDTH - texte[0]->w) / 2;
+	position.x = (WIDTH - text[0]->w) / 2;
 	position.y = HEIGHT / 8;
 
-	SDL_BlitSurface(texte[0], NULL, ecran, &position);
+	SDL_BlitSurface(text[0], NULL, screen, &position);
 
-	TTF_SetFontStyle(police, TTF_STYLE_NORMAL);
+	TTF_SetFontStyle(font, TTF_STYLE_NORMAL);
 
-	//SDL_FreeSurface(texte);
-	texte[1] = TTF_RenderText_Shaded(police, "   Rush Hour   ", couleurFond, couleurEcriture);
+	//SDL_FreeSurface(text);
+	text[1] = TTF_RenderText_Shaded(font, "   Rush Hour   ", colorBackground, colorWrite);
 
-	position.x = (WIDTH - texte[1]->w) / 2;
-	position.y = (HEIGHT / 2) - texte[1]->h;
+	position.x = (WIDTH - text[1]->w) / 2;
+	position.y = (HEIGHT / 2) - text[1]->h;
 
-	button button_Rh = createButton(position.x, position.y, texte[1]->w, texte[1]->h);
+	button button_Rh = createButton(position.x, position.y, text[1]->w, text[1]->h);
 
-	SDL_BlitSurface(texte[1], NULL, ecran, &position);
+	SDL_BlitSurface(text[1], NULL, screen, &position);
 
-	//SDL_FreeSurface(texte);
-	texte[2] = TTF_RenderText_Shaded(police, "   Klotski   ", couleurFond, couleurEcriture);
+	//SDL_FreeSurface(text);
+	text[2] = TTF_RenderText_Shaded(font, "   Klotski   ", colorBackground, colorWrite);
 
-	position.x = (WIDTH - texte[2]->w) / 2;
-	position.y = position.y + ( 2 * texte[2]->h );
+	position.x = (WIDTH - text[2]->w) / 2;
+	position.y = position.y + ( 2 * text[2]->h );
 
-	button button_Ar = createButton(position.x, position.y, texte[2]->w, texte[2]->h);
+	button button_Ar = createButton(position.x, position.y, text[2]->w, text[2]->h);
 
-	SDL_BlitSurface(texte[2], NULL, ecran, &position);
+	SDL_BlitSurface(text[2], NULL, screen, &position);
 
-	//SDL_FreeSurface(texte);
-	texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurEcriture);
+	//SDL_FreeSurface(text);
+	text[3] = TTF_RenderText_Shaded(font, "   A propos ...   ", colorBackground, colorWrite);
 
-	position.x = (WIDTH - texte[3]->w) / 2;
-	position.y = position.y + (2 * texte[3]->h );
+	position.x = (WIDTH - text[3]->w) / 2;
+	position.y = position.y + (2 * text[3]->h );
 
-	button button_Apropos = createButton(position.x, position.y, texte[3]->w, texte[3]->h);
+	button button_Apropos = createButton(position.x, position.y, text[3]->w, text[3]->h);
 
-	SDL_BlitSurface(texte[3], NULL, ecran, &position);
+	SDL_BlitSurface(text[3], NULL, screen, &position);
 
-	int continuer = 1;
+	int check = 1;
 	int xMouse;
 	int yMouse;
 	int tmp = 0;
-	int valeur_retour;
+	int valReturn;
 
 
-	while(continuer)
+	while(check)
 	{
 		SDL_WaitEvent(&event);
 		switch(event.type)
 		{
 			case SDL_QUIT:
-				continuer = 0;
-				valeur_retour = -1;
+				check = 0;
+				valReturn = -1;
 				break;
 			case SDL_KEYDOWN:
 				switch(event.key.keysym.sym)
 				{
 					case SDLK_ESCAPE:
 						
-						menu_echap(ecran, &tmp, &continuer, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
-						if(continuer == 0)
-							valeur_retour = -1;
+						menu_echap(screen, &tmp, &check, WIDTH, HEIGHT, colorBackground, colorBasalt, font);
+						if(check == 0)
+							valReturn = -1;
 						break;
 					default:
 						break;
@@ -1083,19 +995,19 @@ int choixDuJeu(){
 				xMouse = event.motion.x;
 				yMouse = event.motion.y;
 				if (checkButton(xMouse, yMouse, button_Rh))
-					hoverButton(ecran, "   Rush Hour   ", button_Rh, couleurFond, newColorHover, police);
+					hoverButton(screen, "   Rush Hour   ", button_Rh, colorBackground, newColorHover, font);
 				else
-					hoverButtonReverse(ecran, "   Rush Hour   ", button_Rh, couleurFond, couleurEcriture, police);
+					hoverButton(screen, "   Rush Hour   ", button_Rh, colorBackground, colorWrite, font);
 
 				if (checkButton(xMouse, yMouse, button_Ar))
-					hoverButton(ecran, "   Klotski   ", button_Ar, couleurFond, newColorHover, police);
+					hoverButton(screen, "   Klotski   ", button_Ar, colorBackground, newColorHover, font);
 				else
-					hoverButtonReverse(ecran, "   Klotski   ", button_Ar, couleurFond, couleurEcriture, police);
+					hoverButton(screen, "   Klotski   ", button_Ar, colorBackground, colorWrite, font);
 				
 				if (checkButton(xMouse, yMouse, button_Apropos))
-					hoverButton(ecran, "   A propos ...   ", button_Apropos, couleurFond, newColorHover, police);
+					hoverButton(screen, "   A propos ...   ", button_Apropos, colorBackground, newColorHover, font);
 				else
-					hoverButtonReverse(ecran, "   A propos ...   ", button_Apropos, couleurFond, couleurEcriture, police);
+					hoverButton(screen, "   A propos ...   ", button_Apropos, colorBackground, colorWrite, font);
 				
 			break;
 			case SDL_MOUSEBUTTONUP:
@@ -1104,31 +1016,31 @@ int choixDuJeu(){
 				if(checkButton(xMouse, yMouse, button_Rh))
 				{
 					initFileConfig("rush-hour");
-					continuer = 0;
+					check = 0;
 				}
 				if(checkButton(xMouse, yMouse, button_Ar))
 				{
 					initFileConfig("klotski");
-					continuer = 0;
+					check = 0;
 				}
 				if(checkButton(xMouse, yMouse, button_Apropos))
 				{
-					//SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, SDL_Color couleurBasalt, TTF_Font *police
-					Apropos(ecran, WIDTH, HEIGHT, couleurFond, couleurBasalt, police);
+					//SDL_Surface *screen, int WIDTH, int HEIGHT, SDL_Color colorBackground, SDL_Color colorBasalt, TTF_Font *font
+					Apropos(screen, WIDTH, HEIGHT, colorBackground, colorBasalt, font);
 				}
 				break;
 			default:
 				break;
 		}
 
-		SDL_Flip(ecran);
+		SDL_Flip(screen);
 	}
 
 
-	TTF_CloseFont(police);
+	TTF_CloseFont(font);
 	TTF_Quit();
 	for (int i = 0; i < 4; i++)
-		SDL_FreeSurface(texte[i]);
+		SDL_FreeSurface(text[i]);
 
 	SDL_Quit();
 
@@ -1136,5 +1048,5 @@ int choixDuJeu(){
 	deleteButton(button_Ar);
 	deleteButton(button_Apropos);
 
-	return valeur_retour;
+	return valReturn;
 }
