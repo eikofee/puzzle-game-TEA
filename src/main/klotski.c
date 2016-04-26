@@ -5,7 +5,6 @@
 #include <utility.h>
 #include <interface_txt.h>
 #include <string.h>
-#include <sdl.h>
 
 // Cette fonction sert a charger une partie et d'y jouer.
 void loadTheGame(char* id_src, bool sdl)
@@ -19,13 +18,9 @@ void loadTheGame(char* id_src, bool sdl)
 	char* id = (char*) malloc(sizeof(char) * 256);
 	if(id == NULL)
 		error("getIdFromGame(), probleme d'allocation memoire");
-	if (sdl)
-		init_sdl_game(g);
-	else
-	{
-		getIdFromGame(g, id);
-		drawInterface(g, id);
-	}
+
+	getIdFromGame(g, id);
+	drawInterface(g, id);
 
 	while (!game_over_ar(g) && !sdl)
 	{

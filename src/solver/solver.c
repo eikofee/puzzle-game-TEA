@@ -3,8 +3,6 @@
 //#include <string.h>
 //#include <time.h>
 
-//Remplacer "" par du vide pour rendre le traçage fonctionnel
-
 struct map_s{
 	struct map_s* from;
 	game g;
@@ -200,10 +198,6 @@ void trace(nodeQueue final)
 void solve(game g, bool rh, mode cmd)
 {
 	//bool rh = whatGame("rush-hour\n");
-	//clock_t c1;
-	//clock_t c2;
-	//float temps;
-	//c1 = clock();
 	map origMap = newMap(g, NULL);
 	list listMap = newListItem(origMap, NULL);
 	nodeQueue root = newQueueItem(origMap, NULL);
@@ -219,10 +213,7 @@ void solve(game g, bool rh, mode cmd)
 			currentNode = currentNode->next;
 		}
 	}
-	//c2 = clock();
-	//temps = (float)(c2-c1) / CLOCKS_PER_SEC;
 	//drawInterface(currentNode->m->g, "TEST");
-	//drawInterface(top->next->m->g, "TEST");
 	//printf("Nombre de coup minimal : %d, temps de calcul : %fs\n", game_nb_moves(currentNode->m->g), temps);
 	
 	//drawInterface(top->m->g, "TEST");
