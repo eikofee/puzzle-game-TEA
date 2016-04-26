@@ -47,6 +47,14 @@ bool checkButton(int xMouse, int yMouse, button Button){
 	return ( (xMouse >= (Button->x)) && (xMouse < ((Button->x) + (Button->width))) && (yMouse >= (Button->y)) && (yMouse < ((Button->y) + (Button->height))));
 }
 
+//Vérifie si les coordonnées (xMouse;yMouse) sont bien dans la surface du boutton "Button"
+bool hoverButton(int xMouse, int yMouse, button Button){
+	//if(Button == NULL)
+	//	error("checkButton(), le bouton n'est pas alloué ou n'existe pas ...");
+	//xMouse >= xOui && xMouse < (xOui + wOui) && yMouse >= yOui && yMouse < (yOui + hOui)
+	return ( (xMouse >= (Button->x)) && (xMouse < ((Button->x) + (Button->width))) && (yMouse >= (Button->y)) && (yMouse < ((Button->y) + (Button->height))));
+}
+
 //Effectue un free sur un Button non null.
 void deleteButton(button Button){
 	if(Button == NULL)
@@ -523,7 +531,9 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 					afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
 				}
 				break;
+			case SDL_MOUSEMOTION: /*Mouvement de souris*/
 
+				break;
 			case SDL_KEYDOWN: /* Evenement de type touche enfoncée */
 				switch(event.key.keysym.sym)
 				{
@@ -702,7 +712,7 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 //Affiche le menu principal. Permet de choisir le jeu souhaité. Retourne -1 si l'utilisateur décide de quitter.
 int choixDuJeu(){
 	SDL_Surface *ecran = NULL;
-	SDL_Surface *texte = NULL;
+	SDL_Surface **texte = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * 4);
 	SDL_Event event;
 
 	SDL_Rect position;
@@ -729,50 +739,51 @@ int choixDuJeu(){
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
 
 	TTF_SetFontStyle(police, TTF_STYLE_UNDERLINE);
-	texte = TTF_RenderText_Shaded(police, "   Puzzle Games - Game Selection   ", couleurEcriture, couleurFond);
+	texte[0] = TTF_RenderText_Shaded(police, "   Puzzle Games - Choix du Jeu   ", couleurEcriture, couleurFond);
 
-	position.x = (WIDTH - texte->w) / 2;
+	position.x = (WIDTH - texte[0]->w) / 2;
 	position.y = HEIGHT / 8;
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(texte[0], NULL, ecran, &position);
 
 	TTF_SetFontStyle(police, TTF_STYLE_NORMAL);
 
-	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   Rush Hour   ", couleurFond, couleurEcriture);
+	//SDL_FreeSurface(texte);
+	texte[1] = TTF_RenderText_Shaded(police, "   Rush Hour   ", couleurFond, couleurEcriture);
 
-	position.x = (WIDTH - texte->w) / 2;
-	position.y = (HEIGHT / 2) - texte->h;
+	position.x = (WIDTH - texte[1]->w) / 2;
+	position.y = (HEIGHT / 2) - texte[1]->h;
 
-	button button_Rh = createButton(position.x, position.y, texte->w, texte->h);
+	button button_Rh = createButton(position.x, position.y, texte[0]->w, texte[0]->h);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(texte[1], NULL, ecran, &position);
 
-	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   Klotski   ", couleurFond, couleurEcriture);
+	//SDL_FreeSurface(texte);
+	texte[2] = TTF_RenderText_Shaded(police, "   Klotski   ", couleurFond, couleurEcriture);
 
-	position.x = (WIDTH - texte->w) / 2;
-	position.y = position.y + ( 2 * texte->h );
+	position.x = (WIDTH - texte[2]->w) / 2;
+	position.y = position.y + ( 2 * texte[2]->h );
 
-	button button_Ar = createButton(position.x, position.y, texte->w, texte->h);
+	button button_Ar = createButton(position.x, position.y, texte[0]->w, texte[0]->h);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(texte[2], NULL, ecran, &position);
 
-	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   Apropos ...   ", couleurFond, couleurEcriture);
+	//SDL_FreeSurface(texte);
+	texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurEcriture);
 
-	position.x = (WIDTH - texte->w) / 2;
-	position.y = position.y + (2 * texte->h );
+	position.x = (WIDTH - texte[3]->w) / 2;
+	position.y = position.y + (2 * texte[3]->h );
 
-	button button_Apropos = createButton(position.x, position.y, texte->w, texte->h);
+	button button_Apropos = createButton(position.x, position.y, texte[0]->w, texte[0]->h);
 
-	SDL_BlitSurface(texte, NULL, ecran, &position);
+	SDL_BlitSurface(texte[3], NULL, ecran, &position);
 
 	int continuer = 1;
 	int xMouse;
 	int yMouse;
 	int tmp = 0;
 	int valeur_retour;
+
 
 	while(continuer)
 	{
@@ -796,6 +807,52 @@ int choixDuJeu(){
 						break;
 				}
 				break;
+			case SDL_MOUSEMOTION:
+				xMouse = event.motion.x;
+				yMouse = event.motion.y;
+				if (checkButton(xMouse, yMouse, button_Rh))
+				{
+					SDL_Color couleurmagique = {255,17,17};
+					texte[1] = TTF_RenderText_Shaded(police, "   Rush Hour   ", couleurFond, couleurmagique);
+					position.x = button_Rh->x;
+					position.y = button_Rh->y;
+					SDL_BlitSurface(texte[1], NULL, ecran, &position);
+				}else{
+					SDL_Color couleurmagique = {0,0,0};
+					texte[1] = TTF_RenderText_Shaded(police, "   Rush Hour   ", couleurFond, couleurmagique);
+					position.x = button_Rh->x;
+					position.y = button_Rh->y;
+					SDL_BlitSurface(texte[1], NULL, ecran, &position);
+				}
+				if (checkButton(xMouse, yMouse, button_Ar))
+				{
+					SDL_Color couleurmagique = {255,17,17};
+					texte[2] = TTF_RenderText_Shaded(police, "   Klotski   ", couleurFond, couleurmagique);
+					position.x = button_Ar->x;
+					position.y = button_Ar->y;
+					SDL_BlitSurface(texte[2], NULL, ecran, &position);
+				}else{
+					SDL_Color couleurmagique = {0,0,0};
+					texte[2] = TTF_RenderText_Shaded(police, "   Klotski   ", couleurFond, couleurmagique);
+					position.x = button_Ar->x;
+					position.y = button_Ar->y;
+					SDL_BlitSurface(texte[2], NULL, ecran, &position);
+				}
+				if (checkButton(xMouse, yMouse, button_Apropos))
+				{
+					SDL_Color couleurmagique = {255,17,17};
+					texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurmagique);
+					position.x = button_Apropos->x;
+					position.y = button_Apropos->y;
+					SDL_BlitSurface(texte[3], NULL, ecran, &position);
+				}else{
+					SDL_Color couleurmagique = {0,0,0};
+					texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurmagique);
+					position.x = button_Apropos->x;
+					position.y = button_Apropos->y;
+					SDL_BlitSurface(texte[3], NULL, ecran, &position);
+				}
+			break;
 			case SDL_MOUSEBUTTONUP:
 				xMouse = event.button.x;
 				yMouse = event.button.y;
@@ -825,8 +882,8 @@ int choixDuJeu(){
 
 	TTF_CloseFont(police);
 	TTF_Quit();
-
-	SDL_FreeSurface(texte);
+	for (int i = 0; i < 4; i++)
+		SDL_FreeSurface(texte[i]);
 
 	SDL_Quit();
 
