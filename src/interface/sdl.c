@@ -222,6 +222,8 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 
 	//On commence la boucle while, avec la variable ci dessous comme condition.
 	int continuer_echap = 1;
+	int xMouse;
+	int yMouse;
 
 	while(continuer_echap)
 	{
@@ -233,12 +235,15 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 				*continuer = 0;
 				*continuer_principal = 0;
 				break;
+			case SDL_MOUSEMOTION:
+			break;
+
 
 			case SDL_MOUSEBUTTONUP:
 				if (event.button.button == SDL_BUTTON_LEFT)
 				{
-					int xMouse = event.button.x;
-					int yMouse = event.button.y;
+					xMouse = event.button.x;
+					yMouse = event.button.y;
 					if(checkButton(xMouse, yMouse, button_Oui))
 					{
 						continuer_echap = 0;
@@ -256,7 +261,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 					case SDLK_ESCAPE:
 						continuer_echap = 0;
 						break;
-					case SDLK_o:
+					case SDLK_y:
 						*continuer = 0;
 						continuer_echap = 0;
 						*continuer_principal = 0;
@@ -645,7 +650,7 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 				}
 
 			case SDL_MOUSEBUTTONUP: /* Si c'est un evenement de type Clic Souris */
-				if (event.button.button == SDL_BUTTON_LEFT)//clic gauche de la souris
+				if (event.button.button == SDL_BUTTON_LEFT && checkHelp == 0)//clic gauche de la souris
 				{
 					indice_piece = clic(event, g, WIDTH, HEIGHT, NL, NH, TAILLE_CASE);
 					afficherGrilleJeu(g, ecran, grille, NL, NH, TAILLE_CASE, indice_piece);
