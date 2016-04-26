@@ -733,13 +733,14 @@ int choixDuJeu(){
 	ecran = SDL_SetVideoMode(WIDTH, HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); 
 	
 	SDL_WM_SetCaption("Puzzle Games", NULL);
+	SDL_WM_SetIcon(IMG_Load("truck.png"), NULL);
 	
 	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 236, 240, 241));
 	
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
 
 	TTF_SetFontStyle(police, TTF_STYLE_UNDERLINE);
-	texte[0] = TTF_RenderText_Shaded(police, "   Puzzle Games - Choix du Jeu   ", couleurEcriture, couleurFond);
+	texte[0] = TTF_RenderText_Shaded(police, "   Puzzle Games - Game Selection   ", couleurEcriture, couleurFond);
 
 	position.x = (WIDTH - texte[0]->w) / 2;
 	position.y = HEIGHT / 8;
@@ -769,7 +770,7 @@ int choixDuJeu(){
 	SDL_BlitSurface(texte[2], NULL, ecran, &position);
 
 	//SDL_FreeSurface(texte);
-	texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurEcriture);
+	texte[3] = TTF_RenderText_Shaded(police, "   Apropos ...   ", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte[3]->w) / 2;
 	position.y = position.y + (2 * texte[3]->h );
@@ -841,13 +842,13 @@ int choixDuJeu(){
 				if (checkButton(xMouse, yMouse, button_Apropos))
 				{
 					SDL_Color couleurmagique = {255,17,17};
-					texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurmagique);
+					texte[3] = TTF_RenderText_Shaded(police, "   Apropos ...   ", couleurFond, couleurmagique);
 					position.x = button_Apropos->x;
 					position.y = button_Apropos->y;
 					SDL_BlitSurface(texte[3], NULL, ecran, &position);
 				}else{
 					SDL_Color couleurmagique = {0,0,0};
-					texte[3] = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurmagique);
+					texte[3] = TTF_RenderText_Shaded(police, "   Apropos ...   ", couleurFond, couleurmagique);
 					position.x = button_Apropos->x;
 					position.y = button_Apropos->y;
 					SDL_BlitSurface(texte[3], NULL, ecran, &position);
