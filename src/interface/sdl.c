@@ -166,8 +166,8 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
 
 	//A partir d'ici, on va créer les deux bouttons Oui et Non, ainsi qu'afficher du texte.
-	texte = TTF_RenderText_Blended(police, "Voulez vous quitter le jeu ?", couleurFond);
-
+	texte = TTF_RenderText_Blended(police, "Do you want to leave the game ?", couleurFond);
+	
 	int w_echap = texte->w + 100;
 	int h_echap = HEIGHT/3;
 
@@ -183,7 +183,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "   Yes   ", couleurBasalt, couleurFond);
 	position.y = position.y - 3*texte->h + h_echap;
 
 	button button_Oui = createButton(position.x, position.y, texte->w, texte->h);
@@ -191,7 +191,7 @@ void menu_echap(SDL_Surface *ecran,int *continuer_principal, int *continuer, int
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "   No   ", couleurBasalt, couleurFond);
 	position.x += (w_echap - 100) - texte->w;
 
 	button button_Non = createButton(position.x, position.y, texte->w, texte->h);
@@ -277,7 +277,7 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 	position.y = 0;
 	SDL_BlitSurface(ecran, NULL, ecran_tmp, &position);
 
-	texte = TTF_RenderText_Blended(police, "Voulez vous continuer ?", couleurFond);
+	texte = TTF_RenderText_Blended(police, "Proceed to the next level ?", couleurFond);
 
 	int w_continuer = texte->w + 100;
 	int h_continuer = HEIGHT/4;
@@ -294,7 +294,7 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "Oui", couleurBasalt, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "   Yes   ", couleurBasalt, couleurFond);
 	position.y = position.y - 3*texte->h + h_continuer;
 
 	button button_Oui = createButton(position.x, position.y, texte->w, texte->h);
@@ -303,7 +303,7 @@ int menu_continuer(SDL_Surface *ecran, int *continuer, int WIDTH, int HEIGHT, SD
 
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "Non", couleurBasalt, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "   No   ", couleurBasalt, couleurFond);
 	position.x += (w_continuer - 100) - texte->w;
 
 	button button_Non = createButton(position.x, position.y, texte->w, texte->h);
@@ -442,6 +442,7 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 	ecran = SDL_SetVideoMode(WIDTH - 1, HEIGHT - 1, 32, SDL_HWSURFACE | SDL_DOUBLEBUF); // On définit Ecran
 
 	SDL_WM_SetCaption("Puzzle Games", NULL); // Titre de la fenetre
+	SDL_WM_SetIcon(IMG_Load("truck.png"), NULL);
 
 	SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 255, 255, 255));
 
@@ -490,7 +491,7 @@ void init_sdl_game(game g, int *continuer_principal, int indGame){
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "Nombre de Deplacement:", couleurEcriture, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "Number of moves :", couleurEcriture, couleurFond);
 	position.x = (((NL * TAILLE_CASE) + WIDTH) / 2) - (texte->w / 2);
 	position.y = position.y + 40;
 	SDL_BlitSurface(texte, NULL, ecran, &position);
@@ -652,7 +653,7 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 
 	SDL_BlitSurface(menu_apropos, NULL, ecran, &position);
 	
-	texte = TTF_RenderText_Shaded(police, "Retour", couleurBasalt, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "   Back   ", couleurBasalt, couleurFond);
 	position.x = 210;
 	position.y = 240;
 
@@ -728,7 +729,7 @@ int choixDuJeu(){
 	police = TTF_OpenFont("Sansation-Regular.ttf", 20);
 
 	TTF_SetFontStyle(police, TTF_STYLE_UNDERLINE);
-	texte = TTF_RenderText_Shaded(police, "   Puzzle Games - Choix du Jeu   ", couleurEcriture, couleurFond);
+	texte = TTF_RenderText_Shaded(police, "   Puzzle Games - Game Selection   ", couleurEcriture, couleurFond);
 
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = HEIGHT / 8;
@@ -748,7 +749,7 @@ int choixDuJeu(){
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   Klotski / L'Ane Rouge   ", couleurFond, couleurEcriture);
+	texte = TTF_RenderText_Shaded(police, "   Klotski   ", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = position.y + ( 2 * texte->h );
@@ -758,7 +759,7 @@ int choixDuJeu(){
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	SDL_FreeSurface(texte);
-	texte = TTF_RenderText_Shaded(police, "   A propos ...   ", couleurFond, couleurEcriture);
+	texte = TTF_RenderText_Shaded(police, "   Apropos ...   ", couleurFond, couleurEcriture);
 
 	position.x = (WIDTH - texte->w) / 2;
 	position.y = position.y + (2 * texte->h );
