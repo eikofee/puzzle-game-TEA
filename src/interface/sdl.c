@@ -931,7 +931,7 @@ void Apropos(SDL_Surface *ecran, int WIDTH, int HEIGHT, SDL_Color couleurFond, S
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
 	position.y = position.y + texte->h;
-	texte = TTF_RenderText_Shaded(police, "games as such as Rush Hour and Klotski.", couleurFond, couleurBasalt);
+	texte = TTF_RenderText_Shaded(police, "games such as Rush Hour and Klotski.", couleurFond, couleurBasalt);
 	position.x = ((WIDTH - (w_Apropos))/2) + 15;
 	SDL_BlitSurface(texte, NULL, ecran, &position);
 
