@@ -322,7 +322,7 @@ SDL_Surface* menu_Help(SDL_Surface *screen, int WIDTH, int HEIGHT, TTF_Font *fon
 	position.y = position.y + text->h;
 	SDL_BlitSurface(text, NULL, screen, &position);
 
-	text = TTF_RenderText_Shaded(font, "other pieces to free yourself a passage.", colorWrite, colorBackground);
+	text = TTF_RenderText_Shaded(font, "other pieces to free yourself a passage. Pieces", colorWrite, colorBackground);
 	position.y = position.y + text->h;
 	SDL_BlitSurface(text, NULL, screen, &position);
 
