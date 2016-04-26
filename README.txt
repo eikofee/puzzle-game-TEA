@@ -1,17 +1,18 @@
 ### Projet de Programmation - Semestre 4 ###
 Groupe IN400A3
 
-Projet rush-hour 
+Projet rush-hour / Ane Rouge
 
-Le projet consiste à développer le jeu Rush Hour en interface texte (console) et graphique plus tard, avec un solveur.
+Le projet consiste à développer le jeu Rush Hour et l'Ane Rouge en interface texte (console) et graphique, avec un solveur.
 
 Composition du groupe :
 HALNAUT Adrien (Echoffee) - ORDONEZ Romain (Apodeus) - MARTY Yoan (tlanvaldear)
 
 
 ### Compiler et exécuter les jeux ###
+- Pour compiler la version Graphique, assurez vous d'avoir installé SDL en version 1.2, SDL_ttf, SDL_Image et SDL_Mixer.
 
-- En se plaçant dans le répertoire rush-hour, taper:
+- En se plaçant dans le répertoire racine 'Puzzle-game-TEA', taper:
 
 $> cmake .
 
@@ -23,6 +24,10 @@ $> cmake .
     - Pour le jeu de l'Ane Rouge
     
     $> make klotski
+
+    - Pour obtenir les deux jeux avec une interface graphique :
+
+    $> make interfaceGraphique
     
 - Pour lancer le jeu, en se plaçant dans le dossier `bin`, taper:
     - Pour Rush Hour
@@ -32,6 +37,10 @@ $> cmake .
     - Pour le jeu de l'Ane Rouge
   
     $> ./klotski
+
+    - Pour l'interface graphique
+
+    $> ./interfaceGraphique
   
 *** Avant de faire un nouveau `make`, penser à exécuter la commande `make clean`. ***
 
@@ -63,3 +72,16 @@ Un exemple est disponible à cette adresse : http://puu.sh/olBmr/504a56fc43.txt
 ## Version in-game ##
 
 La commande 'solve' résoud et affiche les mouvements pour résoudre la situation actuelle du niveau.
+
+## Interface Graphique ##
+
+Pour choisir votre jeu, un simple clic sur le nom du jeu de votre choix.
+
+Une fois en-jeu, passez votre souris sur le rectangle 'Help' pour avoir davantages d'informations concernant
+le but du jeu, et comment y jouer.
+
+Le bouton Reset permet de réinitialiser la partie actuelle.
+
+Appuyer sur Echap pour afficher le menu Echap afin de quitter le programme.
+
+La police utilisée pour l'interface graphique est la police sansation-regular.ttf 

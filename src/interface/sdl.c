@@ -296,7 +296,7 @@ SDL_Surface* menu_Help(SDL_Surface *screen, int WIDTH, int HEIGHT, TTF_Font *fon
 	SDL_Surface *text = NULL;
 	SDL_Rect position;
 	int widthMenu = 4*WIDTH / 5;
-	int heightMenu = 5*HEIGHT / 8;
+	int heightMenu = 3*HEIGHT / 4;
 
 	position.x = 0;
 	position.y = 0;
@@ -313,36 +313,50 @@ SDL_Surface* menu_Help(SDL_Surface *screen, int WIDTH, int HEIGHT, TTF_Font *fon
 	position.x = position.x + 5;
 	position.y = position.y + 5;
 	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
 
 	text = TTF_RenderText_Shaded(font, "you need to go to the exit (the red line at the", colorWrite, colorBackground);
 	position.y = position.y + text->h;
 	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
 
 	text = TTF_RenderText_Shaded(font, "board's edge). To do that, you need to move the", colorWrite, colorBackground);
 	position.y = position.y + text->h;
 	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
 
 	text = TTF_RenderText_Shaded(font, "other pieces to free yourself a passage. Pieces", colorWrite, colorBackground);
 	position.y = position.y + text->h;
 	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
 
 	text = TTF_RenderText_Shaded(font, "can't cross others or go outside the game area.", colorWrite, colorBackground);
 	position.y = position.y + text->h;
 	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
 
 	text = TTF_RenderText_Shaded(font, "To move them, click on the desired piece, and", colorWrite, colorBackground);
 	position.y = position.y + (text->h * 2);
 	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
 
-	text = TTF_RenderText_Shaded(font, "press the directional keys.", colorWrite, colorBackground);
+	text = TTF_RenderText_Shaded(font, "press the directional keys. Press Echap if", colorWrite, colorBackground);
 	position.y = position.y + text->h;
 	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
+
+	text = TTF_RenderText_Shaded(font, "you want to leave the binary.", colorWrite, colorBackground);
+	position.y = position.y + text->h;
+	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
 
 	text = TTF_RenderText_Shaded(font, "Good Luck !", colorWrite, colorBackground);
-	position.y = position.y + text->h;
+	position.y = position.y + (text->h * 2);
 	SDL_BlitSurface(text, NULL, screen, &position);
 
 	SDL_Flip(screen);
+	SDL_FreeSurface(menuHelp);
+	SDL_FreeSurface(text);
 	return screenTMP;
 }
 
