@@ -378,7 +378,7 @@ void getIdFromGame(game g, char* id)
 	{
 		id[pos] = 'p';
 		pos++;
-		id[pos] = '0' + (can_move_x(game_piece(g, index_pieces))?1:0) + (can_move_y(game_piece(g, index_pieces))?2:0);
+		id[pos] = '0' + (can_move_x(game_piece(g, index_pieces))?2:0) + (can_move_y(game_piece(g, index_pieces))?1:0);
 		pos++;
 		id[pos] = 'w';
 		pos++;

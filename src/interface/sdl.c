@@ -503,7 +503,11 @@ void deleteSon(Mix_Music *musique){
 
 // Permet d'afficher la fenetre principal, ainsi que le jeu.
 void init_sdl_game(game g, int *MAIN_CHECK, int indGame){
-	
+	char *initID = (char*)malloc(512*sizeof(char));
+	getIdFromGame(g, initID);
+	game initialGame = getGameFromId(initID);
+	free(initID);
+
 	int NL = game_width(g);//Nombre de case de largeur
 	int NH = game_height(g);//Nombre de case hauteur
 	int SIZE_SQUARE = 75;//taille d'une case (CxC)
@@ -610,6 +614,13 @@ void init_sdl_game(game g, int *MAIN_CHECK, int indGame){
 	SDL_FreeSurface(text);
 	int yNbMove = position.y; //Permet de conserver l'ordonnée du text précedent afin d'afficher le nombre de mouvement.
 
+	text = TTF_RenderText_Shaded(font, "   Reset   ", colorBlack, colorSilver);
+	position.x = (((NL * SIZE_SQUARE) + WIDTH) / 2) - (text->w / 2);
+	position.y = 2*HEIGHT / 3;
+	button button_Reset = createButton(position.x, position.y, text->w, text->h);
+	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
+
 	text = TTF_RenderText_Shaded(font, "   Help   ", colorBlack, colorSilver);
 	position.x = (((NL * SIZE_SQUARE) + WIDTH) / 2) - (text->w / 2);
 	position.y = 5*HEIGHT / 6;
@@ -643,10 +654,7 @@ void init_sdl_game(game g, int *MAIN_CHECK, int indGame){
 				yMouse = event.motion.y;
 				if(checkButton(xMouse, yMouse, button_Help))
 				{
-					
-					//(SDL_Surface *screen, char* str, button Button, SDL_Color colorWhite, SDL_Color newColor, TTF_Font *font){
 					hoverButton(screen, "   Help   ", button_Help, colorBlack, colorGrey, font);
-					//(SDL_Surface *screen, int WIDTH, int HEIGHT, TTF_Font *font, SDL_Color colorBlack)
 					if(checkHelp == 0)
 					{
 						checkHelp = 1;
@@ -662,12 +670,27 @@ void init_sdl_game(game g, int *MAIN_CHECK, int indGame){
 						SDL_BlitSurface(screenTMP, NULL, screen, &position);
 						checkHelp = 0;
 					}
-					hoverButton(screen, "   Help   ", button_Help, colorBlack,colorSilver, font);
+					hoverButton(screen, "   Help   ", button_Help, colorBlack, colorSilver, font);
 				}
+				if(checkButton(xMouse, yMouse, button_Reset))
+				{
+					hoverButton(screen, "   Reset   ", button_Reset, colorBlack, colorGrey, font);
+				}
+				else if(checkHelp == 0)
+				{
+					hoverButton(screen, "   Reset   ", button_Reset, colorBlack, colorSilver, font);
+				}
+				break;
 
 			case SDL_MOUSEBUTTONUP: /* Si c'est un evenement de type Clic Souris */
 				if (checkHelp == 0 && (event.button.button == SDL_BUTTON_LEFT))//clic gauche de la souris
 				{
+					xMouse = event.button.x;
+					yMouse = event.button.y;
+					if(checkButton(xMouse, yMouse, button_Reset))
+					{
+						copy_game(initialGame, g);
+					}
 					indexPiece = clic(event, g, WIDTH, HEIGHT, NL, NH, SIZE_SQUARE);
 					displayGridGame(g, screen, grid, NL, NH, SIZE_SQUARE, indexPiece);
 				}
@@ -781,6 +804,7 @@ void init_sdl_game(game g, int *MAIN_CHECK, int indGame){
 	free(nameOfTheGame);
 	SDL_FreeSurface(text);
 	SDL_FreeSurface(exitGame);
+	delete_game(initialGame);
 	
 	SDL_Quit();
 }
