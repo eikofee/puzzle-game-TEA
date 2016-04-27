@@ -50,6 +50,7 @@ void hoverButton(SDL_Surface *screen, char* str, button Button, SDL_Color colorW
 	text = TTF_RenderText_Shaded(font, str, colorWrite, colorBackground);
 
 	SDL_BlitSurface(text, NULL, screen, &position);
+	SDL_FreeSurface(text);
 }
 
 //Effectue un free sur un Button non null.
