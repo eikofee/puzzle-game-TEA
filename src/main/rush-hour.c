@@ -12,6 +12,7 @@ void loadTheGame(char* id_src)
 	//On crée le game g à partir d'un id source
 	printf("\nLoading Game ...\n");
 	game g = getGameFromId(id_src);
+	free(id_src);
 	printf("Done\n\n");
 
 	//On malloc un id qu'on utilisera pour etre modifié pendant la partie
@@ -51,7 +52,6 @@ int main(int argc, char* argv[])
 		char* idGame = loadGameFromFile("games_rh.txt", indGame);
 		loadTheGame(idGame);
 		indGame++;
-		free(idGame);
 	}
 	return 0;
 }

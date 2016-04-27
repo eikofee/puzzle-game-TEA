@@ -155,53 +155,6 @@ void confirm()
 		c = getchar();	
 }
 
-/* On met en commentaire ce bloc uniquement pour la V2 . . . . . . . . */
-
-//Permet de sauvegarder dans le fichier save.txt la partie.
-//On ecrase l'ancienne partie à chaque fois qu'on fait appelle a cette fonction.
-
-/*void saveGameFromId(game g, char* id)
-{
-	FILE *fichier = NULL;
-	fichier = fopen("save.txt", "w");
-
-	if(fichier == NULL)
-		error("saveGameFromId(), probleme d'ouverture du fichier");
-
-	fprintf(fichier, "%s\n", id);
-	if(game_nb_moves(g) != -1)
-		fprintf(fichier, "%d\n", game_nb_moves(g));
-	fclose(fichier);
-}
-*/
-
-//Permet de charger une partir a partir de la save.
-//Cette fonction est exclusif a la save.
-
-/*void loadGameFromSave(char* fichier, game g)
-{
-	FILE* fichier_tmp = NULL;
-	fichier_tmp = fopen(fichier, "r");
-	
-	if(fichier_tmp == NULL)
-		error("loadGameFromSave(), probleme d'ouverture du fichier");
-
-	char s[128] = "";
-	fgets(s, 128, fichier_tmp);
-
-	game g_tmp = NULL; //getGameFromId(s);
-	copy_game(g_tmp, g);
-
-	// *****----- A conserver pour la V3 --------*****
-	// fgets(s, 128, fichier_tmp);
-	// g->nb_moves = atoi(s);
-
-	fclose(fichier_tmp);
-	delete_game(g_tmp);
-
-}
-*/
-
 char* loadGameFromNum(char* file, char* num)
 {
 	//num représente le numero du level
@@ -595,12 +548,12 @@ game getGameFromConfigFile(char* fileName)
 //Retourne l'id à la ligne indGame du fichier file.txt
 char* loadGameFromFile(char* file, int indGame)
 {
-	char* idGame = (char*) malloc(sizeof(char) * 512);
+	// char *idGame = (char*) malloc(sizeof(char) * 512);
 	char *strIndGame = (char*)malloc(5 * sizeof(char));
 
 	sprintf(strIndGame, "%d\n", indGame);
 
-	idGame = loadGameFromNum(file, strIndGame);
+	char *idGame = loadGameFromNum(file, strIndGame);
 
 	free(strIndGame);
 

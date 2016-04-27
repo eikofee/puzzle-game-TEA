@@ -28,6 +28,10 @@ $> cmake .
     - Pour obtenir les deux jeux avec une interface graphique :
 
     $> make interfaceGraphique
+
+    - Si vous voulez compiler tout les executables, taper:
+
+    $> make
     
 - Pour lancer le jeu, en se plaçant dans le dossier `bin`, taper:
     - Pour Rush Hour
