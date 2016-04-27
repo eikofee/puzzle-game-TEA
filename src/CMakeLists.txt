@@ -17,10 +17,6 @@ file(APPEND ${CMAKE_BINARY_DIR}/bin/games_ar.txt "10n4x5p3w2h2x2y0p3w1h1x1y0p3w1
 
 file(APPEND ${CMAKE_BINARY_DIR}/bin/games_ar.txt "15n4x5p3w2h2x2y1p3w1h1x0y0p3w1h1x1y0p3w1h1x2y0p3w1h1x3y0p3w1h1x0y1p3w1h1x1y1p3w1h1x0y2p3w1h1x1y2p3w1h1x0y3p3w1h1x0y4p3w1h1x2y3p3w1h1x3y3p3w1h1x2y4p3w1h1x3y4\n")
 
-
-file(WRITE ${CMAKE_BINARY_DIR}/config.ini "#Contiendra le nom du jeu exécuté")
-
-
 # On definit les elements necessaires aux librairies (*.a) puis on les cree
 #Librairie racine: game
 add_library(game ${CMAKE_BINARY_DIR}/src/game/game.c ${CMAKE_BINARY_DIR}/src/piece/piece.c ${CMAKE_BINARY_DIR}/src/game/game_ar.c ${CMAKE_BINARY_DIR}/src/game/game_rh.c ${CMAKE_BINARY_DIR}/src/piece/piece_rh.c ${CMAKE_BINARY_DIR}/src/interface/function_interface.c ${CMAKE_BINARY_DIR}/src/interface/interface_txt.c ${CMAKE_BINARY_DIR}/src/solver/solver.c )

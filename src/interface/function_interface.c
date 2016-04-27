@@ -450,17 +450,7 @@ void initFileConfig(char* level_name){
 	if(fichier == NULL)
 		error("initFileConfig(), probleme de création du fichier");
 
-	if(strEqual(level_name, "rush-hour"))
-	{
-		fprintf(fichier, "%s\n", "rush-hour");
-	}
-	else if(strEqual(level_name, "klotski"))
-	{
-		fprintf(fichier, "%s\n", "klotski");
-	}
-	else
-		fprintf(fichier, "%s\n", level_name);
-
+	fprintf(fichier, "%s\n", level_name);
 	fclose(fichier);
 }
 
